@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { LoginPageRoutingModule } from './login-routing.module';
 
 import { LoginPage } from './login.page';
+import { ClaimitService } from '../../SharedServices/claimit.service';
 
 @NgModule({
   imports: [
@@ -18,6 +19,6 @@ import { LoginPage } from './login.page';
     ReactiveFormsModule,
     FormsModule
   ],
-
+providers:[ClaimitService]
 })
 export class LoginPageModule {}

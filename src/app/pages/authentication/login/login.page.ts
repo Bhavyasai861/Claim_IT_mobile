@@ -11,7 +11,8 @@ import { Capacitor } from '@capacitor/core';
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
-  imports: [CommonModule, FormsModule, IonicModule,ReactiveFormsModule]
+  imports: [CommonModule, FormsModule, IonicModule,ReactiveFormsModule],
+  providers:[ClaimitService]
 })
 export class LoginPage implements OnInit {
  
@@ -22,7 +23,7 @@ export class LoginPage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private service: ClaimitService,
+    public service: ClaimitService,
     private toastController: ToastController
   ) {}
 
@@ -104,7 +105,7 @@ export class LoginPage implements OnInit {
   userNavigate(){
     localStorage.setItem('isLogin', 'true');
     localStorage.setItem('role', 'user');
-    this.router.navigate(['/additem']);
+    this.router.navigate(['/user-home']);
     this.service.loginResponse.next(true)
   }
   

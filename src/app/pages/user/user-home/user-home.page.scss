@@ -1,0 +1,52 @@
+.search-container {
+    padding: 10px;
+  }
+  
+  .search-bar {
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  ion-input {
+    flex: 1;
+    margin-right: 8px;
+    font-size: 16px;
+  }
+  
+  .search-buttons ion-button {
+    --padding-start: 6px;
+    --padding-end: 6px;
+  }
+  
+  ion-list {
+    margin-top: 10px;
+  }
+  
+  ion-text {
+    display: block;
+    text-align: center;
+    color: #999;
+    margin-top: 20px;
+  }
+  
+  .camera-button {
+    margin-bottom: 19px
+  }
+  .search-name{
+    margin-left: 19px;
+  }
+
+  
+  .custom-divider {
+    height: 2px; 
+    background-color:#737478; 
+    margin: 16px 0;
+    border-radius: 0.5px; 
+  }
+  .noresults{
+    margin-left: 121px
+  }

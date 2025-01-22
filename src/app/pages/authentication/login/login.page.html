@@ -28,7 +28,7 @@
       <ion-text *ngIf="password?.invalid && password?.touched" color="danger">
         <p>Password must be at least 6 characters long.</p>
       </ion-text>
-      <p class="user-link" >Are you a user?</p>
+      <p class="user-link"  (click)="userNavigate()">Are you a user?</p>
       <ion-button expand="block" class="login-button" (click)="onSubmit()">Login</ion-button>
       <ion-text color="danger" *ngIf="errMsg">
         <p>{{ errMsg }}</p>
