@@ -24,6 +24,10 @@ export class AdditemPage implements OnInit {
   isQrModalOpen: boolean = false;
   qrData: string = '';
   qrItem: any = null;
+  formattedData:any;
+  isTruncated: boolean = true;
+  addItemData:any
+  selectedOrgId: string = '';
   constructor(private http: HttpClient, private modalController: ModalController, private router:Router) {}
 
   ngOnInit() {
@@ -50,18 +54,12 @@ export class AdditemPage implements OnInit {
     return `data:image/jpeg;base64,${base64String}`;
   }
 
-  // Method to handle file selection
   onFileSelect(event: any) {
     const file = event.target.files[0]; 
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.files.push({
-          name: file.name,
-          dataURL: e.target.result, 
-        });
-      };
-      reader.readAsDataURL(file); 
+      this.files.push({file:file,
+      preview:URL.createObjectURL(file)})
+      
     }
   }
 
@@ -74,10 +72,25 @@ export class AdditemPage implements OnInit {
 
   addItem() {
     this.isModalOpen = true;
+    const url = 'http://172.17.12.101:8081/api/admin/listOfOrganisation';
+    this.http.get<any>(url).subscribe((response) => {
+      this.addItemData = response;
+      console.log(this.addItemData); 
+      if (Array.isArray(this.addItemData)) {
+        this.addItemData.forEach(item => {
+          console.log(item.orgId); 
+          this.selectedOrgId= item.orgId
+        });
+      } else {
+        console.log(this.addItemData.orgId); 
+      }
+    });
   }
+  
   goToNextStep() {
     if (this.currentStep < 2) {
       this.currentStep++;
+      // this.submitItem()
     }
   }
 
@@ -89,12 +102,13 @@ export class AdditemPage implements OnInit {
   submitItem() {
     if (this.files.length > 0) {
       const formData = new FormData();
-      formData.append('image', this.files[0].dataURL);  
+      console.log("this.files", this.files);
+      
+      formData.append('image', this.files[0].file);
+      formData.append('orgId', this.selectedOrgId);
       this.http.post('http://172.17.12.101:8081/api/admin/upload', formData).subscribe(
         (response) => {
-          console.log('Item submitted:', response);
-          this.isModalOpen = false;
-          this.files = [];
+          this.formatResponse(response);          
           this.fetchItems();  
         },
         (error) => {
@@ -103,22 +117,25 @@ export class AdditemPage implements OnInit {
       );
     }
   }
-
+  formatResponse(response: any): void {
+    const allowedKeys = ['description', 'title'];
+    this.formattedData = Object.entries(response)
+      .filter(([key]) => allowedKeys.includes(key))
+      .map(([key, value]) => ({ key, value }));
+  }
+  toggleTruncate(): void {
+    this.isTruncated = !this.isTruncated;
+  }
   onModalDismiss() {
-    this.files = []; // Clear the files on modal dismiss
+    this.files = []; 
   }
   generateQRCode(item: any): void {
-    // Store item details for later display in the modal
-    this.qrItem = item;
-    
-    // Prepare the data for the QR code
+    this.qrItem = item;    
     this.qrData = JSON.stringify({
       name: item.name,
       receivedDate: item.receivedDate,
       status: item.status,
     });
-
-    // Open the modal
     this.isQrModalOpen = true;
   }
 

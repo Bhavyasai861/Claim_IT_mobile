@@ -1,78 +1,8 @@
-<!-- <ion-header>
-  <ion-toolbar>
-    <ion-title>Items List</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-  <div style="display: flex; justify-content: flex-end; padding: 1px;">
-    <ion-button class="additem" style="width: auto; padding: 5px 10px;" (click)="addItem()">
-      Add Item
-    </ion-button>
-  </div>
-  <ion-modal [isOpen]="isModalOpen" (willDismiss)="onModalDismiss()">
-    <ng-template>
-      <div class="modal-header">
-        <h2>Add an Item</h2>
-      </div>
-      <div class="modal-content">
-        <div class="swiper-container" #swiperRef>
-          <div class="swiper-wrapper">
-            <div class="swiper-slide">
-              <h3>Upload</h3>
-              <input 
-                type="file" 
-                accept="image/*" 
-                (change)="onFileSelect($event)" 
-                hidden 
-                #fileInput 
-              />
-              <ion-button (click)="fileInput.click()">Select Image</ion-button>
-              <ion-button (click)="nextSlide()" [disabled]="!files.length">Next</ion-button>
-            </div>
-            <div class="swiper-slide">
-              <h3>Preview</h3>
-              <div *ngIf="files.length > 0">
-                <img [src]="files[0].dataURL" alt="Preview" class="w-full max-w-xs mx-auto rounded-md" />
-              </div>
-              <p *ngIf="files.length === 0" class="text-gray-500 text-center">No image selected.</p>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button mat-raised-button color="primary" (click)="submitItem()">Submit</button>
-        </div>
-      </div>
-    </ng-template>
-  </ion-modal>
-  <ion-grid>
-    <ion-row *ngFor="let item of items" style="align-items: center; border-bottom: 1px solid #dcdcdc;">
-      <ion-col size="4">
-        <img
-          [src]="getImage(item.image)"
-          alt="Item Image"
-          style="width: 60%; max-height: 100px; margin: auto; display: block;"
-        />
-      </ion-col>
-      <ion-col size="6" style="font-size: 14px; color: #666;">
-        <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.name }}</p>
-        <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date: 'shortDate' }}</p>
-        <p style="font-size: 12px; color: #999;">{{ item.status }}</p>
-      </ion-col>
-      <ion-col size="2" style="text-align: center;">
-        <ion-icon name="qr-code-outline" class="qrIcon"></ion-icon>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-</ion-content> -->
 
 <ion-header>
   <ion-toolbar style="--background: #00897b;">
     <ion-title style="color: white;">Add Item</ion-title>
     <ion-buttons slot="end">
-      <!-- <ion-button (click)="viewProfile()">
-        <ion-icon name="person-circle-outline" style="color: white; font-size: 24px;"></ion-icon>
-      </ion-button> -->
       <ion-button (click)="logout()">
         <ion-icon name="log-out-outline" style="color: white; font-size: 24px;"></ion-icon>
       </ion-button>
@@ -80,44 +10,62 @@
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content>
   <div style="display: flex; justify-content: flex-end; padding: 1px;">
     <ion-button class="additem" style="width: auto; padding: 5px 10px;" (click)="addItem()">
       Add Item
     </ion-button>
   </div>
-  <ion-modal [isOpen]="isModalOpen" (willDismiss)="onModalDismiss()"
-    style="--width: 300px; --height: 400px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-    <ng-template>
+  <ion-modal 
+  [isOpen]="isModalOpen" 
+  (willDismiss)="onModalDismiss()"
+  style="--width: 500px; --height: 450px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);"
+>
+  <ng-template>
+    <div class="content ">
       <div class="modal-header">
         <h2>Add an Item</h2>
       </div>
-      <div class="modal-content">
-        <div class="stepper-header">
-          <div [class.active]="currentStep === 1" class="step">1. Upload</div>
-          <div [class.active]="currentStep === 2" class="step">2. Preview</div>
-        </div>
-        <div class="stepper-content">
-          <div *ngIf="currentStep === 1">
-            <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInput />
-            <ion-button (click)="fileInput.click()" class="additem">Select Image</ion-button>
-            <ion-button (click)="goToNextStep()" [disabled]="!files.length" class="additem">Next</ion-button>
-          </div>
-
-          <div *ngIf="currentStep === 2">
-            <h3>Preview</h3>
-            <div *ngIf="files.length > 0">
-              <img [src]="files[0].dataURL" alt="Preview" class="w-full max-w-xs mx-auto rounded-md" />
-            </div>
-            <p *ngIf="files.length === 0" class="text-gray-500 text-center">No image selected.</p>
-            <ion-button (click)="goToPreviousStep()" class="additem">Back</ion-button>
-            <ion-button (click)="submitItem()" class="additem">Submit</ion-button>
-          </div>
-        </div>
+      <div class="scrollable-content">
+      <div class="stepper-header">
+        <div [class.active]="currentStep === 1" class="step">1. Upload</div>
+        <div [class.active]="currentStep === 2" class="step">2. Preview</div>
       </div>
-    </ng-template>
-  </ion-modal>
+      <div *ngIf="currentStep === 1">
+        <div class="upload-box">
+          <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInput />
+          <ion-button (click)="fileInput.click()" class="additem">Select Image</ion-button>
+        </div>
+        <ion-button (click)="goToNextStep();" [disabled]="!files.length" class="next">Next</ion-button>
+      </div>
+      <div *ngIf="currentStep === 2" >
+        <h3>Preview</h3>
+        <div *ngIf="files.length > 0">
+          <img [src]="files[0].preview" alt="Preview" class="w-full max-w-xs mx-auto rounded-md" />
+        </div>
+        <ion-list>          
+          <ion-item *ngFor="let item of formattedData">
+            <ion-label>
+              <strong>{{ item.key }}:</strong>
+              <span>
+                {{ isTruncated && item.key === 'description' ? (item.value | slice: 0: 100) + '...' : item.value }}
+                <a
+                  *ngIf="item.key === 'description'"
+                  href="javascript:void(0)"
+                  (click)="toggleTruncate()"
+                >
+                  {{ isTruncated ? 'Read More' : 'Show Less' }}
+                </a>
+              </span>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+        <ion-button (click)="submitItem()" class="additem" expand="full">Submit</ion-button>
+      </div>
+    </div>
+    </div>
+  </ng-template>
+</ion-modal>
 
 
   <ion-grid>
@@ -140,11 +88,9 @@
   <ion-modal [isOpen]="isQrModalOpen" (ionModalDidDismiss)="closeQrModal()" canDismiss="true"
     style="--width: 300px; --height: 400px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
     <ion-content>
-      <!-- Floating Close Button -->
       <ion-button fill="clear" (click)="closeQrModal()" class="close-button">
         <ion-icon name="close-outline"></ion-icon>
       </ion-button>
-
       <ion-header>
         <ion-toolbar>
           <ion-title>QR Code</ion-title>
