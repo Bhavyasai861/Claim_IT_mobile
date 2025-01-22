@@ -6,6 +6,7 @@ import { IonicModule, ModalController } from '@ionic/angular';
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { QRCodeModule } from 'angularx-qrcode';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-additem',
   templateUrl: './additem.page.html',
@@ -23,12 +24,21 @@ export class AdditemPage implements OnInit {
   isQrModalOpen: boolean = false;
   qrData: string = '';
   qrItem: any = null;
-  constructor(private http: HttpClient, private modalController: ModalController) {}
+  constructor(private http: HttpClient, private modalController: ModalController, private router:Router) {}
 
   ngOnInit() {
     this.fetchItems();
   }
+  viewProfile(): void {
+    this.router.navigateByUrl('/profile'); // Replace '/profile' with the correct profile route
+  }
 
+  // Logout and navigate to the Login page
+  logout(): void {
+    // Perform any necessary cleanup, such as clearing storage or resetting states
+    localStorage.clear(); // Example: Clear local storage
+    this.router.navigateByUrl('/login'); // Replace '/login' with the correct login route
+  }
   fetchItems() {
     const url = 'http://172.17.12.101:8081/api/admin/listOfItems';
     this.http.get<any>(url).subscribe((response) => {
