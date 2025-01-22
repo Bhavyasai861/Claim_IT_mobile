@@ -1,0 +1,38 @@
+.lost-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .image-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .logo {
+    height: auto; 
+  }
+  .user{
+    right: 10px;
+  }
+  .form-container {
+    margin-top: 30px;
+    padding: 0 20px;
+  }
+  
+  .input-field {
+    margin-bottom: 20px; /* Adds space between input fields */
+  }
+  
+  .user-link {
+    text-align: right;
+    color: var(--ion-color-primary); /* Primary color for the link */
+    text-decoration: underline;
+    margin: 10px 0 20px 0; /* Space above and below the text */
+    cursor: pointer;
+  }
+  
+  .login-button {
+    margin-top: 20px;
+  }
+  
+  
