@@ -1,16 +1,19 @@
+ion-content {
+  height: 100%;
+  overflow: hidden; 
+}
+.logo{
+  height: auto;
+}
 .lost-container {
     text-align: center;
-    margin-top: 20px;
   }
   
   .image-wrapper {
     display: flex;
     justify-content: center;
   }
-  
-  .logo {
-    height: auto; 
-  }
+   
   .user{
     right: 10px;
   }
