@@ -20,19 +20,22 @@
   }
   
   .input-field {
-    margin-bottom: 20px; /* Adds space between input fields */
+    margin-bottom: 20px; 
   }
   
   .user-link {
     text-align: right;
-    color: var(--ion-color-primary); /* Primary color for the link */
+    color: #00897b; 
     text-decoration: underline;
-    margin: 10px 0 20px 0; /* Space above and below the text */
+    margin: 10px 0 20px 0; 
     cursor: pointer;
   }
   
   .login-button {
+    --background: #00897b;
+    --color: #ffffff; 
     margin-top: 20px;
   }
   
+
   
