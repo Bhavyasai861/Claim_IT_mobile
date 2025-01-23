@@ -1,44 +1,109 @@
-ion-content {
-  height: 100%;
-  overflow: hidden; 
-}
-.logo{
-  height: auto;
-}
-.lost-container {
-    text-align: center;
-  }
+// ion-content {
+//   --overflow: hidden; /* Prevent scrolling */
+//   height: 100%;
+// }
+
+// .logo{
+//   height: auto;
+// }
+// .lost-container {
+//     text-align: center;
+//   }
   
-  .image-wrapper {
-    display: flex;
-    justify-content: center;
-  }
+//   .image-wrapper {
+//     display: flex;
+//     justify-content: center;
+//   }
    
-  .user{
-    right: 10px;
-  }
-  .form-container {
-    margin-top: 30px;
-    padding: 0 20px;
-  }
+//   .user{
+//     right: 10px;
+//   }
+//   .form-container {
+//     margin-top: 30px;
+//     padding: 0 20px;
+//   }
   
-  .input-field {
-    margin-bottom: 20px; 
-  }
+//   .input-field {
+//     margin-bottom: 20px; 
+//   }
   
-  .user-link {
-    text-align: right;
-    color: #00897b; 
-    text-decoration: underline;
-    margin: 10px 0 20px 0; 
-    cursor: pointer;
-  }
+//   .user-link {
+//     text-align: right;
+//     color: #00897b; 
+//     text-decoration: underline;
+//     margin: 10px 0 20px 0; 
+//     cursor: pointer;
+//   }
   
-  .login-button {
-    --background: #00897b;
-    --color: #ffffff; 
-    margin-top: 20px;
-  }
+//   .login-button {
+//     --background: #00897b;
+//     --color: #ffffff; 
+//     margin-top: 20px;
+//   }
   
 
-  
+ion-content {
+  --overflow: hidden;
+  height: 100%;
+  background-color: #f3f4f6;
+} 
+
+.background {
+  // background: linear-gradient(to bottom, #00897b, #005f56);
+  background: linear-gradient(to bottom, #9ad1cc, #0f7369);
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom-left-radius: 50px;
+  border-bottom-right-radius: 50px;
+}
+.background-image {
+  height: 70%;
+  object-fit: cover; 
+}
+.welcome-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.form-container {
+  margin-top: 20px;
+  padding: 0 20px;
+}
+
+.input-field {
+  margin-bottom: 15px;
+}
+
+.links {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.user-link {
+  color: #00897b;
+  text-decoration: underline;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.login-button {
+  --background: #00897b;
+  --color: #ffffff;
+  margin-top: 10px;
+}
+
+.signup-button {
+  --background: #ffffff;
+  --color: #00897b;
+  border: 1px solid #00897b;
+  margin-top: 10px;
+}
+
+.divider {
+  text-align: center;
+  color: #808080;
+  margin: 20px 0;
+}

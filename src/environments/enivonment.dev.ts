@@ -18,5 +18,6 @@ export const environment = {
     getCategories: 'http://172.17.12.101:8081/api/admin/getcategories',
     contactUs: 'http://172.17.12.101:8081/api/users/submit',
     getNotifications:'http://172.17.12.101:8081/api/admin/notifications',
-    updateNotification:'http://172.17.12.101:8081/api/admin/update-claimrequest'
+    updateNotification:'http://172.17.12.101:8081/api/admin/update-claimrequest',
+    
   };

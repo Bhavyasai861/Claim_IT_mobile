@@ -15,4 +15,13 @@ export class ClaimitService {
     const loginData = { email, password };
     return this.http.post(environment.adminLogin, loginData);
   }
+  public statusCount(month: string, year: number) {
+    const url = `${environment.statusCount}?month=${year}-${month}`;
+    return this.http.get(url);
+  }
+  
+  public categoryItems(month: string, year: number) {
+    const url = `${environment.categoryItems}?month=${year}-${month}`;
+    return this.http.get(url);
+  }
 }
