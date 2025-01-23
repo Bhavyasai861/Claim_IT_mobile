@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
 import { ClaimitService } from '../../SharedServices/claimit.service';
 
 @Component({
@@ -13,10 +13,15 @@ import { ClaimitService } from '../../SharedServices/claimit.service';
 })
 export class ApproveRejectPage implements OnInit {
   approveRejectForm!: FormGroup;
+  isPopoverOpen: boolean = false
   currentDate: any = new Date();
   searchResults: any = [];
   selectedDate: Date | null = null; 
   isModalOpen = false;
+  modalOpen=false
+  adminActions = true;
+  alertButtons = ['Action'];
+  @ViewChild('popover') popover!: HTMLIonPopoverElement;
   public statusDropDown: any = [
     { label: 'REJECTED', value: 'REJECTED' },
     { label: 'PENDING_APPROVAL', value: 'PENDING APPROVAL' },
@@ -24,8 +29,13 @@ export class ApproveRejectPage implements OnInit {
     { label: 'CLAIMED', value: 'CLAIMED' },
     { label: 'UNCLAIMED', value: 'UNCLAIMED' },
   ]
-  constructor(private fb: FormBuilder, private claimService: ClaimitService) {}
+  constructor(private fb: FormBuilder, private claimService: ClaimitService, private modalController:ModalController) {}
 
+
+  presentPopover(e: Event) {
+    this.popover.event = e;
+    this.isPopoverOpen = true;
+  }
   ngOnInit() {
     this.approveRejectForm = this.fb.group({
       email: [''],
@@ -47,6 +57,13 @@ export class ApproveRejectPage implements OnInit {
       this.search()
     }
 
+  }
+  approveReject(e: Event){
+    this.popover.event = e;
+    this.modalOpen = true;
+  }
+  closeModal() {
+    this.modalController.dismiss();
   }
   openDatepicker() {
     this.isModalOpen = true;

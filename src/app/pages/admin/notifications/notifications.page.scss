@@ -1,0 +1,20 @@
+
+ion-card {
+    height:150px;
+    transition: background-color 0.3s ease;
+  
+    &.unread {
+      background-color: #00897b2e; /* Blue for unread notifications */
+    }
+  
+    &.read {
+      background-color: #fdfdfd; /* Red for read notifications */
+    }
+  }
+  .notification-card {
+    margin: 8px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}

@@ -9,6 +9,14 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ClaimitService {
   public loginResponse = new BehaviorSubject<any>(false);
+  private notificationCountSource = new BehaviorSubject<number>(0);
+  notificationCount$ = this.notificationCountSource.asObservable();
+
+
+  private pendingClaimsSubject = new BehaviorSubject<number>(0);
+
+  // Observable for components to subscribe to
+  pendingClaimsCount$ = this.pendingClaimsSubject.asObservable();
   loginResponse_Triggered = this.loginResponse.asObservable();
   constructor(private http: HttpClient) { }
   public adminLogin(email: string, password: string) {
@@ -31,5 +39,24 @@ export class ClaimitService {
 
   public adminSearch(params:any){
     return this.http.get(environment.adminSearch+'?mail='+params.mail+'&status='+params.status+'&to='+params.to+'&from='+params.from)
+  }
+  public getNotifications(): Observable<any> {
+    return this.http.get(environment.getNotifications)
+  }
+  pendingClaims: any[] = [];
+
+  addClaim(claim: any) {
+    this.pendingClaims.push(claim);
+    this.pendingClaimsSubject.next(this.pendingClaims.length); // Update notification count
+  }
+
+  getClaims() {
+    return this.pendingClaims;
+  }
+  setNotificationCount(count: number): void {
+    this.notificationCountSource.next(count);
+  }
+  public updateNotification(reqbody: any) {
+    return this.http.put(environment.updateNotification, reqbody);
   }
 }

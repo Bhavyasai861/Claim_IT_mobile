@@ -12,9 +12,25 @@
     color: #000000b9;
     font-family: "Roboto";
 }
-.button {
+.buttons {
     --background: #00897b;
 }
+ion-content {
+    background-color: #00000000 !important;
+}
+ion-icon .select-icon.md.hydrated {
+    position: absolute !important;
+    right: 2px !important;
+}
+.modal-header {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
+    padding-bottom: 8px;
+    // padding-top: 8px;
+    border-bottom: 1px solid #ddd;
+  }
 .modal {
     --width: 290px;
     --height: 397px;

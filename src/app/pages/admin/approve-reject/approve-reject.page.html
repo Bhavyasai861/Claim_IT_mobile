@@ -24,22 +24,22 @@
                 <ion-col size="12">
                   <ion-label position="floating" class="fieldHeading fieldLabel">Email</ion-label>
                   <ion-item class="fieldBox fieldStyle" lines="none">
-                    <ion-input placeholder="Enter email" type="text" formControlName="email"></ion-input>
+                    <ion-input placeholder="Email" type="text" formControlName="email"></ion-input>
                   </ion-item>
                 </ion-col>
                 <ion-col size="12">
                   <ion-label position="floating" class="fieldHeading fieldLabel">Name</ion-label>
                   <ion-item class="fieldBox fieldStyle" lines="none">
-                    <ion-input placeholder="Enter name" type="text" formControlName="name"></ion-input>
+                    <ion-input placeholder="Name" type="text" formControlName="name"></ion-input>
                   </ion-item>
                 </ion-col>
                 <ion-col size="12">
                   <ion-label position="floating" class="fieldHeading fieldLabel">Date</ion-label>
                   <ion-item class="fieldBox fieldStyle">
                     <ion-input type="text" readonly placeholder="Select Date"
-                      [value]="selectedDate ? (selectedDate | date:'MM-dd-yyyy') : ''"
-                      formControlName="selectedDate"></ion-input>
-                    <ion-button slot="end" (click)="openDatepicker()">
+                      [value]="selectedDate ? (selectedDate | date:'MM-dd-yyyy') : ''" formControlName="selectedDate"
+                      placeholder="Received Date"></ion-input>
+                    <ion-button slot="end" (click)="openDatepicker()" class="buttons">
                       <ion-icon name="calendar-outline"></ion-icon>
                     </ion-button>
                   </ion-item>
@@ -60,12 +60,12 @@
                     <ion-select formControlName="status" interface="popover">
                       <ion-select-option *ngFor="let option of statusDropDown" [value]="option.value">{{ option.value
                         }}</ion-select-option>
-                    </ion-select>
+                    </ion-select>                   
                   </ion-item>
                 </ion-col>
                 <br>
                 <div class="container">
-                  <ion-button name="add" class="button" expand="full" (click)="SearchAndClear('search')">
+                  <ion-button name="add" class="buttons" expand="full" (click)="SearchAndClear('search')">
                     <ion-icon name="checkmark-outline"></ion-icon>&nbsp;
                     Search
                   </ion-button>
@@ -90,7 +90,49 @@
         <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date: 'shortDate' }}</p>
         <p style="font-size: 12px; color: #999;">{{ item.status }}</p>
       </ion-col>
-
+      <ion-col size="2">
+        <ion-button fill="clear" size="small" (click)="presentPopover($event)">
+          <ion-icon name="ellipsis-vertical" slot="end"></ion-icon>
+        </ion-button>
+        <ion-popover [isOpen]="isPopoverOpen" (didDismiss)="isPopoverOpen = false" [dismissOnSelect]="true" [showBackdrop]="false">
+          <ng-template>
+            <ion-content>
+              <ion-list>
+                <ion-item [button]="true" [detail]="false">Approve</ion-item>
+                <ion-item [button]="true" [detail]="false">Reject</ion-item>
+                <ion-item [button]="true" [detail]="false">Remove</ion-item>
+                <ion-item [button]="true" [detail]="false">Claimed</ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+        <!-- <ion-modal  [isOpen]="modalOpen" 
+          style="--width: 500px; --height: 350px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; ">
+          <ng-template>
+            <div class="content ">
+              <div class="modal-header">
+                <h2>Options</h2>
+              <ion-icon name="close-circle" style="color: red;" (click)="closeModal()"></ion-icon>        
+              </div>         
+             
+            <ion-list>
+              <ion-item >
+                <ion-button>Approve</ion-button>
+              </ion-item>
+              <ion-item >
+                <ion-button>Reject</ion-button>
+              </ion-item>
+              <ion-item >
+                <ion-button>Remove</ion-button>
+              </ion-item>
+              <ion-item >
+                <ion-button>Claimed</ion-button>
+              </ion-item>
+            </ion-list>
+          </div>
+         </ng-template>
+        </ion-modal> -->
+      </ion-col>
     </ion-row>
   </ion-grid>
 </ion-content>

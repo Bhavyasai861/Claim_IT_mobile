@@ -36,7 +36,9 @@ export class AdditemPage implements OnInit {
   ngOnInit() {
     this.fetchItems();
   }
- 
+  closeModal() {
+    this.modalController.dismiss();
+  }
   viewProfile(): void {
     this.router.navigateByUrl('/profile'); 
   }
