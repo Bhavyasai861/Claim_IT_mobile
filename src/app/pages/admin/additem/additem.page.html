@@ -10,7 +10,6 @@
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content>
   <div style="display: flex; justify-content: flex-end; padding: 1px;">
     <ion-button class="additem" style="width: auto; padding: 5px 10px;" (click)="addItem()">
@@ -29,25 +28,32 @@
       </div>
       <div class="scrollable-content">
       <div class="stepper-header">
-        <div [class.active]="currentStep === 1" class="step">1. Upload</div>
-        <div [class.active]="currentStep === 2" class="step">2. Preview</div>
+        <div (click)="goToStep(1)"  [class.active]="currentStep === 1" class="step"> Upload</div>
+        <div (click)="goToStep(1)"  [class.active]="currentStep === 2" class="step"> Preview</div>
       </div>
       <div *ngIf="currentStep === 1">
         <div class="upload-box">
           <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInput />
-          <ion-button (click)="fileInput.click()" class="additem">Select Image</ion-button>
+          <div *ngIf="files.length === 0">
+            <p (click)="fileInput.click()" style="margin-top: 90px;">Upload Image</p>
+          </div>
+          <div *ngIf="files.length > 0">
+            <div *ngFor="let file of files" class="image-container"> 
+              <img [src]="file.preview" alt="Preview" class="image">
+              <ion-icon name="close-circle" class="close-icon" (click)="removeFile(file)"></ion-icon>
+            </div>
+          </div>
         </div>
-        <ion-button (click)="goToNextStep();" [disabled]="!files.length" class="next">Next</ion-button>
+        <ion-button (click)="goToNextStep();submitItem()" [disabled]="!files.length" class="next">Next</ion-button>
       </div>
       <div *ngIf="currentStep === 2" >
         <h3>Preview</h3>
-        <div *ngIf="files.length > 0">
+        <!-- <div *ngIf="files.length > 0">
           <img [src]="files[0].preview" alt="Preview" class="w-full max-w-xs mx-auto rounded-md" />
-        </div>
+        </div> -->
         <ion-list>          
           <ion-item *ngFor="let item of formattedData">
             <ion-label>
-              <strong>{{ item.key }}:</strong>
               <span>
                 {{ isTruncated && item.key === 'description' ? (item.value | slice: 0: 100) + '...' : item.value }}
                 <a
@@ -67,8 +73,6 @@
     </div>
   </ng-template>
 </ion-modal>
-
-
   <ion-grid>
     <ion-row *ngFor="let item of items" style="align-items: center; border-bottom: 1px solid #dcdcdc;">
       <ion-col size="4">
@@ -108,4 +112,5 @@
     </ion-content>
   </ion-modal>
 
+  <app-footer></app-footer>
 </ion-content>

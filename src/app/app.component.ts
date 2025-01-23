@@ -8,13 +8,13 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   appPages: any[] = [];
-
+  public isMenuOpen = false;
   constructor() {
-    this.initializeApp();
-  }
-
-  initializeApp() {
     this.loadSideMenu();
+  }
+  ionViewWillEnter(){
+    this.loadSideMenu();
+
   }
 
   loadSideMenu() {
@@ -36,6 +36,8 @@ export class AppComponent {
       ];
     }
   }
-  
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
 }
 

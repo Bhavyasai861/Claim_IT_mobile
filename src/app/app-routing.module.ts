@@ -39,6 +39,7 @@ const routes: Routes = [
     path: 'view-claim',
     loadChildren: () => import('./pages/user/view-claim/view-claim.module').then( m => m.ViewClaimPageModule)
   },
+
   
   
 ];

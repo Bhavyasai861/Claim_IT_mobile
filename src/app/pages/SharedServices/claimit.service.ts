@@ -24,4 +24,12 @@ export class ClaimitService {
     const url = `${environment.categoryItems}?month=${year}-${month}`;
     return this.http.get(url);
   }
+  //List of itetems
+  public listOfItems(query: any) {
+    return this.http.get(environment.listOfItems);
+  }
+
+  public adminSearch(params:any){
+    return this.http.get(environment.adminSearch+'?mail='+params.mail+'&status='+params.status+'&to='+params.to+'&from='+params.from)
+  }
 }

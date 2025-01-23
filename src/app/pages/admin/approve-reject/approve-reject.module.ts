@@ -14,7 +14,7 @@ import { ApproveRejectPage } from './approve-reject.page';
     FormsModule,
     IonicModule,
     ApproveRejectPageRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   declarations: []
 })

@@ -1,0 +1,26 @@
+//Input box outline style
+.fieldBox {
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    padding: 1px;
+    margin-top: 8px;
+}
+//Input field heading style
+.fieldHeading {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #000000b9;
+    font-family: "Roboto";
+}
+.button {
+    --background: #00897b;
+}
+.modal {
+    --width: 290px;
+    --height: 397px;
+    --border-radius: 8px;
+}
+
+ion-modal ion-datetime {
+    height: 382px;
+}

@@ -60,7 +60,7 @@
 
 .upload-box {
   border: 2px dashed #aaa;
-  padding: 65px 0;
+  height: 200px;
   text-align: center;
   border-radius: 10px;
   background-color: #f9f9f9;
@@ -143,4 +143,19 @@ ion-label {
       text-decoration: underline;
     }
   }
+}
+
+
+.image {
+  width: 50%;
+  height: 50%; 
+  border-radius: 5px; 
+  margin-top: 20px;
+}
+
+.close-icon {
+  color: red; 
+  font-size: 20px; 
+  position: relative;
+  top: -130px;
 }

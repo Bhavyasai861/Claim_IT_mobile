@@ -7,6 +7,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { QRCodeModule } from 'angularx-qrcode';
 import { Router } from '@angular/router';
+import { MenuController } from '@ionic/angular';
+import { ClaimitService } from '../../SharedServices/claimit.service';
 @Component({
   selector: 'app-additem',
   templateUrl: './additem.page.html',
@@ -28,32 +30,35 @@ export class AdditemPage implements OnInit {
   isTruncated: boolean = true;
   addItemData:any
   selectedOrgId: string = '';
-  constructor(private http: HttpClient, private modalController: ModalController, private router:Router) {}
+   searchQuery: string = '';
+  constructor(private http: HttpClient, private modalController: ModalController, private router:Router, private menu:MenuController,private claimService: ClaimitService) {}
 
   ngOnInit() {
     this.fetchItems();
   }
+ 
   viewProfile(): void {
-    this.router.navigateByUrl('/profile'); // Replace '/profile' with the correct profile route
+    this.router.navigateByUrl('/profile'); 
   }
 
-  // Logout and navigate to the Login page
   logout(): void {
-    // Perform any necessary cleanup, such as clearing storage or resetting states
-    localStorage.clear(); // Example: Clear local storage
-    this.router.navigateByUrl('/login'); // Replace '/login' with the correct login route
+    localStorage.clear(); 
+    this.router.navigateByUrl('/login'); 
   }
   fetchItems() {
-    const url = 'http://172.17.12.101:8081/api/admin/listOfItems';
-    this.http.get<any>(url).subscribe((response) => {
-      this.items = response.data;
+    const query = this.searchQuery.trim();
+    this.claimService.listOfItems(query).subscribe(
+      (res: any) => {
+      this.items = res.data;
     });
   }
 
   getImage(base64String: string): string {
     return `data:image/jpeg;base64,${base64String}`;
   }
-
+  goToStep(stepNumber: number) {
+    this.currentStep = stepNumber;
+  }
   onFileSelect(event: any) {
     const file = event.target.files[0]; 
     if (file) {
@@ -62,7 +67,9 @@ export class AdditemPage implements OnInit {
       
     }
   }
-
+  removeFile(file: any) {
+    this.files = this.files.filter(f => f !== file); 
+  }
   nextSlide() {
     const swiper = this.swiperRef.swiper;
     if (swiper) {
