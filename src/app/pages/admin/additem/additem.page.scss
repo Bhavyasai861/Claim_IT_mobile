@@ -98,12 +98,14 @@
 }
 
 .modal-header {
+  display: flex;  /* Use flexbox to arrange elements in a row */
+  justify-content: space-between;  /* Distribute space between the items */
+  align-items: center;  /* Vertically center the items */
   position: sticky;
   top: 0;
   background-color: white;
   z-index: 1;
-  padding-bottom: 8px;
-  // padding-top: 8px;
+  padding: 8px 16px;  /* Add padding for spacing */
   border-bottom: 1px solid #ddd;
 }
 

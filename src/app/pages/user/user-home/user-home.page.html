@@ -8,167 +8,69 @@
     <ion-title style="color: white;">Search and Claim</ion-title>
   </ion-toolbar>
 </ion-header>
+<ion-content>
+  <ion-item-divider class="searchBarFixed">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="10">
+          <ion-searchbar class="search-bar" [(ngModel)]="searchQuery" placeholder="Search with item" (ionInput)="searchItems()"> </ion-searchbar >
+        </ion-col>
+        <ion-col size="1"> 
+          <ion-icon name="filter" style="margin-top: 15px; cursor: pointer; font-size: 25px;"
+            (click)="openPopover($event)"></ion-icon>
 
-<ion-content [fullscreen]="true">
+          <ion-popover [isOpen]="popoverOpen" (didDismiss)="popoverOpen = false" [event]="popoverEvent">
+            <ng-template>
+              <div *ngFor="let category of categories" class="custom-dropdown" (click)="selectCategory(category.name)">
+                {{ category.name }}
+              </div>
+            </ng-template>
+          </ion-popover>
+        </ion-col>
+        <ion-col size="1">
+          <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInput />
+          <ion-icon name="camera" style="margin-top: 15px; cursor: pointer; font-size: 25px;"
+            (click)="fileInput.click()"></ion-icon>
+          <ion-icon name="close-circle" size="small" style="position: absolute; top: 0; right: 0; "
+            (click)="clearSearch()">
+          </ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
 
-  <div class="px-5 pt-5 bg-[#E8F2F3]">
-    <!-- <span class="font-bold max-w-3xs mr-6 text-2xl">Search and Claim</span> -->
-    <div class="filter-container">
-
-      <div class="search-container">
-        <ion-item lines="none" class="search-bar">
-          <ion-input
-            [(ngModel)]="searchQuery"
-            (ionKeyup.enter)="searchItems()"
-            placeholder="Search your lost item"
-          ></ion-input>
-          <ion-buttons slot="end" class="search-buttons">
-            <ion-button fill="clear" (click)="searchItems()">
-              <ion-icon slot="icon-only" name="search"></ion-icon>
-            </ion-button>
-            <ion-button  *ngIf="searchQuery && searchQuery.trim().length > 0" fill="clear" (click)="clearSearch()">
-              <ion-icon slot="icon-only" name="close"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-item>
-      </div>
-      
-      <ion-grid>
-        <ion-row *ngFor="let item of searchResults" style="align-items: center; border-bottom: 1px solid #dcdcdc;">
-          <ion-col size="4">
-            <img
-              [src]="getImage(item.image)"
-              alt="Item Image"
-              style="width: 60%; max-height: 100px; margin: auto; display: block;"
-            />
-          </ion-col>
-          <ion-col size="6" style="font-size: 14px; color: #666;">
-            <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.categoryName }}</p>
-            <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date: 'shortDate' }}</p>
-            <p style="font-size: 12px; color: #999;">{{ item.status }}</p>
-          </ion-col>
-          <ion-col size="2" style="text-align: center;">
-            <ion-icon name="qr-code-outline" class="qrIcon"></ion-icon>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-
-      <div *ngIf="isItemsLoading" class="flex justify-center mx-4 mt-[165px] ml-[161px]">
-        <p>Loading...</p> <!-- Optional placeholder message -->
-      </div>
-      <div *ngIf="noItems">
-        <img src="assets/Animation - 1737116880117 (1).gif" alt="No results found" class="noresults" />
-        <p class="noresults font-bold text-lg">No results found.</p>
-      </div>
-      <div class="custom-divider"></div>
-      <div class="grid grid-cols-5 items-center gap-4">
-        <span class="col-span-3 search-name">Search with a picture</span>
-      
-        <!-- Camera Button -->
-        <ion-button
-          fill="clear"
-          class="camera-button"
-          (click)="triggerCamera()"
-          style="--color: #287883;"
-        >
-          <ion-icon slot="icon-only" name="camera"></ion-icon>
-        </ion-button>
-      
-        <!-- Clear Button -->
-        <ion-button
-          *ngIf="imageUrl"
-          class="camera-button"
-          fill="clear"
-          (click)="imageUrl = null"
-        >
-        <ion-button  *ngIf="imagesearchResponse.length > 0 || noImagedata"fill="clear" size="small" (click)="clearImageResponse()">
-          <ion-icon slot="icon-only" name="close"></ion-icon>
-        </ion-button>
-        </ion-button>
-      </div>
-      <ion-grid>
-        <ion-row *ngFor="let item of imagesearchResponse" style="align-items: center; border-bottom: 1px solid #dcdcdc;">
-          <ion-col size="4">
-            <img
-              [src]="getImage(item.image)"
-              alt="Item Image"
-              style="width: 60%; max-height: 100px; margin: auto; display: block;"
-            />
-          </ion-col>
-          <ion-col size="6" style="font-size: 14px; color: #666;">
-            <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.title }}</p>
-            <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date: 'shortDate' }}</p>
-            <p style="font-size: 12px; color: #999;">{{ item.status }}</p>
-          </ion-col>
-          <ion-col size="2" style="text-align: center;">
-            <ion-icon name="qr-code-outline" class="qrIcon"></ion-icon>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-      <div *ngIf="noImagedata">
-        <img src="assets/Animation - 1737116880117 (1).gif" alt="No results found" class="noresults" />
-        <p class="noresults font-bold text-lg">No results found.</p>
-      </div>
-      <!-- Preview of the Captured Image -->
-      <!-- <div *ngIf="imageUrl" class="preview">
-        <img [src]="imageUrl" alt="Captured image preview" />
-      </div>
-       -->
- 
-      <div class="custom-divider"></div>
-      <ion-col size="5">
-        <ion-item class="fieldBox1" lines="none">
-          <ion-select
-            placeholder="Search with in category"
-            class="inputfields disabledStyle"
-            interface="popover"
-            [(ngModel)]="selectedCategory"
-            (ionChange)="onCategorySelect($event.detail.value)"
-          >
-            <ion-select-option
-              *ngFor="let category of categories"
-              [value]="category.name"
-            >
-              {{ category.name }}
-            </ion-select-option>
-          </ion-select>
-          <!-- Icon Button to Clear Dropdown -->
-          <ion-buttons *ngIf="selectedCategory">
-            <ion-button fill="clear" size="small" (click)="clearDropdown()">
-              <ion-icon slot="icon-only" name="close"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-item>
+  </ion-item-divider>
+  <ion-grid class="custom-card">
+    <ion-row *ngFor="let item of items"
+      style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
+      <ion-col size="4">
+        <img [src]="getImage(item.image)" alt="Item Image"
+          style="width: 60%; max-height: 100px; margin: auto; display: block;" (click)="openImageModal(item.image)" />
       </ion-col>
-      
-    
+      <ion-col size="6" style="font-size: 14px; color: #666;">
+        <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.name }}</p>
+        <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date: 'shortDate' }}</p>
+        <p style="font-size: 12px; padding: 5px; border-radius: 5px;width: fit-content;" [ngStyle]="{
+    'background-color': getStatusColor(item.status),
+    'color': getTextColor(item.status)
+  }">
+          {{ item.status }}
+        </p>
+      </ion-col>
 
-      <div *ngIf="isCategeoryLoading" class="flex justify-center mx-4 mt-[165px] ml-[161px]">
-        <p>Loading...</p> <!-- Optional placeholder message -->
-      </div>
-      <ion-grid>
-        <ion-row *ngFor="let item of categerorydata" style="align-items: center; border-bottom: 1px solid #dcdcdc;">
-          <ion-col size="4">
-            <img
-              [src]="getImage(item.image)"
-              alt="Item Image"
-              style="width: 60%; max-height: 100px; margin: auto; display: block;"
-            />
-          </ion-col>
-          <ion-col size="6" style="font-size: 14px; color: #666;">
-            <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.categoryName }}</p>
-            <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date: 'shortDate' }}</p>
-            <p style="font-size: 12px; color: #999;">{{ item.status }}</p>
-          </ion-col>
-          <ion-col size="2" style="text-align: center;">
-            <ion-icon name="qr-code-outline" class="qrIcon"></ion-icon>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-      <div *ngIf="noCategeroydata">
-        <img src="assets/Animation - 1737116880117 (1).gif" alt="No results found" class="noresults" />
-        <p class="noresults font-bold text-lg">No results found.</p>
-      </div>
-    </div>
-  </div>
+    </ion-row>
+  </ion-grid>
+  <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"
+    style="--width: 300px; --height: 270px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+    <ng-template>
+      <ion-content>
+        <div style="text-align: center;">
+          <img [src]="selectedImage" alt="Selected Image" style="width: 90%; height: 250px; object-fit: contain;" />
+          <ion-button fill="clear" (click)="closeImageModal()" style="position: absolute; top: 10px; right: 10px;">
+            <ion-icon name="close" style="color: #f90000;"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
 </ion-content>

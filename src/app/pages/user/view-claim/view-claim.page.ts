@@ -11,7 +11,7 @@ import { IonicModule } from '@ionic/angular';
   imports:[CommonModule,IonicModule,FormsModule]
 })
 export class ViewClaimPage implements OnInit {
-
+  searchValue: any;
   constructor() { }
 
   ngOnInit() {

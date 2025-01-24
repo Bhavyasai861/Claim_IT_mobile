@@ -11,9 +11,13 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">view-claim</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-item-divider class="searchBarFixed">
+    <ion-searchbar 
+      class="search-bar" [(ngModel)]="searchValue"
+
+      placeholder="Search by name / Mail"
+      >
+    </ion-searchbar>
+    
+  </ion-item-divider>
 </ion-content>

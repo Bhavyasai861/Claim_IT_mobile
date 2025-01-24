@@ -39,7 +39,7 @@ export class AdditemPage implements OnInit {
     this.fetchItems();
   }
   closeModal() {
-    this.modalController.dismiss();
+    this.isModalOpen = false;
   }
   viewProfile(): void {
     this.router.navigateByUrl('/profile'); 

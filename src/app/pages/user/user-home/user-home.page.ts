@@ -2,12 +2,14 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, PopoverController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { LoadingController } from '@ionic/angular';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ClaimitService } from '../../SharedServices/claimit.service';
+
 @Component({
   selector: 'app-user-home',
   templateUrl: './user-home.page.html',
@@ -17,120 +19,118 @@ import { DomSanitizer } from '@angular/platform-browser';
   imports:[CommonModule, FormsModule, IonicModule,NgxDropzoneModule]
 })
 export class UserHomePage implements OnInit {
+  items: any[] = [];
   searchQuery: string = '';
-  searchResults: any = [];
+  isImageModalOpen = false;
+  selectedImage: string = '';
   files: any[] = [];
-  uplodedfilesdata: any[] = []
-  matchedItems: any = [];
+  matchedItems: any[] = [];
+  pictureSearchCompleted: boolean = false;
+
+  selectedCategory: any;
+  popoverOpen = false;
+  popoverEvent: any;
+  categories: { id: number; name: string }[] = [];
   categerorydata: any = [];
-  searchCompleted!: boolean;
-  categories: any[] = [];
-  imagesearchResponse: any[] = []
-  isCategeoryLoading :boolean =  false;
-  isItemsLoading :boolean =  false;
-  noItems :boolean =  false;
-  selectedCategory: string = '';
-  pictureSearchCompleted!: boolean;
-  categeorySearchCompleted!: boolean;
-  noImagedata:boolean =  false;
-  imageUrl: string | null = null;
-  categeoryerror: boolean = false
-  noCategeroydata: boolean = false;
-  constructor(private http: HttpClient,private loadingCtrl: LoadingController,private sanitizer: DomSanitizer) { }
+  categoryNames: any[] = [];
+  searchResults: any = [];
+  dropdownVisible: boolean = false; 
+    constructor(private popoverController: PopoverController, private http: HttpClient,private loadingCtrl: LoadingController,private sanitizer: DomSanitizer, private claimService:ClaimitService) { }
 
   ngOnInit() {
-    this.fetchCategories()
+   this.fetchItems()
+   this.triggerFileInput()
+   this.fetchCategories()
   }
-  searchItems() {
-    if (this.searchQuery.trim() !== '') {
-      this.searchResults = []; // Clear previous results
-      this.searchCompleted = false; // Reset search completion status  
-      const apiUrl = `http://172.17.12.101:8081/api/users/search?query=${encodeURIComponent(this.searchQuery)}`;
-      this.isItemsLoading = true
-      this.http.get<any[]>(apiUrl).subscribe(
-        (response) => {
-          if (Array.isArray(response)) {
-            // Filter results for items with status "UNCLAIMED"
-            this.searchResults = response.filter(item => item.status === "UNCLAIMED");
-            this.isItemsLoading = false
-          } else {
-            this.isItemsLoading = false
-            this.noItems = true 
-            console.error('API response is not an array', response);
-          }
-          this.searchCompleted = true; // Mark search as completed
-        },
-        (error) => {
-          this.noItems = true 
-          this.isItemsLoading = false
-          console.error('Error fetching search results:', error);
-          this.searchCompleted = true; // Mark search as completed even on error
-        }
-      );
+  fetchItems() {
+    const query = this.searchQuery.trim();
+    this.claimService.listOfItems(query).subscribe(
+      (res: any) => {
+      this.items = res.data;
+    });
+  }
+  getImage(base64String: string): string {
+    return `data:image/jpeg;base64,${base64String}`;
+  }
+  getStatusColor(status: string): string {
+    switch (status) {
+      case 'CLAIMED':
+        return '#e0ffe0'; // Light green
+      case 'PENDING_PICKUP':
+        return 'rgb(254, 226, 226)'; // Light red/pink
+      case 'UNCLAIMED':
+        return 'rgb(248, 113, 113)'; // Red
+      case 'REJECTED':
+        return '#ec9d9d'; // Darker red
+      default:
+        return '#ffffff'; 
+    }
+  }
+  openPopover(event: any): void {
+    this.popoverEvent = event; // Store the event for positioning the popover
+    this.popoverOpen = true; // Open the popover
+  }
+
+  // Select the category and log it
+  selectCategory(categoryName: string): void {
+    this.selectedCategory = categoryName;  // Set the selected category name
+    console.log('Selected Category:', this.selectedCategory);  // Log the selected category
+    const value = this.selectedCategory
+    this.popoverOpen = false;  // Close the popover after selecting a category
+    this.search(value)
+  }
+
+  getTextColor(status: string): string {
+    if (status === 'UNCLAIMED' || status === 'REJECTED') {
+      return '#fff'; 
+    }
+    return '#333'; 
+  }
+  openImageModal(image: string) {
+    this.selectedImage = `data:image/jpeg;base64,${image}`;
+    this.isImageModalOpen = true;
+  }
+  closeImageModal() {
+    this.isImageModalOpen = false;
+    this.clearSearch(); // Reset the list and fetch original items
+  }
+  triggerFileInput(): void {
+    const fileInput = document.querySelector<HTMLInputElement>('#fileInput');
+    if (fileInput) {
+      fileInput.click();
+    }
+  }
+  onFileSelect(event: any) {
+    const file = event.target.files[0]; 
+    if (file) {
+      this.files.push({
+        file: file,
+        preview: URL.createObjectURL(file),
+      });
     }
     
-  }
-  getImage(base64String: string | null): string {
-    return base64String ? `data:image/jpeg;base64,${base64String}` : '';
-  }
-  clearDropdown(){
-    this.categerorydata = []
-    this.fetchCategories();
-    this.isCategeoryLoading = false
-    this.noCategeroydata = false
-  }
-  public onSelect(event: any): void {
-  }
-  async triggerCamera() {
-    try {
-      const image = await Camera.getPhoto({
-        quality: 90,
-        allowEditing: false,
-        resultType: CameraResultType.Base64,
-        source: CameraSource.Camera, // Use CameraSource.Photos for gallery
-      });
-
-      if (image && image.base64String) {
-        console.log('Captured image:', image.base64String);
-        this.imageUrl = `data:image/jpeg;base64,${image.base64String}`;
-        const file = this.base64ToFile(image.base64String, 'captured_image.jpg');
-        this.uploadImage(file).subscribe(
-          (response) =>  
-          {
-            if (response.success) {
-              this.imagesearchResponse = response.matchedItems.filter((item: { status: string; }) => item.status === "UNCLAIMED");
-            } else {
-              this.noImagedata = true
-            }
+    // Call the upload API
+    this.uploadImage(file).subscribe(
+      (response) => {
+        if (response.success) {
+          // Update matchedItems from the response
+          this.matchedItems = response.matchedItems.filter(
+            (item: { status: string }) => item.status === "UNCLAIMED"
+          );
   
-          },
-          (error) => {
-            console.error('Upload failed', error)
-            this.noImagedata = true
-          } ,
-        );
+          // Update the items list to display matchedItems
+          this.items = this.matchedItems;
+        } else {
+          this.pictureSearchCompleted = true;
+        }
+      },
+      (error) => {
+        console.error("Error uploading image:", error);
       }
-    } catch (error) {
-      console.error('Error capturing image:', error);
-    }
+    );
   }
-  clearImageResponse(){
-    this.imagesearchResponse = []
-    this.noImagedata = false
-  }
-  base64ToFile(base64: string, fileName: string): File {
-    const byteString = atob(base64);
-    const arrayBuffer = new ArrayBuffer(byteString.length);
-    const uint8Array = new Uint8Array(arrayBuffer);
-
-    for (let i = 0; i < byteString.length; i++) {
-      uint8Array[i] = byteString.charCodeAt(i);
-    }
-
-    return new File([uint8Array], fileName, { type: 'image/jpeg' });
-  }
-
-  uploadImage(file: File): Observable<any> {
+  
+  public uploadImage(file: File): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('image', file, file.name);
     const picUrl = 'http://172.17.12.101:8081/api/users/search-by-image';
@@ -138,82 +138,53 @@ export class UserHomePage implements OnInit {
       headers: new HttpHeaders(),
     });
   }
-  async showLoader() {
-    const loader = await this.loadingCtrl.create({
-      message: 'Loading...',
-      spinner: 'crescent', // You can use 'bubbles', 'circles', 'crescent', 'dots', or 'lines'
-      cssClass: 'custom-loader', // Optional, if you want to style it
-    });
-    await loader.present();
-
-    // Dismiss the loader programmatically when the task is done
-    setTimeout(() => {
-      loader.dismiss();
-    }, 3000); // Adjust the timeout as needed
-  }
-
-  toggleLoader(show: boolean) {
-    this.isCategeoryLoading = show;
-    if (show) {
-      this.showLoader();
-    }
-  }
-
-
-
   clearSearch() {
     this.searchQuery = '';
-    this.searchResults = [];
     this.matchedItems = [];
-    this.categerorydata = [];
     this.files = [];
-    this.searchCompleted = false;
     this.pictureSearchCompleted = false;
-    this.noItems = false
-  }
-  search(): void {
-    this.searchResults = [];
-       this.isCategeoryLoading = true;
-
-    const apiUrl = `http://172.17.12.101:8081/api/users/search?query=${this.selectedCategory}`;
-    this.http.get<any[]>(apiUrl).subscribe(
-      (data: any) => {
-        if (Array.isArray(data)) {
-          this.categerorydata = data.filter(item => item.status === "UNCLAIMED");
-             this.isCategeoryLoading = false;
-
-          if (this.categerorydata.length === 0) {
-            this.categeoryerror = true;
-          } else {
-            this.categeoryerror = false;
-          }
-        } else {
-             this.isCategeoryLoading = false;
-          this.categeoryerror = true;
-          this.noCategeroydata = true
-        }
-      },
-      (error: any) => {
-        console.error('API Error:', error);
-           this.isCategeoryLoading = false;
-      }
-    );
+  
+    // Fetch the original list of items
+    this.fetchItems();
   }
   fetchCategories(): void {
     this.http.get<{ id: number; name: string }[]>('http://172.17.12.101:8081/api/admin/getcategories')
       .subscribe(
         (response) => {
           this.categories = response;
+          this.categoryNames = this.categories.map(category => category.name);
+          console.log(this.categoryNames); 
         },
         (error) => {
           console.error('Error fetching categories:', error);
         }
       );
   }
-  onCategorySelect(categoryName: string): void {
-    this.selectedCategory = categoryName
-    this.categerorydata = this.categories.filter(category => category.name === categoryName);
-    this.search()
+  search(search:any): void {
+    const apiUrl = `http://172.17.12.101:8081/api/users/search?query=${search}`;
+    this.http.get<any[]>(apiUrl).subscribe(
+      (data: any) => {
+        if (Array.isArray(data)) {
+          this.categerorydata = data.filter(item => item.status === "UNCLAIMED");
+          console.log(this.categerorydata);
+          this.items = this.categerorydata;
+        }
+      },
+    );
   }
+  searchItems() {
+    if (this.searchQuery.trim() !== '') {
+      const apiUrl = `http://172.17.12.101:8081/api/users/search?query=${encodeURIComponent(this.searchQuery)}`;
+      this.http.get<any[]>(apiUrl).subscribe(
+        (response) => {
+          if (Array.isArray(response)) {
+            // Filter results for items with status "UNCLAIMED"
+            this.searchResults = response.filter(item => item.status === "UNCLAIMED");
+            this.items = this.searchResults    
+          } 
+        }
+      );
+    }
 
+  }
 }

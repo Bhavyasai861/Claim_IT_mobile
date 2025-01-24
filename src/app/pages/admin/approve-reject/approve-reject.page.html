@@ -12,7 +12,7 @@
 <ion-content [fullscreen]="true">
   <ion-item-divider class="searchBarFixed">
     <ion-searchbar 
-      class="searchBars" 
+      class="search-bar" 
       placeholder="{{ currentFilterPlaceholder }}"
       [(ngModel)]="searchValue"
       (ionInput)="filterSearch()"  (keyup)="clear($event)">
@@ -21,14 +21,14 @@
     <ion-icon name="filter" class="addIcon" size="large" (click)="toggleFilterPopover($event)"></ion-icon>
   </ion-item-divider>
   
-  <ion-popover [isOpen]="isFilterPopoverOpen" (didDismiss)="isFilterPopoverOpen = false">
+  <ion-popover [isOpen]="isFilterPopoverOpen" (didDismiss)="popoverOpen = false" [event]="popoverEvent" >
     <ng-template>
-      <ion-list>
+      <div class="custom-dropdown">
         <ion-item button (click)="selectFilter('name')">Name</ion-item>
         <ion-item button (click)="selectFilter('email')">Email</ion-item>
         <ion-item button (click)="selectFilter('date')">Date</ion-item>
         <ion-item button (click)="selectFilter('status')">Status</ion-item>
-      </ion-list>
+      </div>
     </ng-template>
   </ion-popover>
   

@@ -27,6 +27,8 @@ export class ApproveRejectPage implements OnInit {
   searchValue: string = '';
   isFilterPopoverOpen = false;
   PopoverOpen= false;
+  popoverOpen = false;
+  popoverEvent: any;
   isImageModalOpen = false;
   selectedImage: string = '';
   public statusDropDown: any = [

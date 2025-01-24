@@ -20,7 +20,7 @@
       <div class="content ">
         <div class="modal-header">
           <h2>Add an Item</h2>
-          <ion-icon name="close-circle" style="color: red;" (click)="closeModal()"></ion-icon>
+          <ion-icon name="close-circle" style="color: red; font-size: x-large;" (click)="closeModal()"></ion-icon>
         </div>
         <div class="scrollable-content">
           <div class="stepper-header">
@@ -66,12 +66,7 @@
     </ng-template>
   </ion-modal>
   <ion-grid class="custom-card">
-    <ion-row *ngFor="let item of items" [ngClass]="{
-          'claimed-card': item.status === 'Claimed' || item.status === 'claimed',
-          'pending-card': item.status === 'PENDING_APPROVAL',
-          'rejected-card': item.status === 'REJECTED',
-          'unclaimed-card': item.status !== 'Claimed' && item.status !== 'claimed' && item.status !== 'PENDING_APPROVAL' && item.status !== 'REJECTED'
-        }" style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;"
+    <ion-row *ngFor="let item of items"  style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;"
       class="card-row">
 
       <ion-col size="4">

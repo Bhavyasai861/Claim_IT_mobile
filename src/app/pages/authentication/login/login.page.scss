@@ -1,109 +1,106 @@
-// ion-content {
-//   --overflow: hidden; /* Prevent scrolling */
-//   height: 100%;
-// }
-
-// .logo{
-//   height: auto;
-// }
-// .lost-container {
-//     text-align: center;
-//   }
-  
-//   .image-wrapper {
-//     display: flex;
-//     justify-content: center;
-//   }
-   
-//   .user{
-//     right: 10px;
-//   }
-//   .form-container {
-//     margin-top: 30px;
-//     padding: 0 20px;
-//   }
-  
-//   .input-field {
-//     margin-bottom: 20px; 
-//   }
-  
-//   .user-link {
-//     text-align: right;
-//     color: #00897b; 
-//     text-decoration: underline;
-//     margin: 10px 0 20px 0; 
-//     cursor: pointer;
-//   }
-  
-//   .login-button {
-//     --background: #00897b;
-//     --color: #ffffff; 
-//     margin-top: 20px;
-//   }
-  
-
 ion-content {
-  --overflow: hidden;
-  height: 100%;
-  background-color: #f3f4f6;
-} 
-
-.background {
-  // background: linear-gradient(to bottom, #00897b, #005f56);
-  background: linear-gradient(to bottom, #9ad1cc, #0f7369);
-  height: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-bottom-left-radius: 50px;
-  border-bottom-right-radius: 50px;
+  overflow: hidden !important; /* Prevent scrolling */
+  height: 100% !important;     /* Ensure full height */
 }
-.background-image {
-  height: 70%;
-  object-fit: cover; 
+.inner-scroll {
+  overflow: unset;
 }
-.welcome-text {
-  font-size: 24px;
-  font-weight: bold;
-  color: #ffffff;
+html, body {
+  overflow: hidden; /* Prevent scrolling on body */
+  height: 100%;     /* Prevent body scrollbars */
 }
-
-.form-container {
+.slogan-section {
+  background-color: #32a095; /* Background color */
+  padding: 60px 20px;
+  text-align: center;
+  position: relative;
+  font-family: cursive;
+ 
+ 
+}
+h1 {
   margin-top: 20px;
-  padding: 0 20px;
+  font-size: 1.625rem;
 }
-
+.circle-background {
+  display: inline-block;
+  position: relative;
+  padding: 50px;
+  background: rgba(255, 255, 255, 0.2); /* Translucent circle */
+  border-radius: 50%;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+ 
+ 
+.slogan {
+  font-size: 1.5em;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: white;
+  letter-spacing: 3px;
+}
+svg.wave {
+  margin-bottom: -79px;
+  margin-left: -48px;
+  margin-top: 27px;
+}
+.sub-slogan {
+  font-size: 1.2em;
+  font-weight: lighter;
+  margin-top: 10px;
+  color: white;
+  letter-spacing: 1px;
+}
+ 
+ 
+.wave-container {
+  position: relative;
+  margin-top: -10px;
+}
+ 
+ 
+.wave {
+  display: block;
+  width: 180%;
+  height: auto;
+}
+ 
+ 
+.form-container {
+  background-color: #ffffff; /* White background for credentials card */
+  padding: 30px;
+  margin: -40px 20px 0;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 1;
+}
+ 
+ 
 .input-field {
-  margin-bottom: 15px;
-}
-
-.links {
-  text-align: right;
   margin-bottom: 20px;
 }
-
-.user-link {
-  color: #00897b;
-  text-decoration: underline;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.login-button {
-  --background: #00897b;
-  --color: #ffffff;
-  margin-top: 10px;
-}
-
-.signup-button {
-  --background: #ffffff;
-  --color: #00897b;
-  border: 1px solid #00897b;
-  margin-top: 10px;
-}
-
-.divider {
+ 
+ 
+.links {
   text-align: center;
-  color: #808080;
-  margin: 20px 0;
+  margin-top: 15px;
+}
+ 
+ 
+.user-link {
+  color: #0066cc;
+  text-decoration: none;
+}
+ 
+ 
+.login-button {
+  margin-top: 20px;
+  background: #32a095; /* Dark Blue Button */
+  color: white;
 }
