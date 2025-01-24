@@ -1,20 +1,65 @@
 
-ion-card {
-    height:150px;
-    transition: background-color 0.3s ease;
+// ion-card {
+//     height:150px;
+//     transition: background-color 0.3s ease;
   
-    &.unread {
-      background-color: #00897b2e; /* Blue for unread notifications */
-    }
+//     &.unread {
+//       background-color: #00897b2e; /* Blue for unread notifications */
+//     }
   
-    &.read {
-      background-color: #fdfdfd; /* Red for read notifications */
-    }
-  }
-  .notification-card {
-    margin: 8px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
-    cursor: pointer;
+//     &.read {
+//       background-color: #fdfdfd; /* Red for read notifications */
+//     }
+//   }
+//   .notification-card {
+//     margin: 8px;
+//     border-radius: 12px;
+//     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+//     transition: transform 0.3s, box-shadow 0.3s;
+//     cursor: pointer;
+// }
+
+.notification-item {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #dcdcdc; 
+  border-radius: 8px; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+  background-color: #ffffff;
+  transition: all 0.3s ease; 
+}
+
+.notification-item:hover {
+  background-color: #f8f8f8; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+
+.unread {
+  border-left: 8px solid #888888;
+}
+
+.read {
+  border-left: 8px solid #00897b; 
+}
+
+.notification-item ion-label h2 {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.notification-item .email {
+  color: #888; 
+  font-size: 14px;
+}
+
+.notification-item .message {
+  font-size: 14px;
+  color: #555;
+  margin-top: 5px;
+}
+
+.notification-item .label {
+  font-weight: bold;
+  color: #00897b; 
 }

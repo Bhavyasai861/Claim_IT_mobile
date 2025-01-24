@@ -31,6 +31,8 @@ export class AdditemPage implements OnInit {
   addItemData:any
   selectedOrgId: string = '';
    searchQuery: string = '';
+   isImageModalOpen = false;
+   selectedImage: string = '';
   constructor(private http: HttpClient, private modalController: ModalController, private router:Router, private menu:MenuController,private claimService: ClaimitService) {}
 
   ngOnInit() {
@@ -54,7 +56,27 @@ export class AdditemPage implements OnInit {
       this.items = res.data;
     });
   }
-
+  getStatusColor(status: string): string {
+    switch (status) {
+      case 'CLAIMED':
+        return '#e0ffe0'; // Light green
+      case 'PENDING_PICKUP':
+        return 'rgb(254, 226, 226)'; // Light red/pink
+      case 'UNCLAIMED':
+        return 'rgb(248, 113, 113)'; // Red
+      case 'REJECTED':
+        return '#ec9d9d'; // Darker red
+      default:
+        return '#ffffff'; 
+    }
+  }
+  
+  getTextColor(status: string): string {
+    if (status === 'UNCLAIMED' || status === 'REJECTED') {
+      return '#fff'; 
+    }
+    return '#333'; 
+  }
   getImage(base64String: string): string {
     return `data:image/jpeg;base64,${base64String}`;
   }
@@ -78,7 +100,13 @@ export class AdditemPage implements OnInit {
       swiper.slideNext();
     }
   }
-
+  openImageModal(image: string) {
+    this.selectedImage = `data:image/jpeg;base64,${image}`;
+    this.isImageModalOpen = true;
+  }
+  closeImageModal() {
+    this.isImageModalOpen = false;
+  }
   addItem() {
     this.isModalOpen = true;
     const url = 'http://172.17.12.101:8081/api/admin/listOfOrganisation';

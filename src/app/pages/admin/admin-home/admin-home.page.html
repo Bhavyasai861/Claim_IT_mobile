@@ -18,13 +18,13 @@
         <ion-item button (click)="openCalendarDialog()">
           <ion-icon name="calendar-outline" slot="start" color="primary"></ion-icon>
           <ion-label>
-            Report for the month of 
+            Report for the month of
             <span class="selected-month">{{ selectedMonth | date: 'MMMM yyyy' }}</span>
           </ion-label>
         </ion-item>
       </ion-col>
     </ion-row>
-    
+
     <ion-row>
       <ion-col size="6" size-md="3">
         <ion-card>
@@ -36,7 +36,7 @@
           </ion-card-content>
         </ion-card>
       </ion-col>
-      
+
       <ion-col size="6" size-md="3">
         <ion-card>
           <ion-card-header>
@@ -47,7 +47,7 @@
           </ion-card-content>
         </ion-card>
       </ion-col>
-      
+
       <ion-col size="6" size-md="3">
         <ion-card>
           <ion-card-header>
@@ -58,7 +58,7 @@
           </ion-card-content>
         </ion-card>
       </ion-col>
-      
+
       <ion-col size="6" size-md="3">
         <ion-card>
           <ion-card-header>
@@ -70,8 +70,6 @@
         </ion-card>
       </ion-col>
     </ion-row>
-    
-
     <!-- Charts Section -->
     <ion-row>
       <ion-col size="12" size-md="6">
@@ -80,9 +78,11 @@
             <ion-card-title>Item Categories</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <ng-container *ngIf="currentMonthData?.totalItems > 0; else noData">
-              <!-- <canvas baseChart [data]="PieChartData" [type]="pieChartType"></canvas> -->
-            </ng-container>
+            <canvas baseChart [data]="PieChartData" [type]="pieChartType">
+            </canvas>
+            <!-- <ng-container *ngIf="currentMonthData?.totalItems > 0; else noData">
+              <canvas baseChart [data]="PieChartData" [type]="pieChartType"></canvas>
+            </ng-container> -->
             <ng-template #noData>
               <p class="ion-text-center text-muted">No data found for the selected month</p>
             </ng-template>
@@ -95,9 +95,10 @@
             <ion-card-title>Monthly Reports</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <ng-container *ngIf="currentMonthData?.totalItems > 0; else noData">
-              <!-- <canvas baseChart [data]="barChartData" [type]="barChartType"></canvas> -->
-            </ng-container>
+            <canvas baseChart [data]="barChartData" [type]="barChartType"></canvas>
+            <!-- <ng-container *ngIf="currentMonthData?.totalItems > 0; else noData">
+              <canvas baseChart [data]="barChartData" [type]="barChartType"></canvas>
+            </ng-container> -->
             <ng-template #noData>
               <p class="ion-text-center text-muted">No data found for the selected month</p>
             </ng-template>
@@ -112,12 +113,13 @@
             <ion-card-title>Items Claimed</ion-card-title>
           </ion-card-header>
           <ion-card-content>
+            <canvas baseChart [data]="lineChartData" [type]="lineChartType"></canvas>
             <ng-container *ngIf="currentMonthData?.totalItems > 0; else noData">
-              <!-- <canvas baseChart [data]="lineChartData" [type]="lineChartType"></canvas> -->
+              <canvas baseChart [data]="lineChartData" [type]="lineChartType"></canvas>
             </ng-container>
-            <ng-template #noData>
+            <!-- <ng-template #noData>
               <p class="ion-text-center text-muted">No data found for the selected month</p>
-            </ng-template>
+            </ng-template> -->
           </ion-card-content>
         </ion-card>
       </ion-col>
@@ -127,9 +129,10 @@
             <ion-card-title>Claimed vs Unclaimed</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <ng-container *ngIf="currentMonthData?.totalItems > 0; else noData">
-              <!-- <canvas baseChart [data]="doughnutChartData" [type]="doughnutChartType"></canvas> -->
-            </ng-container>
+            <canvas baseChart [data]="doughnutChartData" [type]="doughnutChartType"></canvas>
+            <!-- <ng-container *ngIf="currentMonthData?.totalItems > 0; else noData">
+              <canvas baseChart [data]="doughnutChartData" [type]="doughnutChartType"></canvas>
+            </ng-container> -->
             <ng-template #noData>
               <p class="ion-text-center text-muted">No data found for the selected month</p>
             </ng-template>
@@ -138,4 +141,11 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-</ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" size-md="6">
+        <h5 class="text-md font-bold text-gray-500 ion-text-center">Reported items more than 30 days</h5>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>

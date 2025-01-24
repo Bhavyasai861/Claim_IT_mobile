@@ -10,79 +10,33 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-
-  <ion-accordion-group>
-    <ion-card>
-      <ion-accordion value="first">
-        <ion-item slot="header" style="font-size: 18px;">
-          <ion-label>Search</ion-label>
-        </ion-item>
-        <div class="ion-padding" slot="content">
-          <ion-radio-group value="custom-checked">
-            <ion-grid>
-              <form [formGroup]="approveRejectForm">
-                <ion-col size="12">
-                  <ion-label position="floating" class="fieldHeading fieldLabel">Email</ion-label>
-                  <ion-item class="fieldBox fieldStyle" lines="none">
-                    <ion-input placeholder="Email" type="text" formControlName="email"></ion-input>
-                  </ion-item>
-                </ion-col>
-                <ion-col size="12">
-                  <ion-label position="floating" class="fieldHeading fieldLabel">Name</ion-label>
-                  <ion-item class="fieldBox fieldStyle" lines="none">
-                    <ion-input placeholder="Name" type="text" formControlName="name"></ion-input>
-                  </ion-item>
-                </ion-col>
-                <ion-col size="12">
-                  <ion-label position="floating" class="fieldHeading fieldLabel">Date</ion-label>
-                  <ion-item class="fieldBox fieldStyle">
-                    <ion-input type="text" readonly placeholder="Select Date"
-                      [value]="selectedDate ? (selectedDate | date:'MM-dd-yyyy') : ''" formControlName="selectedDate"
-                      placeholder="Received Date"></ion-input>
-                    <ion-button slot="end" (click)="openDatepicker()" class="buttons">
-                      <ion-icon name="calendar-outline"></ion-icon>
-                    </ion-button>
-                  </ion-item>
-                </ion-col>
-
-                <ion-modal [isOpen]="isModalOpen" (didDismiss)="onModalClosed()" class="modal">
-                  <ng-template>
-                    <ion-content>
-                      <ion-datetime presentation="date" placeholder="Select an deliveryDate"
-                        min="{{currentDate| date:'yyyy-MM-dd'}}" [showDefaultButtons]="true" [(ngModel)]="selectedDate"
-                        displayFormat="MM-dd-yyyy"></ion-datetime>
-                    </ion-content>
-                  </ng-template>
-                </ion-modal>
-                <ion-col size="12">
-                  <ion-label position="floating" class="fieldHeading fieldLabel">Status</ion-label>
-                  <ion-item class="fieldBox fieldStyle">
-                    <ion-select formControlName="status" interface="popover">
-                      <ion-select-option *ngFor="let option of statusDropDown" [value]="option.value">{{ option.value
-                        }}</ion-select-option>
-                    </ion-select>                   
-                  </ion-item>
-                </ion-col>
-                <br>
-                <div class="container">
-                  <ion-button name="add" class="buttons" expand="full" (click)="SearchAndClear('search')">
-                    <ion-icon name="checkmark-outline"></ion-icon>&nbsp;
-                    Search
-                  </ion-button>
-                </div>
-              </form>
-            </ion-grid>
-          </ion-radio-group>
-        </div>
-      </ion-accordion>
-    </ion-card>
-  </ion-accordion-group>
-
-  <ion-grid>
-    <ion-row *ngFor="let item of searchResults" style="align-items: center; border-bottom: 1px solid #dcdcdc;">
+  <ion-item-divider class="searchBarFixed">
+    <ion-searchbar 
+      class="searchBars" 
+      placeholder="{{ currentFilterPlaceholder }}"
+      [(ngModel)]="searchValue"
+      (ionInput)="filterSearch()"  (keyup)="clear($event)">
+    </ion-searchbar>
+    
+    <ion-icon name="filter" class="addIcon" size="large" (click)="toggleFilterPopover($event)"></ion-icon>
+  </ion-item-divider>
+  
+  <ion-popover [isOpen]="isFilterPopoverOpen" (didDismiss)="isFilterPopoverOpen = false">
+    <ng-template>
+      <ion-list>
+        <ion-item button (click)="selectFilter('name')">Name</ion-item>
+        <ion-item button (click)="selectFilter('email')">Email</ion-item>
+        <ion-item button (click)="selectFilter('date')">Date</ion-item>
+        <ion-item button (click)="selectFilter('status')">Status</ion-item>
+      </ion-list>
+    </ng-template>
+  </ion-popover>
+  
+  <ion-grid class="custom-card">
+    <ion-row *ngFor="let item of searchResults" style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
       <ion-col size="4">
         <img [src]="getImage(item.image)" alt="Item Image"
-          style="width: 60%; max-height: 100px; margin: auto; display: block;" />
+          style="width: 60%; max-height: 100px; margin: auto; display: block;" (click)="openImageModal(item.image)"/>
       </ion-col>
       <ion-col size="6" style="font-size: 14px; color: #666;">
         <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.name }}</p>
@@ -91,10 +45,10 @@
         <p style="font-size: 12px; color: #999;">{{ item.status }}</p>
       </ion-col>
       <ion-col size="2">
-        <ion-button fill="clear" size="small" (click)="presentPopover($event)">
-          <ion-icon name="ellipsis-vertical" slot="end"></ion-icon>
+        <ion-button fill="clear" size="small" (click)="toggleFilterPopoverApprove($event)">
+          <ion-icon name="ellipsis-vertical" slot="end" style="color: #00897b;"></ion-icon>
         </ion-button>
-        <ion-popover [isOpen]="isPopoverOpen" (didDismiss)="isPopoverOpen = false" [dismissOnSelect]="true" [showBackdrop]="false">
+        <ion-popover [isOpen]="PopoverOpen" (didDismiss)="PopoverOpen = false" [dismissOnSelect]="true" [showBackdrop]="false">
           <ng-template>
             <ion-content>
               <ion-list>
@@ -105,34 +59,20 @@
               </ion-list>
             </ion-content>
           </ng-template>
-        </ion-popover>
-        <!-- <ion-modal  [isOpen]="modalOpen" 
-          style="--width: 500px; --height: 350px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; ">
-          <ng-template>
-            <div class="content ">
-              <div class="modal-header">
-                <h2>Options</h2>
-              <ion-icon name="close-circle" style="color: red;" (click)="closeModal()"></ion-icon>        
-              </div>         
-             
-            <ion-list>
-              <ion-item >
-                <ion-button>Approve</ion-button>
-              </ion-item>
-              <ion-item >
-                <ion-button>Reject</ion-button>
-              </ion-item>
-              <ion-item >
-                <ion-button>Remove</ion-button>
-              </ion-item>
-              <ion-item >
-                <ion-button>Claimed</ion-button>
-              </ion-item>
-            </ion-list>
-          </div>
-         </ng-template>
-        </ion-modal> -->
+        </ion-popover>       
       </ion-col>
     </ion-row>
   </ion-grid>
+  <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"   style="--width: 300px; --height: 270px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+    <ng-template>
+      <ion-content>
+        <div style="text-align: center;">
+          <img [src]="selectedImage" alt="Selected Image" style="width: 90%; height: 250px; object-fit: contain;" />
+          <ion-button fill="clear" (click)="closeImageModal()" style="position: absolute; top: 10px; right: 10px;">
+            <ion-icon name="close" style="color: #f90000;"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>

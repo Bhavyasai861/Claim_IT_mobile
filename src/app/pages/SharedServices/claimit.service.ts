@@ -38,7 +38,7 @@ export class ClaimitService {
   }
 
   public adminSearch(params:any){
-    return this.http.get(environment.adminSearch+'?mail='+params.mail+'&status='+params.status+'&to='+params.to+'&from='+params.from)
+    return this.http.get(environment.adminSearch+'?mail='+params.mail+'&status='+params.status+'&date='+params.date)
   }
   public getNotifications(): Observable<any> {
     return this.http.get(environment.getNotifications)
@@ -47,7 +47,7 @@ export class ClaimitService {
 
   addClaim(claim: any) {
     this.pendingClaims.push(claim);
-    this.pendingClaimsSubject.next(this.pendingClaims.length); // Update notification count
+    this.pendingClaimsSubject.next(this.pendingClaims.length); 
   }
 
   getClaims() {

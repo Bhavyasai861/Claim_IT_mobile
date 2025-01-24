@@ -8,7 +8,7 @@
     <ion-content>
       <ion-list>
         <ion-menu-toggle auto-hide="false" *ngFor="let pages of appPages">
-          <ion-item [routerDirection]="'root'" [routerLink]="pages.url" lines="none">
+          <ion-item [routerDirection]="'root'" [routerLink]="pages.url" lines="none" (click)="pages.action ? handleMenuItemClick(pages.action) : null">
             <ion-icon [name]="pages.icon" slot="start"></ion-icon>
             <ion-label>{{ pages.title }}</ion-label>
           </ion-item>
@@ -16,7 +16,7 @@
       </ion-list>
     </ion-content>
     <ion-footer>
-      <ion-toolbar >
+      <ion-toolbar>
         <ion-row>
           <ion-col size="12">
             <ion-img class="image" src="assets/loginLogo.jpg" alt="claimit"></ion-img>

@@ -40,3 +40,30 @@ ion-icon .select-icon.md.hydrated {
 ion-modal ion-datetime {
     height: 382px;
 }
+.searchBarFixed {
+    position: sticky;
+    top: 0;
+}
+.searchBars{
+    flex: 1;
+    --background: #f1f1f1;
+    --color: #000;
+    --box-shadow: none;
+    --border-radius: 2px;
+    border: none;
+    margin-top: 1px
+}
+.custom-card {
+    margin: 10px;
+  }
+  
+  .card-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px; /* Space between cards */
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* Subtle shadow for rows */
+    border: 1px solid #e0e0e0; /* Lighter border for a softer appearance */
+    background-color: #ffffff; /* White background to make content pop */
+  }
