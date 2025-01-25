@@ -64,6 +64,7 @@ export class LoginPage implements OnInit {
         async (response: any) => {
           if (response.isAdmin) {
             localStorage.setItem('isLogin', 'true');
+            this.service.updateRole('admin');
             localStorage.setItem('role', 'admin');
             await this.showToast('Login successful');
             await this.requestLocationPermission();
@@ -104,6 +105,7 @@ export class LoginPage implements OnInit {
   }
   userNavigate(){
     localStorage.setItem('isLogin', 'true');
+    this.service.updateRole('user');
     localStorage.setItem('role', 'user');
     this.router.navigate(['/user-home']);
     this.service.loginResponse.next(true)

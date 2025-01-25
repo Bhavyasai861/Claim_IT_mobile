@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
+import { ClaimitService } from './pages/SharedServices/claimit.service';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,7 @@ export class AppComponent {
   appPages: any[] = [];
   public isMenuOpen = false;
 
-  constructor(private navCtrl: NavController, private alertController: AlertController) {
+  constructor(private navCtrl: NavController, private alertController: AlertController,private  service: ClaimitService) {
     this.loadSideMenu();
   }
 
@@ -36,6 +37,8 @@ export class AppComponent {
         { title: 'View / Unclaim', url: 'view-claim', icon: 'eye-outline' },
         { title: 'Logout', icon: 'log-out-outline', action: 'logout' }, 
       ];
+    }else{
+      this.appPages=[]
     }
   }
 
@@ -66,6 +69,7 @@ export class AppComponent {
   }
 
   logout() {
+    this.service.updateRole('');
     this.navCtrl.navigateRoot('login'); 
   }
 

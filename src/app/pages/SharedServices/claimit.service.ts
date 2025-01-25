@@ -8,6 +8,15 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class ClaimitService {
+
+  role = new BehaviorSubject<string | null>(localStorage.getItem('role')); // Default to stored role
+
+  updateRole(newRole: string) {
+    localStorage.setItem('role', newRole);
+    this.role.next(newRole);
+  }
+
+
   public loginResponse = new BehaviorSubject<any>(false);
   private notificationCountSource = new BehaviorSubject<number>(0);
   notificationCount$ = this.notificationCountSource.asObservable();
