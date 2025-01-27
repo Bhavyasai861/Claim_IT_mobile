@@ -138,9 +138,12 @@ export class UserHomePage implements OnInit {
     this.fetchItems(); // Fetch the original list of items again
   }
   public uploadImage(file: File): Observable<any> {
+    this.isLoading= true
     const formData: FormData = new FormData();
     formData.append('image', file, file.name);
     const picUrl = 'http://172.17.12.101:8081/api/users/search-by-image';
+    this.isLoading= false
+
     return this.http.post(picUrl, formData, {
       headers: new HttpHeaders(),
     });

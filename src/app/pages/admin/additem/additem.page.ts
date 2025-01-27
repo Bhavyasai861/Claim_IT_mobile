@@ -38,7 +38,7 @@ export class AdditemPage implements OnInit {
   constructor(private http: HttpClient, private modalController: ModalController, private router:Router, private menu:MenuController,private claimService: ClaimitService) {}
 
   ngOnInit() {
-    this.addItem();
+    this.getData();
   }
   closeModal() {
     this.isModalOpen = false;
@@ -61,10 +61,12 @@ export class AdditemPage implements OnInit {
   //   });
   // }
 
-  addItem() {
+  getData() {
     const query = this.searchQuery.trim();
+    this.isLoading = true;
     this.claimService.listOfItemsAddItem(query).subscribe(
       (res: any) => {
+        this.isLoading = false;
         this.addItemSearchResults = Object.keys(res).map((key) => ({
           date: key.split(":")[1], 
           items: res[key]
@@ -129,22 +131,22 @@ export class AdditemPage implements OnInit {
   closeImageModal() {
     this.isImageModalOpen = false;
   }
-  // addItem() {
-  //   this.isModalOpen = true;
-  //   const url = 'http://172.17.12.101:8081/api/admin/listOfOrganisation';
-  //   this.http.get<any>(url).subscribe((response) => {
-  //     this.addItemData = response;
-  //     console.log(this.addItemData); 
-  //     if (Array.isArray(this.addItemData)) {
-  //       this.addItemData.forEach(item => {
-  //         console.log(item.orgId); 
-  //         this.selectedOrgId= item.orgId
-  //       });
-  //     } else {
-  //       console.log(this.addItemData.orgId); 
-  //     }
-  //   });
-  // }
+  addItem() {
+    this.isModalOpen = true;
+    const url = 'http://172.17.12.101:8081/api/admin/listOfOrganisation';
+    this.http.get<any>(url).subscribe((response) => {
+      this.addItemData = response;
+      console.log(this.addItemData); 
+      if (Array.isArray(this.addItemData)) {
+        this.addItemData.forEach(item => {
+          console.log(item.orgId); 
+          this.selectedOrgId= item.orgId
+        });
+      } else {
+        console.log(this.addItemData.orgId); 
+      }
+    });
+  }
   
   goToNextStep() {
     if (this.currentStep < 2) {

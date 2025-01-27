@@ -102,7 +102,16 @@ ion-item {
   width: 100%;
   background-color: rgba(255, 255, 255, 0.7); 
 }
-
+.card-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px; 
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); 
+  border: 1px solid #e0e0e0; 
+  background-color: #ffffff; 
+}
 .no-records-container {
   text-align: center;
   font-size: 16px;

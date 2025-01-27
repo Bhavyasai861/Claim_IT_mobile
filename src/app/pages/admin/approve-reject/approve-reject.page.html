@@ -14,15 +14,13 @@
     <ion-spinner name="crescent"></ion-spinner>
   </div>
   <ion-item-divider class="searchBarFixed">
-    <ion-searchbar 
-      class="search-bar" 
-      placeholder="{{ currentFilterPlaceholder }}"
-      [(ngModel)]="searchValue"
-      (keyup.enter)="search()"  (keyup)="clear($event)">
-    </ion-searchbar>    
+    <ion-searchbar class="search-bar" placeholder="{{ currentFilterPlaceholder }}" [(ngModel)]="searchValue"
+      (ionClear)="clearSearch()" (keyup.enter)="filterSearch()">
+    </ion-searchbar>
     <ion-icon name="filter" class="addIcon" size="large" (click)="toggleFilterPopover($event)"></ion-icon>
-  </ion-item-divider>  
-  <ion-popover [isOpen]="isFilterPopoverOpen" (didDismiss)="popoverOpen = false" [event]="popoverEvent" >
+  </ion-item-divider>
+  <ion-popover [isOpen]="isFilterPopoverOpen" (didDismiss)="popoverOpen = false"
+    style="--width: 300px; --height: auto; --top: 10% !important; --left: 10% !important; transform: translate(-10%, -10%) !important;">
     <ng-template>
       <div class="custom-dropdown">
         <ion-item button (click)="selectFilter('name')">Name</ion-item>
@@ -32,12 +30,13 @@
       </div>
     </ng-template>
   </ion-popover>
-  
-  <ion-grid >
-    <ion-row *ngFor="let item of searchResults" style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
+
+  <ion-grid>
+    <ion-row *ngFor="let item of searchResults"
+      style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 2px;" class="card-row">
       <ion-col size="4">
         <img [src]="getImage(item.image)" alt="Item Image"
-          style="width: 60%; max-height: 100px; margin: auto; display: block;" (click)="openImageModal(item.image)"/>
+          style="width: 60%; max-height: 100px; margin: auto; display: block;" (click)="openImageModal(item.image)" />
       </ion-col>
       <ion-col size="6" style="font-size: 14px; color: #666;">
         <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.name }}</p>
@@ -49,22 +48,24 @@
         <ion-button fill="clear" size="small" (click)="toggleFilterPopoverApprove($event)">
           <ion-icon name="ellipsis-vertical" slot="end" style="color: #00897b;"></ion-icon>
         </ion-button>
-        <ion-popover [isOpen]="PopoverOpen" (didDismiss)="PopoverOpen = false" [dismissOnSelect]="true"  [showBackdrop]="false">
+        <ion-popover [isOpen]="PopoverOpen" (didDismiss)="PopoverOpen = false" [dismissOnSelect]="true"
+          [showBackdrop]="false">
           <ng-template>
             <ion-content>
               <ion-list>
-                <ion-item [button]="true" [detail]="false" >Approve</ion-item>
+                <ion-item [button]="true" [detail]="false">Approve</ion-item>
                 <ion-item [button]="true" [detail]="false">Reject</ion-item>
                 <ion-item [button]="true" [detail]="false">Remove</ion-item>
                 <ion-item [button]="true" [detail]="false">Claimed</ion-item>
               </ion-list>
             </ion-content>
           </ng-template>
-        </ion-popover>       
+        </ion-popover>
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"   style="--width: 300px; --height: 270px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+  <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"
+    style="--width: 300px; --height: 270px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
     <ng-template>
       <ion-content>
         <div style="text-align: center;">

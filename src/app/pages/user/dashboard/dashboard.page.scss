@@ -60,3 +60,19 @@
   ion-card.active {
     transform: scale(1.05);
   }
+
+  .swiper-container {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory; /* Enable smooth scroll snapping */
+    width: 100%; /* Ensure the swiper takes full width */
+    overflow: hidden; /* Hide overflow to prevent excess movement */
+  }
+  
+  .swiper-wrapper {
+    display: flex;
+  }
+  
+  .swiper-slide {
+    width: auto; /* Ensure the chip fits the content only */
+    scroll-snap-align: start; /* Aligns the slide to the start of the scroll container */
+  }
