@@ -65,12 +65,14 @@
   <div *ngIf="isLoading" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
   </div>
-  <div *ngIf="!isLoading && items.length === 0" class="no-records-container">
+  <!-- <div *ngIf="!isLoading && items.length === 0" class="no-records-container">
     <img src="assets/no-records-found.png" alt="No Records" class="no-records-image" />
     <p>No records found</p>
-  </div>
+  </div> -->
   <ion-grid class="custom-card">
-    <ion-row *ngFor="let item of items"
+    <div *ngFor="let group of addItemSearchResults" >
+    <span  style="font-size: 20px;font-weight: bold;">{{ group.date }}</span>
+    <ion-row *ngFor="let item of group.items"
       style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
       <ion-col size="4">
         <img [src]="getImage(item.image)" alt="Item Image"
@@ -90,6 +92,7 @@
         <ion-icon name="qr-code-outline" class="qrIcon" (click)="generateQRCode(item)"></ion-icon>
       </ion-col>
     </ion-row>
+    </div>
   </ion-grid>
   <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"
     style="--width: 300px; --height: 270px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
