@@ -161,7 +161,7 @@ ion-label {
 
 .custom-card {
   margin: 10px;
-
+  height: 135px;
 }  
 .card-row {
   display: flex;
@@ -182,8 +182,28 @@ ion-label {
 .rejected-card {
   background-color: #ec9d9d;
 }
-// .unclaimed-card {
-//   background-color: #fdffe0; 
-// }
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+}
+
+.no-records-container {
+  text-align: center;
+  font-size: 16px;
+  color: #888;
+  margin-top: 50px;
+}
+
+.no-records-image {
+  max-width: 100px; 
+  margin-bottom: 10px;
+}
 
 

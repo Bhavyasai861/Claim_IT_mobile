@@ -2,12 +2,12 @@
   <ion-menu content-id="main-content" menu-id="main-menu" side="start">
     <ion-header>
       <ion-toolbar style="--background: #00897b;">
-        <ion-title style="color: white;">Lost & Found</ion-title>
+        <ion-title style="color: white;">Claim IT</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
       <ion-list>
-        <ion-menu-toggle auto-hide="false" *ngFor="let pages of appPages">
+        <ion-menu-toggle auto-hide="false" *ngFor="let pages of loadSideMenu()">
           <ion-item [routerDirection]="'root'" [routerLink]="pages.url" lines="none" (click)="pages.action ? handleMenuItemClick(pages.action) : null">
             <ion-icon [name]="pages.icon" slot="start"></ion-icon>
             <ion-label>{{ pages.title }}</ion-label>

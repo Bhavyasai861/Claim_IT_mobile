@@ -15,9 +15,7 @@
 .buttons {
     --background: #00897b;
 }
-ion-content {
-    background-color: #00000000 !important;
-}
+
 ion-icon .select-icon.md.hydrated {
     position: absolute !important;
     right: 2px !important;
@@ -36,6 +34,17 @@ ion-icon .select-icon.md.hydrated {
     --height: 397px;
     --border-radius: 8px;
 }
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+  }
 
 ion-modal ion-datetime {
     height: 382px;

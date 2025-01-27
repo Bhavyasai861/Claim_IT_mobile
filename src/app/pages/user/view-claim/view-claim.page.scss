@@ -1,0 +1,43 @@
+.card-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px; 
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); 
+    border: 1px solid #e0e0e0; 
+    background-color: #ffffff; 
+  }
+  .custom-card {
+    margin: 10px;
+  
+  }  
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+  }
+  
+  .no-records-container {
+    text-align: center;
+    font-size: 16px;
+    color: #888;
+    margin-top: 50px;
+  }
+  
+  .no-records-image {
+    max-width: 100px; 
+    margin-bottom: 10px;
+  }
+  
+  
+  .searchBarFixed {
+    position: sticky;
+    top: 0;
+}

@@ -68,7 +68,7 @@ export class LoginPage implements OnInit {
             localStorage.setItem('role', 'admin');
             await this.showToast('Login successful');
             await this.requestLocationPermission();
-            this.router.navigate(['/additem']);
+            this.router.navigate(['/claimIt/additem']);
             this.service.loginResponse.next(true);
           } else {
             this.showToast(response.message);
@@ -107,7 +107,7 @@ export class LoginPage implements OnInit {
     localStorage.setItem('isLogin', 'true');
     this.service.updateRole('user');
     localStorage.setItem('role', 'user');
-    this.router.navigate(['/user-home']);
+    this.router.navigate(['/claimIt/user-home']);
     this.service.loginResponse.next(true)
   }
   

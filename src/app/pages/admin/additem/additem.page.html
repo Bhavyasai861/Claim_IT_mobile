@@ -65,10 +65,16 @@
       </div>
     </ng-template>
   </ion-modal>
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+  <div *ngIf="!isLoading && items.length === 0" class="no-records-container">
+    <img src="assets/no-records-found.png" alt="No Records" class="no-records-image" />
+    <p>No records found</p>
+  </div>
   <ion-grid class="custom-card">
-    <ion-row *ngFor="let item of items"  style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;"
-      class="card-row">
-
+    <ion-row *ngFor="let item of items"
+      style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
       <ion-col size="4">
         <img [src]="getImage(item.image)" alt="Item Image"
           style="width: 60%; max-height: 100px; margin: auto; display: block;" (click)="openImageModal(item.image)" />

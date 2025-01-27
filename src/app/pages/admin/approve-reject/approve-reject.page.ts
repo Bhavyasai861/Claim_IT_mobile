@@ -31,6 +31,7 @@ export class ApproveRejectPage implements OnInit {
   popoverEvent: any;
   isImageModalOpen = false;
   selectedImage: string = '';
+  isLoading: boolean = false;
   public statusDropDown: any = [
     { label: 'REJECTED', value: 'REJECTED' },
     { label: 'PENDING_APPROVAL', value: 'PENDING APPROVAL' },
@@ -98,7 +99,6 @@ export class ApproveRejectPage implements OnInit {
         break;
     }
   }
-    
 
   approveReject(e: Event) {
     this.popover.event = e;
@@ -146,14 +146,12 @@ export class ApproveRejectPage implements OnInit {
         ? new Date(this.approveRejectForm.value.date).toISOString().split('T')[0]
         : '',
     };
-
+    this.isLoading = true;
     this.claimService.adminSearch(reqbody).subscribe((res: any) => {
+      this.isLoading = false;
       this.searchResults = res.data;
     });
   }
-  
-  
-
   getImage(base64String: string): string {
     return `data:image/jpeg;base64,${base64String}`;
   }

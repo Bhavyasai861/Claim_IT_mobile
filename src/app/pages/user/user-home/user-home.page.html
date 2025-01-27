@@ -13,12 +13,18 @@
     <ion-grid>
       <ion-row>
         <ion-col size="10">
-          <ion-searchbar class="search-bar" [(ngModel)]="searchQuery" placeholder="Search with item" (ionInput)="searchItems()"> </ion-searchbar >
+          <ion-searchbar
+          class="search-bar"
+          [(ngModel)]="searchQuery"
+          placeholder="Search with item"
+          showCancelButton="focus"
+          (ionClear)="clearSearch()"
+          (keyup.enter)="searchItems()"
+        ></ion-searchbar>
         </ion-col>
         <ion-col size="1"> 
           <ion-icon name="filter" style="margin-top: 15px; cursor: pointer; font-size: 25px;"
             (click)="openPopover($event)"></ion-icon>
-
           <ion-popover [isOpen]="popoverOpen" (didDismiss)="popoverOpen = false" [event]="popoverEvent">
             <ng-template>
               <div *ngFor="let category of categories" class="custom-dropdown" (click)="selectCategory(category.name)">
@@ -39,6 +45,9 @@
     </ion-grid>
 
   </ion-item-divider>
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
   <ion-grid class="custom-card">
     <ion-row *ngFor="let item of items"
       style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">

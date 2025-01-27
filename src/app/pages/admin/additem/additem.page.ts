@@ -33,6 +33,7 @@ export class AdditemPage implements OnInit {
    searchQuery: string = '';
    isImageModalOpen = false;
    selectedImage: string = '';
+   isLoading: boolean = false;
   constructor(private http: HttpClient, private modalController: ModalController, private router:Router, private menu:MenuController,private claimService: ClaimitService) {}
 
   ngOnInit() {
@@ -51,8 +52,10 @@ export class AdditemPage implements OnInit {
   }
   fetchItems() {
     const query = this.searchQuery.trim();
+    this.isLoading = true;
     this.claimService.listOfItems(query).subscribe(
       (res: any) => {
+        this.isLoading = false;
       this.items = res.data;
     });
   }

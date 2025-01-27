@@ -35,6 +35,7 @@ export class UserHomePage implements OnInit {
   categoryNames: any[] = [];
   searchResults: any = [];
   dropdownVisible: boolean = false; 
+  isLoading:boolean=false
     constructor(private popoverController: PopoverController, private http: HttpClient,private loadingCtrl: LoadingController,private sanitizer: DomSanitizer, private claimService:ClaimitService) { }
 
   ngOnInit() {
@@ -44,14 +45,17 @@ export class UserHomePage implements OnInit {
   }
   fetchItems() {
     const query = this.searchQuery.trim();
+    this.isLoading= true
     this.claimService.listOfItems(query).subscribe(
       (res: any) => {
+        this.isLoading= false
       this.items = res.data;
     });
   }
   getImage(base64String: string): string {
     return `data:image/jpeg;base64,${base64String}`;
   }
+  
   getStatusColor(status: string): string {
     switch (status) {
       case 'CLAIMED':
@@ -113,10 +117,7 @@ export class UserHomePage implements OnInit {
     this.uploadImage(file).subscribe(
       (response) => {
         if (response.success) {
-          // Update matchedItems from the response
-          this.matchedItems = response.matchedItems.filter(
-            (item: { status: string }) => item.status === "UNCLAIMED"
-          );
+          this.matchedItems = response
   
           // Update the items list to display matchedItems
           this.items = this.matchedItems;
@@ -129,7 +130,11 @@ export class UserHomePage implements OnInit {
       }
     );
   }
-  
+  clearAll() {
+    this.searchQuery = '';
+    this.selectedCategory = '';
+   
+  }
   public uploadImage(file: File): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('image', file, file.name);
@@ -143,7 +148,6 @@ export class UserHomePage implements OnInit {
     this.matchedItems = [];
     this.files = [];
     this.pictureSearchCompleted = false;
-  
     // Fetch the original list of items
     this.fetchItems();
   }
@@ -165,8 +169,7 @@ export class UserHomePage implements OnInit {
     this.http.get<any[]>(apiUrl).subscribe(
       (data: any) => {
         if (Array.isArray(data)) {
-          this.categerorydata = data.filter(item => item.status === "UNCLAIMED");
-          console.log(this.categerorydata);
+          this.categerorydata = data;
           this.items = this.categerorydata;
         }
       },
@@ -178,9 +181,8 @@ export class UserHomePage implements OnInit {
       this.http.get<any[]>(apiUrl).subscribe(
         (response) => {
           if (Array.isArray(response)) {
-            // Filter results for items with status "UNCLAIMED"
-            this.searchResults = response.filter(item => item.status === "UNCLAIMED");
-            this.items = this.searchResults    
+            console.log(response);         
+            this.items = response    
           } 
         }
       );

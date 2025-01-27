@@ -45,7 +45,11 @@ export class ClaimitService {
   public listOfItems(query: any) {
     return this.http.get(environment.listOfItems);
   }
-
+  public getAllItems(query: any) {
+    return this.http.get(environment.getAllItems + 
+      `?email=${query.email}&userName=${query.userName}`);
+  }
+  
   public adminSearch(params:any){
     return this.http.get(environment.adminSearch+'?mail='+params.mail+'&status='+params.status+'&date='+params.date)
   }

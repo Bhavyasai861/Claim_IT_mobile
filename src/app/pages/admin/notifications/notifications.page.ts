@@ -16,7 +16,7 @@ export class NotificationsPage implements OnInit {
   pendingClaims: any[] = [];
   notifications: any[] = [];
   loader = true;
-
+  isLoading: boolean = false;
   constructor(private claimService: ClaimitService) {}
 
   async ngOnInit() {
@@ -25,9 +25,11 @@ export class NotificationsPage implements OnInit {
   }
 
   loadNotifications() {
+    this.isLoading = true;
     this.claimService.getNotifications().subscribe(
       (res: any) => {
         if (res && res.data) {
+          this.isLoading = true;
           this.notifications = res.data; 
           const unreadNotifications = this.notifications.filter(notification => !notification.read);
           const unreadCount = unreadNotifications.length;
