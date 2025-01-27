@@ -142,7 +142,7 @@ export class UserHomePage implements OnInit {
     this.isLoading= true
     const formData: FormData = new FormData();
     formData.append('image', file, file.name);
-    const picUrl = 'http://172.17.12.101:8081/api/users/search-by-image';
+    const picUrl = 'http://100.28.242.219:8081/api/users/search-by-image';
     this.isLoading= false
 
     return this.http.post(picUrl, formData, {
@@ -158,7 +158,7 @@ export class UserHomePage implements OnInit {
     this.fetchItems();
   }
   fetchCategories(): void {
-    this.http.get<{ id: number; name: string }[]>('http://172.17.12.101:8081/api/admin/getcategories')
+    this.http.get<{ id: number; name: string }[]>('http://100.28.242.219:8081/api/admin/getcategories')
       .subscribe(
         (response) => {
           this.categories = response;
@@ -208,7 +208,7 @@ export class UserHomePage implements OnInit {
       .then((toast: { present: () => any; }) => toast.present());
   }
   search(search:any): void {
-    const apiUrl = `http://172.17.12.101:8081/api/users/search?query=${search}`;
+    const apiUrl = `http://100.28.242.219:8081/api/users/search?query=${search}`;
     this.http.get<any[]>(apiUrl).subscribe(
       (data: any) => {
         if (Array.isArray(data)) {
@@ -220,7 +220,7 @@ export class UserHomePage implements OnInit {
   }
   searchItems() {
     if (this.searchQuery.trim() !== '') {
-      const apiUrl = `http://172.17.12.101:8081/api/users/search?query=${encodeURIComponent(this.searchQuery)}`;
+      const apiUrl = `http://100.28.242.219:8081/api/users/search?query=${encodeURIComponent(this.searchQuery)}`;
       this.http.get<any[]>(apiUrl).subscribe(
         (response) => {
           if (Array.isArray(response)) {
