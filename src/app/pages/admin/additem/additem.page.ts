@@ -133,7 +133,7 @@ export class AdditemPage implements OnInit {
   }
   addItem() {
     this.isModalOpen = true;
-    const url = 'http://172.17.12.101:8081/api/admin/listOfOrganisation';
+    const url = 'http://100.28.242.219:8081/api/admin/listOfOrganisation';
     this.http.get<any>(url).subscribe((response) => {
       this.addItemData = response;
       console.log(this.addItemData); 
@@ -167,7 +167,7 @@ export class AdditemPage implements OnInit {
       
       formData.append('image', this.files[0].file);
       formData.append('orgId', this.selectedOrgId);
-      this.http.post('http://172.17.12.101:8081/api/admin/upload', formData).subscribe(
+      this.http.post('http://100.28.242.219:8081/api/admin/upload', formData).subscribe(
         (response) => {
           this.formatResponse(response);          
           this.addItem();  

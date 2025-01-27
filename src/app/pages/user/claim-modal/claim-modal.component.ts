@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { IonicModule, IonModal, ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-claim-modal',
@@ -10,7 +10,7 @@ import { IonicModule, ModalController } from '@ionic/angular';
   imports: [CommonModule, IonicModule, FormsModule,ReactiveFormsModule  ],
 })
 export class ClaimModalComponent  implements OnInit {
-
+  @ViewChild('claimModal') claimModal!: IonModal;
   claimForm!: FormGroup;
   enableSave: boolean = true;
   emailRegex =
@@ -47,6 +47,16 @@ export class ClaimModalComponent  implements OnInit {
     return this.claimForm.get('name');
   }
 
+  openModal() {
+    this.claimModal.present();
+  }
+  confirmSubmit() {
+    this.claimModal.dismiss();
+    this.onSubmit();
+  }
+  dismissModal() {
+    this.claimModal.dismiss();
+  }
   onCancel() {
     this.modalCtrl.dismiss(undefined);
   }
