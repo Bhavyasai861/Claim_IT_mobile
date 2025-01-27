@@ -2,13 +2,14 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, PopoverController } from '@ionic/angular';
+import { IonicModule, ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { LoadingController } from '@ionic/angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ClaimitService } from '../../SharedServices/claimit.service';
+import { ClaimModalComponent } from '../claim-modal/claim-modal.component';
 
 @Component({
   selector: 'app-user-home',
@@ -16,7 +17,7 @@ import { ClaimitService } from '../../SharedServices/claimit.service';
   styleUrls: ['./user-home.page.scss'],
   standalone:true,
   
-  imports:[CommonModule, FormsModule, IonicModule,NgxDropzoneModule]
+  imports:[CommonModule, FormsModule, IonicModule,NgxDropzoneModule,ClaimModalComponent]
 })
 export class UserHomePage implements OnInit {
   items: any[] = [];
@@ -36,7 +37,7 @@ export class UserHomePage implements OnInit {
   searchResults: any = [];
   dropdownVisible: boolean = false; 
   isLoading:boolean=false
-    constructor(private popoverController: PopoverController, private http: HttpClient,private loadingCtrl: LoadingController,private sanitizer: DomSanitizer, private claimService:ClaimitService) { }
+    constructor(private popoverController: PopoverController,private toastController: ToastController,private modalController: ModalController, private http: HttpClient,private loadingCtrl: LoadingController,private sanitizer: DomSanitizer, private claimService:ClaimitService) { }
 
   ngOnInit() {
    this.fetchItems()
@@ -168,6 +169,43 @@ export class UserHomePage implements OnInit {
           console.error('Error fetching categories:', error);
         }
       );
+  }
+  async onButtonClick(item: any): Promise<void> {
+    const modal = await this.modalController.create({
+      component: ClaimModalComponent,
+      componentProps: { item },
+      // cssClass: 'dialog-modal',  // Custom class for dialog-style modal
+    });
+  
+    modal.onDidDismiss().then(({ data }) => {
+      if (data) {
+        const REQBODY = {
+          userName: data.name,
+          userEmail: data.email,
+          itemId: item.itemId,
+        };
+        this.isLoading = true;
+        this.claimService.createClaimRequest(REQBODY).subscribe((res: any) => {
+          if (res) {
+            this.isLoading = false;
+            this.showSuccessMessage("Claimed successfully!");
+          }
+        });
+      }
+    });
+  
+    await modal.present();
+  }
+  
+  showSuccessMessage(message: string): void {
+    // You can use a toast, alert, or other notification method
+    this.toastController
+      .create({
+        message,
+        duration: 2000,
+        position: 'bottom',
+      })
+      .then((toast: { present: () => any; }) => toast.present());
   }
   search(search:any): void {
     const apiUrl = `http://100.28.242.219:8081/api/users/search?query=${search}`;

@@ -1,0 +1,69 @@
+<div>
+  <ion-header translucent>
+    <ion-toolbar>
+      <ion-title></ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="onCancel()">
+          <ion-icon name="close"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content>
+    <form [formGroup]="claimForm" class="ion-padding">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" sizeMd="6">
+            <ion-item>
+              <ion-label position="stacked">Your Name</ion-label>
+              <ion-input
+                formControlName="name"
+                placeholder="Enter your name"
+                type="text"
+              ></ion-input>
+            </ion-item>
+            <ion-text color="danger" *ngIf="name?.touched && name?.invalid">
+              <small>Name is required.</small>
+            </ion-text>
+          </ion-col>
+  
+          <ion-col size="12" sizeMd="6">
+            <ion-item>
+              <ion-label position="stacked">Email Address</ion-label>
+              <ion-input
+                formControlName="email"
+                placeholder="Enter your email"
+                type="email"
+              ></ion-input>
+            </ion-item>
+            <ion-text color="danger" *ngIf="email?.touched && email?.invalid">
+              <small
+                *ngIf="email?.hasError('required')"
+                >Email is required.</small
+              >
+              <small
+                *ngIf="email?.hasError('pattern')"
+                >Please enter a valid email address.</small
+              >
+            </ion-text>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </form>
+  </ion-content>
+  
+  <ion-footer>
+    <ion-toolbar>
+      <ion-buttons slot="end">
+        <ion-button color="danger" (click)="onCancel()">Cancel</ion-button>
+        <ion-button
+          color="primary"
+          [disabled]="enableSave"
+          (click)="onSubmit()"
+          >Save</ion-button
+        >
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-footer>
+</div>

@@ -53,6 +53,9 @@ export class ClaimitService {
       `?email=${query.email}&userName=${query.userName}`);
   }
   
+  public createClaimRequest(REQBODY: any) {
+    return this.http.post(environment.createClaimRequest, REQBODY)
+  }
   public adminSearch(params: any) {
     const queryParams = new URLSearchParams({
       mail: params.mail,
