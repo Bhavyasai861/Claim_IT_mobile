@@ -41,13 +41,10 @@
       </ion-item>
     </ion-list>
   </div>
-  <div class="navigation-buttons">
-    <!-- Left Arrow Button -->
+  <!-- <div class="navigation-buttons">
     <ion-button (click)="previous()" [disabled]="currentIndex === 0">
       <ion-icon name="arrow-back-outline"></ion-icon>
     </ion-button>
-
-    <!-- Box Container for Showing One Box at a Time -->
     <div class="scroll-container">
       <ion-card *ngIf="currentIndex >= 0 && currentIndex < data.length">
         <ion-card-header>
@@ -58,12 +55,10 @@
         </ion-card-content>
       </ion-card>
     </div>
-
-    <!-- Right Arrow Button -->
     <ion-button (click)="next()" [disabled]="currentIndex === data.length - 1">
       <ion-icon name="arrow-forward-outline"></ion-icon>
     </ion-button>
-  </div>
+  </div> -->
   
 
 </ion-content>

@@ -29,6 +29,7 @@ export class AdditemPage implements OnInit {
   formattedData:any;
   isTruncated: boolean = true;
   addItemData:any
+  addItemSearchResults: any
   selectedOrgId: string = '';
    searchQuery: string = '';
    isImageModalOpen = false;
@@ -37,7 +38,7 @@ export class AdditemPage implements OnInit {
   constructor(private http: HttpClient, private modalController: ModalController, private router:Router, private menu:MenuController,private claimService: ClaimitService) {}
 
   ngOnInit() {
-    this.fetchItems();
+    this.addItem();
   }
   closeModal() {
     this.isModalOpen = false;
@@ -50,15 +51,33 @@ export class AdditemPage implements OnInit {
     localStorage.clear(); 
     this.router.navigateByUrl('/login'); 
   }
-  fetchItems() {
+  // fetchItems() {
+  //   const query = this.searchQuery.trim();
+  //   this.isLoading = true;
+  //   this.claimService.listOfItems(query).subscribe(
+  //     (res: any) => {
+  //       this.isLoading = false;
+  //     this.items = res.data;
+  //   });
+  // }
+
+  addItem() {
     const query = this.searchQuery.trim();
-    this.isLoading = true;
-    this.claimService.listOfItems(query).subscribe(
+    this.claimService.listOfItemsAddItem(query).subscribe(
       (res: any) => {
-        this.isLoading = false;
-      this.items = res.data;
-    });
+        this.addItemSearchResults = Object.keys(res).map((key) => ({
+          date: key.split(":")[1], 
+          items: res[key]
+        }));
+        console.log(this.addItemSearchResults);
+      },
+      (error) => {
+        console.error('Error fetching data:', error);
+      }
+    );
+
   }
+
   getStatusColor(status: string): string {
     switch (status) {
       case 'CLAIMED':
@@ -110,22 +129,22 @@ export class AdditemPage implements OnInit {
   closeImageModal() {
     this.isImageModalOpen = false;
   }
-  addItem() {
-    this.isModalOpen = true;
-    const url = 'http://172.17.12.101:8081/api/admin/listOfOrganisation';
-    this.http.get<any>(url).subscribe((response) => {
-      this.addItemData = response;
-      console.log(this.addItemData); 
-      if (Array.isArray(this.addItemData)) {
-        this.addItemData.forEach(item => {
-          console.log(item.orgId); 
-          this.selectedOrgId= item.orgId
-        });
-      } else {
-        console.log(this.addItemData.orgId); 
-      }
-    });
-  }
+  // addItem() {
+  //   this.isModalOpen = true;
+  //   const url = 'http://172.17.12.101:8081/api/admin/listOfOrganisation';
+  //   this.http.get<any>(url).subscribe((response) => {
+  //     this.addItemData = response;
+  //     console.log(this.addItemData); 
+  //     if (Array.isArray(this.addItemData)) {
+  //       this.addItemData.forEach(item => {
+  //         console.log(item.orgId); 
+  //         this.selectedOrgId= item.orgId
+  //       });
+  //     } else {
+  //       console.log(this.addItemData.orgId); 
+  //     }
+  //   });
+  // }
   
   goToNextStep() {
     if (this.currentStep < 2) {
@@ -149,7 +168,7 @@ export class AdditemPage implements OnInit {
       this.http.post('http://172.17.12.101:8081/api/admin/upload', formData).subscribe(
         (response) => {
           this.formatResponse(response);          
-          this.fetchItems();  
+          this.addItem();  
         },
         (error) => {
           console.error('Error uploading item:', error);

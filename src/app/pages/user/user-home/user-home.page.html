@@ -48,12 +48,8 @@
           <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInput />
           <ion-icon name="camera" style="margin-top: 15px; cursor: pointer; font-size: 25px;"
             (click)="fileInput.click()"></ion-icon>
-          <!-- <ion-icon name="close-circle" size="small" style="position: absolute; top: 0; right: 0; "
-            (click)="clearSearch()">
-          </ion-icon> -->
         </ion-col>
         <ion-col size="1">
-          <!-- <p *ngIf="searchQuery || selectedCategory || files.length" (click)="clearAll()">clear</p> -->
           <ion-icon *ngIf="searchQuery || selectedCategory || files.length" name="close-circle"
              (click)="clearAll()"  style="margin-top: 15px; cursor: pointer; font-size: 25px;"></ion-icon>
         </ion-col>
@@ -62,7 +58,7 @@
 
   </ion-item-divider>
   <div *ngIf="isLoading" class="loading-container">
-    <ion-spinner name="crescent"></ion-spinner>
+    <ion-spinner name="crescent" ></ion-spinner>
   </div>
   <ion-grid class="custom-card">
     <ion-row *ngFor="let item of items"
