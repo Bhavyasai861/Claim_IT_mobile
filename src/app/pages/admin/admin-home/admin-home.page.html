@@ -1,4 +1,5 @@
-<ion-header>
+<ion-header >
+
   <ion-toolbar style="--background: #00897b;">
     <!-- Menu Button -->
     <ion-buttons slot="start">
@@ -9,21 +10,40 @@
     <ion-title style="color: white;">Dashboard</ion-title>
   </ion-toolbar>
 </ion-header>
+<ion-content>
 
 <ion-content>
   <ion-grid>
     <!-- Month Selection -->
     <ion-row class="ion-margin-bottom">
       <ion-col>
-        <ion-item button (click)="openCalendarDialog()">
+        <ion-item (click)="openCalendarDialog()">
           <ion-icon name="calendar-outline" slot="start" color="primary"></ion-icon>
           <ion-label>
             Report for the month of
-            <span class="selected-month">{{ selectedMonth | date: 'MMMM yyyy' }}</span>
+            <span class="selected-month">{{ selectedMonth | date: 'MMMM yyyy dd' }}</span>
           </ion-label>
         </ion-item>
       </ion-col>
     </ion-row>
+    
+    <ion-modal [isOpen]="isModalOpen" (ionModalDidDismiss)="onModalDismiss()" style="--width: 500px; --height: 450px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+      <ng-template>
+        <ion-header>
+          <ion-toolbar>
+            <ion-title>Select a Date</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="closeCalendarDialog()">Cancel</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content>
+          <ion-datetime [(ngModel)]="selectedDate" [displayFormat]="'MMMM DD, YYYY'"></ion-datetime>
+          <ion-button expand="full" (click)="selectDate()">Done</ion-button>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+
 
     <ion-row>
       <ion-col size="6" size-md="3">
@@ -149,3 +169,88 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+    <div class="navigation-buttons">
+      <!-- Left Arrow Button -->
+      <ion-button (click)="previous()" [disabled]="currentIndex === 0">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+  
+      <!-- Box Container for Showing One Box at a Time -->
+      <div class="scroll-container">
+        <ion-card *ngIf="currentIndex >= 0 && currentIndex < data.length">
+          <ion-card-header>
+            <ion-card-title>{{ data[currentIndex]?.title }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            {{ data[currentIndex]?.content }}
+          </ion-card-content>
+        </ion-card>
+      </div>
+  
+      <!-- Right Arrow Button -->
+      <ion-button (click)="next()" [disabled]="currentIndex === data.length - 1">
+        <ion-icon name="arrow-forward-outline"></ion-icon>
+      </ion-button>
+    </div>
+    <ion-row class="ion-margin-bottom">
+
+    <ion-col size="12" size-md="6">
+
+
+    <h2 class="text-3xl font-extrabold text-center mb-8 text-gray-800">Partnered Charities</h2>
+  
+    <!-- Button to Show New Charity -->
+    <div class="text-center mb-6">
+      <ion-button  (click)="displayRandomCharity()"  color="primary">
+        Show Charity
+      </ion-button>
+
+    </div>
+    </ion-col>
+    </ion-row>
+    <ion-row>
+    <ion-col size="12" size-md="6">
+
+    <!-- Charity Card -->
+    <div *ngIf="currentCharity" class="ion-card">
+      <ion-card-header>
+        <ion-card-title>{{ currentCharity.name }}</ion-card-title>
+        <ion-card-subtitle>{{ currentCharity.description }}</ion-card-subtitle>
+      </ion-card-header>
+  
+      <ion-card-content>
+        <img [src]="currentCharity.image || 'https://via.placeholder.com/300?text=Charity+Image'" alt="{{ currentCharity.name }}" class="w-full h-48 object-cover rounded-md" />
+  
+        <div class="my-4">
+          <div class="flex items-center text-teal-600">
+            <ion-icon name="flash" class="mr-2"></ion-icon>
+            <p class="text-sm">{{ currentCharity.impact }}</p>
+          </div>
+  
+          <div class="flex items-center text-blue-600">
+            <ion-icon name="help-circle" class="mr-2"></ion-icon>
+            <p class="text-sm">{{ currentCharity.howWeHelp }}</p>
+          </div>
+        </div>
+  
+        <div>
+          <h4 class="font-semibold text-lg text-gray-800">Donations:</h4>
+          <div class="grid grid-cols-2 gap-4">
+            <div *ngFor="let donation of currentCharity.donations" class="flex flex-col items-center">
+              <img [src]="donation.image" alt="{{ donation.name }}" class="w-24 h-24 object-cover rounded-md shadow-md" />
+              <p class="text-sm text-gray-700 mt-2">{{ donation.name }}</p>
+            </div>
+          </div>
+        </div>
+  
+        <div class="text-center mt-4">
+          <a [href]="currentCharity.website" target="_blank" class="button button-primary">
+            Learn More
+          </a>
+        </div>
+      </ion-card-content>
+    </div>
+  </ion-col>
+  
+</ion-row>
+</ion-content>

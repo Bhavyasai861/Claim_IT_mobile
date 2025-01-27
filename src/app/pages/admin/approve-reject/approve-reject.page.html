@@ -18,7 +18,7 @@
       class="search-bar" 
       placeholder="{{ currentFilterPlaceholder }}"
       [(ngModel)]="searchValue"
-      (ionInput)="filterSearch()"  (keyup)="clear($event)">
+      (keyup.enter)="search()"  (keyup)="clear($event)">
     </ion-searchbar>    
     <ion-icon name="filter" class="addIcon" size="large" (click)="toggleFilterPopover($event)"></ion-icon>
   </ion-item-divider>  
@@ -49,28 +49,18 @@
         <ion-button fill="clear" size="small" (click)="toggleFilterPopoverApprove($event)">
           <ion-icon name="ellipsis-vertical" slot="end" style="color: #00897b;"></ion-icon>
         </ion-button>
-        <ion-popover  [isOpen]="PopoverOpen"  (didDismiss)="PopoverOpen = false" [event]="popoverEvent" [dismissOnSelect]="true" >
-          <ng-template>
-            <div class="custom-dropdown">
-              <ion-item button (click)="selectFilter('name')">Name</ion-item>
-              <ion-item button (click)="selectFilter('email')">Email</ion-item>
-              <ion-item button (click)="selectFilter('date')">Date</ion-item>
-              <ion-item button (click)="selectFilter('status')">Status</ion-item>
-            </div>
-          </ng-template>
-        </ion-popover>
-        <!-- <ion-popover [isOpen]="PopoverOpen" (didDismiss)="PopoverOpen = false" [dismissOnSelect]="true"  [showBackdrop]="false">
+        <ion-popover [isOpen]="PopoverOpen" (didDismiss)="PopoverOpen = false" [dismissOnSelect]="true"  [showBackdrop]="false">
           <ng-template>
             <ion-content>
               <ion-list>
-                <ion-item [button]="true" [detail]="false">Approve</ion-item>
+                <ion-item [button]="true" [detail]="false" >Approve</ion-item>
                 <ion-item [button]="true" [detail]="false">Reject</ion-item>
                 <ion-item [button]="true" [detail]="false">Remove</ion-item>
                 <ion-item [button]="true" [detail]="false">Claimed</ion-item>
               </ion-list>
             </ion-content>
           </ng-template>
-        </ion-popover>        -->
+        </ion-popover>       
       </ion-col>
     </ion-row>
   </ion-grid>

@@ -44,9 +44,6 @@
           </div>
           <div *ngIf="currentStep === 2">
             <h3>Preview</h3>
-            <!-- <div *ngIf="files.length > 0">
-          <img [src]="files[0].preview" alt="Preview" class="w-full max-w-xs mx-auto rounded-md" />
-        </div> -->
             <ion-list>
               <ion-item *ngFor="let item of formattedData">
                 <ion-label>
@@ -108,7 +105,7 @@
     </ng-template>
   </ion-modal>
   <ion-modal [isOpen]="isQrModalOpen" (ionModalDidDismiss)="closeQrModal()" canDismiss="true"
-    style="--width: 300px; --height: 400px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+    style="--width: 300px; --height: 300px; --max-width: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
     <ion-content>
       <ion-button fill="clear" (click)="closeQrModal()" class="close-button">
         <ion-icon name="close-outline"></ion-icon>

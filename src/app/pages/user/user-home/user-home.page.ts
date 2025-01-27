@@ -117,7 +117,7 @@ export class UserHomePage implements OnInit {
     this.uploadImage(file).subscribe(
       (response) => {
         if (response.success) {
-          this.matchedItems = response
+          this.matchedItems = response.matchedItems
   
           // Update the items list to display matchedItems
           this.items = this.matchedItems;
@@ -133,7 +133,9 @@ export class UserHomePage implements OnInit {
   clearAll() {
     this.searchQuery = '';
     this.selectedCategory = '';
-   
+    this.files = [];
+    this.pictureSearchCompleted = false;
+    this.fetchItems(); // Fetch the original list of items again
   }
   public uploadImage(file: File): Observable<any> {
     const formData: FormData = new FormData();

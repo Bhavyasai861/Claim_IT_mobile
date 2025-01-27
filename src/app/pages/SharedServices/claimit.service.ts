@@ -50,9 +50,16 @@ export class ClaimitService {
       `?email=${query.email}&userName=${query.userName}`);
   }
   
-  public adminSearch(params:any){
-    return this.http.get(environment.adminSearch+'?mail='+params.mail+'&status='+params.status+'&date='+params.date)
+  public adminSearch(params: any) {
+    const queryParams = new URLSearchParams({
+      mail: params.mail,
+      status: params.status,
+      date: params.date
+    });
+  
+    return this.http.get(`${environment.adminSearch}?${queryParams.toString()}`);
   }
+  
   public getNotifications(): Observable<any> {
     return this.http.get(environment.getNotifications)
   }

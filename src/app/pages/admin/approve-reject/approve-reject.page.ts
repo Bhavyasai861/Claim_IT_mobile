@@ -16,6 +16,7 @@ export class ApproveRejectPage implements OnInit {
   isPopoverOpen: boolean = false;
   currentDate: any = new Date();
   searchResults: any = [];
+  normalResponse: any = [];
   selectedDate: Date | null = null; 
   isModalOpen = false;
   modalOpen = false;
@@ -57,7 +58,6 @@ export class ApproveRejectPage implements OnInit {
       date: [''],
       status: [''],
       name: [''],
-      selectedDate: [null],
     });
     this.search();
   }
@@ -82,6 +82,7 @@ export class ApproveRejectPage implements OnInit {
   }
   clearSearchData() {
     this.searchValue = ''
+    this.searchResults = this.normalResponse; 
     this.search()
   }
   selectFilter(filter: string) {
@@ -150,6 +151,7 @@ export class ApproveRejectPage implements OnInit {
     this.claimService.adminSearch(reqbody).subscribe((res: any) => {
       this.isLoading = false;
       this.searchResults = res.data;
+      this.normalResponse = res.data;
     });
   }
   getImage(base64String: string): string {

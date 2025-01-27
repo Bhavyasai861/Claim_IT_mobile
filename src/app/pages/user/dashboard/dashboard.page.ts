@@ -35,7 +35,19 @@ export class DashboardPage implements OnInit {
       locationName: 'Central Park',
     },
   ];
-
+  data = [
+    { title: 'Box 1', content: 'This is the content for box 1' },
+    { title: 'Box 2', content: 'This is the content for box 2' },
+    { title: 'Box 3', content: 'This is the content for box 3' },
+    { title: 'Box 4', content: 'This is the content for box 4' },
+    { title: 'Box 5', content: 'This is the content for box 5' },
+    { title: 'Box 6', content: 'This is the content for box 6' },
+    { title: 'Box 7', content: 'This is the content for box 7' },
+    { title: 'Box 8', content: 'This is the content for box 8' },
+    { title: 'Box 9', content: 'This is the content for box 9' },
+    { title: 'Box 10', content: 'This is the content for box 10' },
+  ];
+  currentIndex=0
   slideOpts = {
     initialSlide: 0,
     slidesPerView: 1.5,
@@ -59,5 +71,16 @@ export class DashboardPage implements OnInit {
 
   shareItem(item: any, platform: string) {
     console.log(`Shared ${item.title} on ${platform}`);
+  }
+  previous() {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+    }
+  }
+
+  next() {
+    if (this.currentIndex < this.data.length - 1) {
+      this.currentIndex++;
+    }
   }
 }

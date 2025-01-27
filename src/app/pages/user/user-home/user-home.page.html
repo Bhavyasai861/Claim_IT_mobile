@@ -9,20 +9,31 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
+  <!-- <ion-item-divider class="searchBarFixed">
+    <ion-grid>
+      <ion-row>
+          <div class="search-container">
+            <ion-searchbar class="search-bar" [(ngModel)]="searchQuery" placeholder="Search with item"
+              showCancelButton="focus" (ionClear)="clearAll()" (keyup.enter)="searchItems()"></ion-searchbar>
+            <ion-icon name="filter" style="margin-top: 15px; cursor: pointer; font-size: 25px;"
+              (click)="openPopover($event)"></ion-icon>
+            <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInput />
+            <ion-icon name="camera" style="margin-top: 15px; cursor: pointer; font-size: 25px;"
+              (click)="fileInput.click()"></ion-icon>
+            <ion-icon *ngIf="searchQuery || selectedCategory || files.length" name="close-circle" size="small"
+              style="position: absolute; top: 0; right: 0;" (click)="clearAll()"></ion-icon>
+          </div>       
+      </ion-row>
+    </ion-grid>
+  </ion-item-divider> -->
   <ion-item-divider class="searchBarFixed">
     <ion-grid>
       <ion-row>
-        <ion-col size="10">
-          <ion-searchbar
-          class="search-bar"
-          [(ngModel)]="searchQuery"
-          placeholder="Search with item"
-          showCancelButton="focus"
-          (ionClear)="clearSearch()"
-          (keyup.enter)="searchItems()"
-        ></ion-searchbar>
+        <ion-col size="9">
+          <ion-searchbar class="search-bar" [(ngModel)]="searchQuery" placeholder="Search with item"
+            showCancelButton="focus" (ionClear)="clearSearch()" (keyup.enter)="searchItems()"></ion-searchbar>
         </ion-col>
-        <ion-col size="1"> 
+        <ion-col size="1">
           <ion-icon name="filter" style="margin-top: 15px; cursor: pointer; font-size: 25px;"
             (click)="openPopover($event)"></ion-icon>
           <ion-popover [isOpen]="popoverOpen" (didDismiss)="popoverOpen = false" [event]="popoverEvent">
@@ -37,9 +48,14 @@
           <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInput />
           <ion-icon name="camera" style="margin-top: 15px; cursor: pointer; font-size: 25px;"
             (click)="fileInput.click()"></ion-icon>
-          <ion-icon name="close-circle" size="small" style="position: absolute; top: 0; right: 0; "
+          <!-- <ion-icon name="close-circle" size="small" style="position: absolute; top: 0; right: 0; "
             (click)="clearSearch()">
-          </ion-icon>
+          </ion-icon> -->
+        </ion-col>
+        <ion-col size="1">
+          <!-- <p *ngIf="searchQuery || selectedCategory || files.length" (click)="clearAll()">clear</p> -->
+          <ion-icon *ngIf="searchQuery || selectedCategory || files.length" name="close-circle"
+             (click)="clearAll()"  style="margin-top: 15px; cursor: pointer; font-size: 25px;"></ion-icon>
         </ion-col>
       </ion-row>
     </ion-grid>

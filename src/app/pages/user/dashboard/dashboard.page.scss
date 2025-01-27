@@ -31,4 +31,32 @@
   .shadow-md {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
+  ion-card {
+    margin: 20px;
+    background-color: #f0f0f0;
+    width: 90%; /* Adjust width based on your needs */
+    transition: transform 0.3s ease;
+  }
   
+  .scroll-container {
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    width: 100%; /* Ensure it covers the full width of the screen */
+  }
+  
+  .navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  ion-button {
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+  
+  ion-card.active {
+    transform: scale(1.05);
+  }

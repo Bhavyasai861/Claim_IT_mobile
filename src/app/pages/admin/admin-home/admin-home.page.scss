@@ -1,24 +1,155 @@
 .selected-month {
-    font-style: italic;
-    font-weight: bold;
-    color: #007bff;
-    text-decoration: underline;
+  font-style: italic;
+  font-weight: bold;
+  color: #007bff;
+  text-decoration: underline;
+}
+
+/* Summary Value Styles */
+.summary-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+.summary-value.claimed {
+  color: #4caf50;
+}
+.summary-value.unclaimed {
+  color: #ff9800;
+}
+.summary-value.donated {
+  color: #2196f3;
+}
+
+/* Header Styles */
+.dashboard-toolbar {
+  --background: #00897b;
+  color: white;
+}
+
+.dashboard-toolbar ion-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.dashboard-toolbar .menu-icon {
+  color: white;
+  font-size: 24px;
+}
+
+/* Card Section Styles */
+ion-card {
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 1rem 0;
+}
+ion-card-header {
+  border-bottom: 1px solid #e0e0e0;
+}
+ion-card-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #00897b;
+}
+ion-card-content {
+  padding: 1rem;
+  color: #757575;
+}
+ion-card img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.scroll-container {
+  display: flex;
+  justify-content: center;
+  overflow: auto; /* Allow scrolling if content overflows */
+  width: 100%;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+ion-button {
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+ion-card.active {
+  transform: scale(1.05);
+}
+
+.additional-image {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.tags {
+  margin-top: 15px;
+}
+
+ion-chip {
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+/* Responsive Grid */
+@media (max-width: 768px) {
+  ion-card {
+    margin: 0.5rem 0;
   }
-  
   .summary-value {
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-size: 1.2rem;
   }
-  
-  .claimed {
-    color: #28a745;
+}
+
+/* Slide Styles */
+/* Ensuring horizontal or vertical scrolling */
+ion-slides {
+  display: flex;
+  flex-direction: column; /* Adjust this if you want vertical slides */
+  overflow: auto;  /* Add scroll if content exceeds height */
+  height: auto; /* Adjust this to fit dynamic data */
+  max-height: 300px; /* Example max-height, change based on your data */
+  width: 100%;
+}
+
+ion-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: #f5f5f5;
+  border-radius: 10px;
+  height: auto; /* Allow height to scale */
+  min-height: 150px; /* Minimum height for slides */
+}
+
+.slide-content {
+  padding: 1rem;
+  background: #fff;
+  border-radius: 10px;
+}
+
+h2 {
+  font-size: 1.5rem;
+  color: #00897b;
+}
+
+p {
+  font-size: 1.2rem;
+  color: #333;
+}
+:host {
+  .scroll-y {
+    overflow-y: var(--overflow, auto); /* Default to auto if --overflow is not set */
+    overscroll-behavior-y: none;
   }
-  
-  .unclaimed {
-    color: #ffc107;
-  }
-  
-  .donated {
-    color: #dc3545;
-  }
-  
+
+
+}
