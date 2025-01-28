@@ -40,24 +40,36 @@
                 </div>
               </div>
             </div>
-            <ion-button (click)="goToNextStep();submitItem()" [disabled]="!files.length" class="next">Next</ion-button>
+            <ion-button (click)="goToNextStep();submitItem1()" [disabled]="!files.length" class="next">Next</ion-button>
           </div>
           <div *ngIf="currentStep === 2">
             <h3>Preview</h3>
             <ion-list>
               <ion-item *ngFor="let item of formattedData">
                 <ion-label>
-                  <span>
+                  <span *ngIf="item.key !== 'description'">
                     {{ isTruncated && item.key === 'description' ? (item.value | slice: 0: 100) + '...' : item.value }}
-                    <a *ngIf="item.key === 'description'" href="javascript:void(0)" (click)="toggleTruncate()">
-                      {{ isTruncated ? 'Read More' : 'Show Less' }}
-                    </a>
+                  </span>
+                  <span *ngIf="item.key === 'description'">
+                    <ng-container *ngIf="!isEditingDescription">
+                      {{ isTruncated ? (item.value | slice: 0: 100) + '...' : item.value }}
+                      <a *ngIf="item.key === 'description'" href="javascript:void(0)" (click)="toggleTruncate()">
+                        {{ isTruncated ? 'Read More' : 'Show Less' }}
+                      </a>
+                      <ion-icon name="create" (click)="editDescription(item)"></ion-icon>
+                    </ng-container>
+                    <ng-container *ngIf="isEditingDescription">
+                      <ion-input [(ngModel)]="editableDescription" placeholder="Edit description"></ion-input>
+                      <ion-button (click)="submitItem()">Submit</ion-button>
+                    </ng-container>
                   </span>
                 </ion-label>
+                
               </ion-item>
             </ion-list>
             <ion-button (click)="submitItem()" class="additem" expand="full">Submit</ion-button>
           </div>
+          
         </div>
       </div>
     </ng-template>
@@ -79,7 +91,7 @@
           style="width: 60%; max-height: 100px; margin: auto; display: block;" (click)="openImageModal(item.image)" />
       </ion-col>
       <ion-col size="6" style="font-size: 14px; color: #666;">
-        <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.name }}</p>
+        <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.categoryName }}</p>
         <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date: 'shortDate' }}</p>
         <p style="font-size: 12px; padding: 5px; border-radius: 5px;width: fit-content;" [ngStyle]="{
     'background-color': getStatusColor(item.status),

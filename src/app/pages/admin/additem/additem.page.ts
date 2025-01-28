@@ -36,6 +36,10 @@ export class AdditemPage implements OnInit {
    isImageModalOpen = false;
    selectedImage: string = '';
    isLoading: boolean = false;
+   isEditingDescription = false;
+   editableDescription = '';
+  imageDataResponse: any;
+  formData!: any;
   constructor(private http: HttpClient, private modalController: ModalController, private router:Router, private menu:MenuController,private claimService: ClaimitService) {}
 
   ngOnInit() {
@@ -161,17 +165,17 @@ export class AdditemPage implements OnInit {
       this.currentStep--;
     }
   }
-  submitItem() {
+  submitItem1() {
     if (this.files.length > 0) {
-      const formData = new FormData();
+       this.formData = new FormData();
       console.log("this.files", this.files);
       
-      formData.append('image', this.files[0].file);
-      formData.append('orgId', this.selectedOrgId);
-      this.http.post('http://100.28.242.219:8081/api/admin/upload', formData).subscribe(
+      this.formData.append('image', this.files[0].file);
+      this.formData.append('orgId', this.selectedOrgId);
+      this.http.post(' http://172.17.12.101:8081/api/admin/image',  this.formData).subscribe(
         (response) => {
           this.formatResponse(response);          
-          this.addItem();  
+        this.imageDataResponse = response
         },
         (error) => {
           console.error('Error uploading item:', error);
@@ -179,6 +183,30 @@ export class AdditemPage implements OnInit {
       );
     }
   }
+
+  editDescription(item: any) {
+    this.editableDescription = item.value;
+    this.isEditingDescription = true;
+  }
+  submitItem() {
+    const updatedData = { ...this.imageDataResponse };
+    if (this.isEditingDescription) {
+      updatedData.description = this.editableDescription;  // Set the updated description
+    }
+    this.isLoading = false
+    this.formData.append('image', this.files[0].file);
+    this.formData.append('orgId', this.selectedOrgId);
+    this.formData.append('editedLabels', this.editableDescription)
+    this.http.post('http://172.17.12.101:8081/api/admin/upload',  this.formData)
+      .subscribe(response => {
+        console.log('Data submitted:', response);
+        this.isEditingDescription = false;
+        this.isLoading = true
+        this.closeModal()
+        this.getData();
+      });
+  }
+
   formatResponse(response: any): void {
     const allowedKeys = ['description', 'title'];
     this.formattedData = Object.entries(response)

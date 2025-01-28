@@ -48,8 +48,8 @@ export class ApproveRejectPage implements OnInit {
     private modalController: ModalController
   ) {}
 
-  presentPopover(e: Event) {
-    this.popover.event = e;
+  presentPopover(event: Event) {
+    this.popoverEvent = event; 
     this.isPopoverOpen = true;
   }
 
@@ -80,7 +80,123 @@ export class ApproveRejectPage implements OnInit {
     this.isImageModalOpen = false;
   }
 
-  
+  async confirmRemove(event: any) {
+    const confirmed = await this.presentConfirmationDialog('Remove', 'Are you sure you want to remove this item?');
+    if (confirmed === 'yes') {
+      const itemId = event.itemId;
+      this.isLoading = true;
+      this.claimService.adminRemoveItem(itemId).subscribe(
+        (res: any) => {
+          this.search(); // Refresh the data table
+          this.isLoading = false;
+        },
+        (error) => {
+          console.error('Error removing item:', error); // Debug API error
+        }
+      );
+    }
+  }
+
+  async approveClaim(event: any) {
+    const confirmed = await this.presentConfirmationDialog('Approve Claim', 'Are you sure you want to approve this claim?');
+    if (confirmed === 'yes') {
+      const params = {
+        itemId: event.itemId,
+        status: 'PENDING_PICKUP',
+      };
+      this.isLoading = true;
+      this.claimService.approveOrRejectClaim(params).subscribe(
+        async (res: any) => {
+          await this.presentConfirmationDialog('Success!!', 'Claim Request Approved Successfully');
+          this.search();
+          this.isLoading = false;
+        },
+        (error) => {
+          console.error('Error approving claim:', error);
+        }
+      );
+    }
+  }
+
+  async rejectClaim(event: any) {
+    const reason = await this.presentRejectClaimDialog('Reject Claim', 'Are you sure you want to reject this claim?');
+    if (reason) {
+      const params = {
+        itemId: event.itemId,
+        status: 'REJECTED',
+        reasonForReject: reason,
+      };
+      this.isLoading = true;
+      this.claimService.approveOrRejectClaim(params).subscribe(
+        async (res: any) => {
+          await this.presentConfirmationDialog('Success!!', 'Claim Request Rejected Successfully');
+          this.search();
+          this.isLoading = false;
+        },
+        (error) => {
+          console.error('Error rejecting claim:', error);
+        }
+      );
+    }
+  }
+
+  async markClaimed(event: any) {
+    const confirmed = await this.presentConfirmationDialog('Mark as Claimed', 'Are you sure you want to mark this item as Claimed?');
+    if (confirmed === 'yes') {
+      const params = {
+        itemId: event.itemId,
+        claimStatus: 'CLAIMED',
+        userId: event.userId,
+      };
+      this.isLoading = true;
+      this.claimService.markASClaimed(params).subscribe(
+        async (res: any) => {
+          await this.presentConfirmationDialog('Success!!', 'Item Claimed Successfully');
+          this.search();
+          this.isLoading = false;
+        },
+        (error) => {
+          console.error('Error marking item as claimed:', error);
+        }
+      );
+    }
+  }
+
+  async presentConfirmationDialog(title: string, message: string): Promise<string> {
+    return new Promise<string>((resolve) => {
+      const dialog = document.createElement('ion-alert');
+      dialog.header = title;
+      dialog.message = message;
+      dialog.buttons = [
+        { text: 'Cancel', role: 'cancel', handler: () => resolve('no') },
+        { text: 'Yes', role: 'confirm', handler: () => resolve('yes') },
+      ];
+      document.body.appendChild(dialog);
+      dialog.present();
+    });
+  }
+
+  async presentRejectClaimDialog(title: string, message: string): Promise<string | null> {
+    return new Promise<string | null>((resolve) => {
+      const dialog = document.createElement('ion-alert');
+      dialog.header = title;
+      dialog.message = message;
+      dialog.inputs = [
+        {
+          name: 'reason',
+          type: 'text',
+          placeholder: 'Reason for rejection',
+        },
+      ];
+      dialog.buttons = [
+        { text: 'Cancel', role: 'cancel', handler: () => resolve(null) },
+        { text: 'Submit', role: 'confirm', handler: (data) => resolve(data.reason) },
+      ];
+      document.body.appendChild(dialog);
+      dialog.present();
+    });
+  }
+
   clear(event: any) {
     if (event.target.value == '') {
       this.clearSearchData();
