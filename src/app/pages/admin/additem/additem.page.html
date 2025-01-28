@@ -123,20 +123,14 @@
               <ion-card-title>QR Code with ID</ion-card-title>
           </ion-card-header>
           <ion-card-content style="text-align: center;">
-              <!-- Display the ID -->
               <div class="text-lg font-medium">
                   ID: {{ qrData.uniqueId }}
               </div>
-              <!-- QR Code -->
               <qrcode #qrCode [qrdata]="generateQrCodeData(qrData)" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
-              <!-- Print and Save Buttons -->
               <div class="button-group mt-3">
-                <!-- Print Button -->
                 <ion-button fill="outline" (click)="onSaveQrCode()">
                   <ion-icon name="print-outline" slot="icon-only"></ion-icon>
                 </ion-button>
-              
-                <!-- Close Button -->
                 <ion-button fill="solid" color="danger" (click)="closeQrModal()">
                   Close
                 </ion-button>

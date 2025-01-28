@@ -39,7 +39,7 @@ export class UserHomePage implements OnInit {
   claimForm!: FormGroup;
   selectedItemId: any;
   isQrModalOpen: boolean = false;
-  qrData: string = '';
+  qrData: any;
   qrItem: any = null;
   constructor(private fb: FormBuilder, private popoverController: PopoverController, private toastController: ToastController, private modalController: ModalController, private http: HttpClient, private loadingCtrl: LoadingController, private sanitizer: DomSanitizer, private claimService: ClaimitService) { }
 
@@ -113,8 +113,13 @@ export class UserHomePage implements OnInit {
     this.popoverEvent = event; // Store the event for positioning the popover
     this.popoverOpen = true; // Open the popover
   }
+  openQrModal(item: any): void {
+    this.qrData = item;
+    this.isQrModalOpen = true;
+  }
   generateQRCode(item: any): void {
     this.qrItem = item;    
+ 
     this.qrData = JSON.stringify({
       name: item.name,
       receivedDate: item.receivedDate,
@@ -122,7 +127,16 @@ export class UserHomePage implements OnInit {
     });
     this.isQrModalOpen = true;
   }
-
+  generateQrCodeData(element: any): string {
+    return JSON.stringify({
+        id: element.uniqueId,
+        name: element.name,
+        status: element.status,
+        verificationLink: element.status === 'UNCLAIMED' 
+            ? `http://localhost:4200/assets/verification.html?itemId=${element.itemId}` 
+            : 'Item is Claimed'
+    });
+}
   closeQrModal(): void {
     this.isQrModalOpen = false;
   }

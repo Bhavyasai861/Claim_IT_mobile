@@ -78,7 +78,7 @@
         </p>
       </ion-col>
       <ion-col size="2" style="text-align: center;">
-        <ion-icon name="qr-code-outline" class="qrIcon"  (click)="generateQRCode(item)"></ion-icon>
+        <ion-icon name="qr-code-outline" class="qrIcon"  (click)="openQrModal(item)"></ion-icon>
         <ion-button expand="block" size="small" (click)="onButtonClick(item.itemId)" *ngIf="item.status === 'UNCLAIMED'">
           Claim
         </ion-button>
@@ -99,8 +99,11 @@
         <ion-card-header>
           <ion-card-title>QR Code</ion-card-title>
         </ion-card-header>
+        <div class="text-lg font-medium">
+          ID: {{ qrData.uniqueId }}
+      </div>
         <ion-card-content style="text-align: center;">
-          <qrcode [qrdata]="qrData"></qrcode>
+          <qrcode  #qrCode [qrdata]="qrData" [qrdata]="generateQrCodeData(qrData)"></qrcode>
         </ion-card-content>
       </ion-card>
     </ion-content>
