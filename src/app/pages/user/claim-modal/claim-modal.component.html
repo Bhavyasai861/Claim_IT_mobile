@@ -1,16 +1,16 @@
-<div>
-  <ion-header translucent>
-    <ion-toolbar>
-      <ion-title></ion-title>
-      <ion-buttons slot="end">
-        <ion-button (click)="onCancel()">
-          <ion-icon name="close"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-header>
-  
-  <ion-content>
+<ion-header translucent>
+  <ion-toolbar class="custom-toolbar">
+    <ion-title>Claim Form</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onCancel()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="dialog-container">
+  <div class="dialog-box">
     <form [formGroup]="claimForm" class="ion-padding">
       <ion-grid>
         <ion-row>
@@ -27,7 +27,7 @@
               <small>Name is required.</small>
             </ion-text>
           </ion-col>
-  
+
           <ion-col size="12" sizeMd="6">
             <ion-item>
               <ion-label position="stacked">Email Address</ion-label>
@@ -38,24 +38,18 @@
               ></ion-input>
             </ion-item>
             <ion-text color="danger" *ngIf="email?.touched && email?.invalid">
-              <small
-                *ngIf="email?.hasError('required')"
-                >Email is required.</small
-              >
-              <small
-                *ngIf="email?.hasError('pattern')"
-                >Please enter a valid email address.</small
-              >
+              <small *ngIf="email?.hasError('required')">
+                Email is required.
+              </small>
+              <small *ngIf="email?.hasError('pattern')">
+                Please enter a valid email address.
+              </small>
             </ion-text>
           </ion-col>
         </ion-row>
       </ion-grid>
-    </form>
-  </ion-content>
-  
-  <ion-footer>
-    <ion-toolbar>
-      <ion-buttons slot="end">
+
+      <div class="button-group">
         <ion-button color="danger" (click)="onCancel()">Cancel</ion-button>
         <ion-button
           color="primary"
@@ -63,7 +57,7 @@
           (click)="onSubmit()"
           >Save</ion-button
         >
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-footer>
-</div>
+      </div>
+    </form>
+  </div>
+</ion-content>

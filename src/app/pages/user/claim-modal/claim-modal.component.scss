@@ -1,8 +1,26 @@
-.boxstyle{
-    width: '80%';     // Adjust width to 80% of the screen
-    //   max-Width: '50%';  // Limit max-width (optional)
-      height: '50%';     // Set the height to 50% of the viewport height
-    //   max-height: '50vh';  // Limit max-height (optional)
-      border-radius: '10px'; // Optional: rounded corners
-      box-shadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', 
+
+.custom-toolbar {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-light);
+}
+.dialog-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; 
+  padding: 1rem;
+}
+.dialog-box {
+  width: 100%;
+  max-width: 500px;
+  background: var(--ion-color-light);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  padding: 1.5rem;
+  text-align: center;
+}
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
 }
