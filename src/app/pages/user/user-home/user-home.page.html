@@ -50,41 +50,79 @@
             (click)="fileInput.click()"></ion-icon>
         </ion-col>
         <ion-col size="1">
-          <ion-icon *ngIf="searchQuery || selectedCategory || files.length" name="close-circle"
-             (click)="clearAll()"  style="margin-top: 15px; cursor: pointer; font-size: 25px;"></ion-icon>
+          <ion-icon *ngIf="searchQuery || selectedCategory || files.length" name="close-circle" (click)="clearAll()"
+            style="margin-top: 15px; cursor: pointer; font-size: 25px;"></ion-icon>
         </ion-col>
       </ion-row>
     </ion-grid>
 
   </ion-item-divider>
   <div *ngIf="isLoading" class="loading-container">
-    <ion-spinner name="crescent" ></ion-spinner>
+    <ion-spinner name="crescent"></ion-spinner>
   </div>
   <ion-grid class="custom-card">
     <ion-row *ngFor="let item of items"
-    style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
-    <ion-col size="4">
-      <img [src]="getImage(item.image)" alt="Item Image"
-        style="width: 60%; max-height: 100px; margin: auto; display: block;" (click)="openImageModal(item.image)" />
-    </ion-col>
-    <ion-col size="6" style="font-size: 14px; color: #666;">
-      <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.name }}</p>
-      <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date: 'shortDate' }}</p>
-      <p style="font-size: 12px; padding: 5px; border-radius: 5px;width: fit-content;" [ngStyle]="{
+      style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
+      <ion-col size="4">
+        <img [src]="getImage(item.image)" alt="Item Image"
+          style="width: 60%; max-height: 100px; margin: auto; display: block;" (click)="openImageModal(item.image)" />
+      </ion-col>
+      <ion-col size="6" style="font-size: 14px; color: #666;">
+        <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.name }}</p>
+        <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date: 'shortDate' }}</p>
+        <p style="font-size: 12px; padding: 5px; border-radius: 5px;width: fit-content;" [ngStyle]="{
         'background-color': getStatusColor(item.status),
         'color': getTextColor(item.status)
       }">
-        {{ item.status }}
-      </p>
-    </ion-col>
-    <ion-col size="2" style="text-align: center;">
-      <ion-icon name="qr-code-outline" class="qrIcon"></ion-icon>
-      <ion-button expand="block" size="small" (click)="onButtonClick(item)">
-        Claim
+          {{ item.status }}
+        </p>
+      </ion-col>
+      <ion-col size="2" style="text-align: center;">
+        <ion-icon name="qr-code-outline" class="qrIcon"  (click)="generateQRCode(item)"></ion-icon>
+        <ion-button expand="block" size="small" (click)="onButtonClick(item.itemId)" *ngIf="item.status === 'UNCLAIMED'">
+          Claim
+        </ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-modal [isOpen]="isQrModalOpen" (ionModalDidDismiss)="closeQrModal()" canDismiss="true"
+    style="--width: 300px; --height: 300px; --max-width: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+    <ion-content>
+      <ion-button fill="clear" (click)="closeQrModal()" class="close-button">
+        <ion-icon name="close-outline"></ion-icon>
       </ion-button>
-    </ion-col>
-  </ion-row>
-  
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>QR Code</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-card *ngIf="qrData">
+        <ion-card-header>
+          <ion-card-title>QR Code</ion-card-title>
+        </ion-card-header>
+        <ion-card-content style="text-align: center;">
+          <qrcode [qrdata]="qrData"></qrcode>
+        </ion-card-content>
+      </ion-card>
+    </ion-content>
+  </ion-modal>
+    <ion-modal [isOpen]="isModalOpen"
+      style="--width: 300px; --height: 300px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+      <ng-template>
+        <form [formGroup]="claimForm" (ngSubmit)="submitClaimForm()">
+          <ion-item>
+            <ion-label position="floating">Name</ion-label>
+            <ion-input formControlName="name" placeholder="Enter your name" type="text"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Email</ion-label>
+            <ion-input formControlName="email" placeholder="Enter your email" type="email"></ion-input>
+          </ion-item>
+          <div class="button-container">
+            <ion-button expand="block" type="submit" [disabled]="!claimForm.valid">Submit</ion-button>
+          </div>
+        </form>
+      </ng-template>
+    </ion-modal>
   </ion-grid>
   <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"
     style="--width: 300px; --height: 270px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
