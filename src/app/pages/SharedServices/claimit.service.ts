@@ -36,6 +36,17 @@ export class ClaimitService {
     const url = `${environment.statusCount}?month=${year}-${month}`;
     return this.http.get(url);
   }
+  public approveOrRejectClaim(reqbody:any){
+    return this.http.put(environment.approveOrRejectClaim+'?itemId='+reqbody.itemId+'&status='+reqbody.status+'&rejectedReason='+reqbody.reasonForReject,'')
+  }
+  public adminRemoveItem(itemId: number): Observable<any> {
+    const url = `${environment.adminRemoveItem}?itemId=${itemId}`;
+    return this.http.put(url, {});
+  }
+
+  public markASClaimed(reqbody:any){
+    return this.http.post(environment.markASClaimed,reqbody)
+  }
   
   public categoryItems(month: string, year: number) {
     const url = `${environment.categoryItems}?month=${year}-${month}`;

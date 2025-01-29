@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { QRCodeModule } from 'angularx-qrcode';
+import { QRCodeComponent, QRCodeModule } from 'angularx-qrcode';
 import { Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
 import { ClaimitService } from '../../SharedServices/claimit.service';
@@ -18,13 +18,14 @@ import { ClaimitService } from '../../SharedServices/claimit.service';
   imports: [CommonModule, FormsModule, IonicModule, HttpClientModule,QRCodeModule],
 })
 export class AdditemPage implements OnInit {
+  @ViewChild('qrCode') qrCode!: QRCodeComponent;
   items: any[] = [];
   files: any[] = [];
   isModalOpen = false;
   swiperRef: any;
   currentStep = 1; 
   isQrModalOpen: boolean = false;
-  qrData: string = '';
+  qrData: any;
   qrItem: any = null;
   formattedData:any;
   isTruncated: boolean = true;
@@ -35,6 +36,10 @@ export class AdditemPage implements OnInit {
    isImageModalOpen = false;
    selectedImage: string = '';
    isLoading: boolean = false;
+   isEditingDescription = false;
+   editableDescription = '';
+  imageDataResponse: any;
+  formData!: any;
   constructor(private http: HttpClient, private modalController: ModalController, private router:Router, private menu:MenuController,private claimService: ClaimitService) {}
 
   ngOnInit() {
@@ -160,17 +165,17 @@ export class AdditemPage implements OnInit {
       this.currentStep--;
     }
   }
-  submitItem() {
+  submitItem1() {
     if (this.files.length > 0) {
-      const formData = new FormData();
+       this.formData = new FormData();
       console.log("this.files", this.files);
       
-      formData.append('image', this.files[0].file);
-      formData.append('orgId', this.selectedOrgId);
-      this.http.post('http://100.28.242.219:8081/api/admin/upload', formData).subscribe(
+      this.formData.append('image', this.files[0].file);
+      this.formData.append('orgId', this.selectedOrgId);
+      this.http.post(' http://172.17.12.101:8081/api/admin/image',  this.formData).subscribe(
         (response) => {
           this.formatResponse(response);          
-          this.addItem();  
+        this.imageDataResponse = response
         },
         (error) => {
           console.error('Error uploading item:', error);
@@ -178,6 +183,30 @@ export class AdditemPage implements OnInit {
       );
     }
   }
+
+  editDescription(item: any) {
+    this.editableDescription = item.value;
+    this.isEditingDescription = true;
+  }
+  submitItem() {
+    const updatedData = { ...this.imageDataResponse };
+    if (this.isEditingDescription) {
+      updatedData.description = this.editableDescription;  // Set the updated description
+    }
+    this.isLoading = false
+    this.formData.append('image', this.files[0].file);
+    this.formData.append('orgId', this.selectedOrgId);
+    this.formData.append('editedLabels', this.editableDescription)
+    this.http.post('http://172.17.12.101:8081/api/admin/upload',  this.formData)
+      .subscribe(response => {
+        console.log('Data submitted:', response);
+        this.isEditingDescription = false;
+        this.isLoading = true
+        this.closeModal()
+        this.getData();
+      });
+  }
+
   formatResponse(response: any): void {
     const allowedKeys = ['description', 'title'];
     this.formattedData = Object.entries(response)
@@ -190,15 +219,113 @@ export class AdditemPage implements OnInit {
   onModalDismiss() {
     this.files = []; 
   }
-  generateQRCode(item: any): void {
-    this.qrItem = item;    
-    this.qrData = JSON.stringify({
-      name: item.name,
-      receivedDate: item.receivedDate,
-      status: item.status,
+  generateQrCodeData(element: any): string {
+    return JSON.stringify({
+        id: element.uniqueId,
+        name: element.name,
+        status: element.status,
+        verificationLink: element.status === 'UNCLAIMED' 
+            ? `http://localhost:4200/assets/verification.html?itemId=${element.itemId}` 
+            : 'Item is Claimed'
     });
-    this.isQrModalOpen = true;
-  }
+}
+openQrModal(item: any): void {
+  this.qrData = item;
+  // this.qrDataString = this.generateQrCodeData(item);
+  this.isQrModalOpen = true;
+}
+onSaveQrCode(): void {
+    const canvas = this.qrCode.qrcElement.nativeElement.querySelector('canvas') as HTMLCanvasElement;
+    if (canvas) {
+        const combinedCanvas = document.createElement('canvas');
+        const context = combinedCanvas.getContext('2d');
+        if (!context) {
+            console.error('Could not get 2D context for canvas.');
+            return;
+        }
+
+        const qrCodeSize = 200;
+        const padding = 20;
+        const idHeight = 30;
+
+        combinedCanvas.width = qrCodeSize + 2 * padding;
+        combinedCanvas.height = qrCodeSize + 2 * padding + idHeight;
+
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+        context.fillStyle = '#000000';
+        context.font = '16px Arial';
+        context.textAlign = 'center';
+        context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, idHeight - 10);
+        context.drawImage(canvas, padding, idHeight + padding, qrCodeSize, qrCodeSize);
+
+        const combinedImage = combinedCanvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = combinedImage;
+        link.download = `qr-code-with-id-${this.qrData.uniqueId}.png`;
+        link.click();
+    } else {
+        console.error('QR code canvas not found.');
+    }
+}
+
+onPrintQrCode(): void {
+    const canvas = this.qrCode.qrcElement.nativeElement.querySelector('canvas') as HTMLCanvasElement;
+    if (canvas) {
+        const combinedCanvas = document.createElement('canvas');
+        const context = combinedCanvas.getContext('2d');
+        if (!context) {
+            console.error('Could not get 2D context for canvas.');
+            return;
+        }
+
+        const qrCodeSize = 200;
+        const padding = 20;
+        const idHeight = 30;
+
+        combinedCanvas.width = qrCodeSize + 2 * padding;
+        combinedCanvas.height = qrCodeSize + 2 * padding + idHeight;
+
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+        context.fillStyle = '#000000';
+        context.font = '16px Arial';
+        context.textAlign = 'center';
+        context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, idHeight - 10);
+        context.drawImage(canvas, padding, idHeight + padding, qrCodeSize, qrCodeSize);
+
+        const combinedImage = combinedCanvas.toDataURL('image/png');
+        const printWindow = window.open('', '_blank');
+        printWindow?.document.write(`
+            <html>
+            <head>
+                <title>Print QR Code</title>
+                <style>
+                    body {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        height: 100vh;
+                        margin: 0;
+                    }
+                    img {
+                        max-width: 100%;
+                        max-height: 100%;
+                    }
+                </style>
+            </head>
+            <body>
+                <img src="${combinedImage}" alt="QR Code with ID">
+            </body>
+            </html>
+        `);
+        printWindow?.document.close();
+        printWindow?.print();
+        printWindow?.close();
+    } else {
+        console.error('QR code canvas not found.');
+    }
+}
 
   closeQrModal(): void {
     this.isQrModalOpen = false;

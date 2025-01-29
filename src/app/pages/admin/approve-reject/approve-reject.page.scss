@@ -63,21 +63,40 @@ ion-modal ion-datetime {
     margin-top: 1px
 }
 .custom-card {
-    margin: 10px;
-  }
-  
-  .card-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px; /* Space between cards */
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* Subtle shadow for rows */
-    border: 1px solid #e0e0e0; /* Lighter border for a softer appearance */
-    background-color: #ffffff; /* White background to make content pop */
-  }
+  margin: 10px;
+  height: 135px;
+}  
+.card-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px; 
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); 
+  border: 1px solid #e0e0e0; 
+  background-color: #ffffff; 
+}
 
   
 .custom-dropdown {
   padding: 20px;
+}
+
+.button-col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.custom-button {
+  font-size: 14px; /* Adjust the text size */
+  padding: 4px 12px; /* Reduce padding for smaller button size */
+  height: 36px; /* Set a consistent height */
+  min-width: 80px; /* Ensure buttons have a consistent width */
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+ion-row {
+  margin: 0; /* Optional: Remove unnecessary spacing between rows */
 }
