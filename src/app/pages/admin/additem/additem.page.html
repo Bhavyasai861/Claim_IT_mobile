@@ -63,12 +63,12 @@
                     </ng-container>
                   </span>
                 </ion-label>
-                
+
               </ion-item>
             </ion-list>
             <ion-button (click)="submitItem()" class="additem" expand="full">Submit</ion-button>
           </div>
-          
+
         </div>
       </div>
     </ng-template>
@@ -81,28 +81,28 @@
     <p>No records found</p>
   </div> -->
   <ion-grid class="custom-card">
-    <div *ngFor="let group of addItemSearchResults" >
-    <span  style="font-size: 20px;font-weight: bold;">{{ group.date }}</span>
-    <ion-row *ngFor="let item of group.items"
-      style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
-      <ion-col size="4">
-        <img [src]="getImage(item.image)" alt="Item Image"
-          style="width: 60%; max-height: 100px; margin: auto; display: block;" (click)="openImageModal(item.image)" />
-      </ion-col>
-      <ion-col size="6" style="font-size: 14px; color: #666;">
-        <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.categoryName }}</p>
-        <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date: 'shortDate' }}</p>
-        <p style="font-size: 12px; padding: 5px; border-radius: 5px;width: fit-content;" [ngStyle]="{
+    <div *ngFor="let group of addItemSearchResults">
+      <span style="font-size: 20px;font-weight: bold;">{{ group.date }}</span>
+      <ion-row *ngFor="let item of group.items"
+        style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
+        <ion-col size="4">
+          <img [src]="getImage(item.image)" alt="Item Image"
+            style="width: 60%; max-height: 100px; margin: auto; display: block;" (click)="openImageModal(item.image)" />
+        </ion-col>
+        <ion-col size="6" style="font-size: 14px; color: #666;">
+          <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.name }}</p>
+          <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date: 'shortDate' }}</p>
+          <p style="font-size: 12px; padding: 5px; border-radius: 5px;width: fit-content;" [ngStyle]="{
     'background-color': getStatusColor(item.status),
     'color': getTextColor(item.status)
   }">
-          {{ item.status }}
-        </p>
-      </ion-col>
-      <ion-col size="2" style="text-align: center;">
-        <ion-icon name="qr-code-outline" class="qrIcon" (click)="openQrModal(item)"></ion-icon>
-      </ion-col>
-    </ion-row>
+            {{ item.status }}
+          </p>
+        </ion-col>
+        <ion-col size="2" style="text-align: center;">
+          <ion-icon name="qr-code-outline" class="qrIcon" (click)="openQrModal(item)"></ion-icon>
+        </ion-col>
+      </ion-row>
     </div>
   </ion-grid>
   <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"
@@ -118,7 +118,7 @@
       </ion-content>
     </ng-template>
   </ion-modal>
-  <ion-modal [isOpen]="isQrModalOpen" (ionModalDidDismiss)="closeQrModal()" canDismiss="true"
+  <!-- <ion-modal [isOpen]="isQrModalOpen" (ionModalDidDismiss)="closeQrModal()" canDismiss="true"
   style="--width: 300px; --height: 400px; --max-width: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
   <ion-content>
       <ion-button fill="clear" (click)="closeQrModal()" class="close-button">
@@ -149,7 +149,24 @@
           </ion-card-content>
       </ion-card>
   </ion-content>
-</ion-modal>
-
+</ion-modal> -->
+  <ion-modal [isOpen]="isQrModalOpen" (ionModalDidDismiss)="closeQrModal()" canDismiss="true"
+    style="--width: 300px; --height: 350px; --max-width: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+    <div *ngIf="qrData">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>QR code</h2>
+        <ion-icon name="close-circle" style="color: red; font-size: x-large;" (click)="closeQrModal()"></ion-icon>
+      </div>
+      <qrcode #qrCode [qrdata]="generateQrCodeData(qrData)" style="text-align: center; margin-bottom: 10px;"></qrcode>
+      <div style="font-size: 14px; color: #555; text-align: center;">
+        <div class="text-lg font-medium">
+          ID: {{ qrData.uniqueId }}
+        </div>
+        <ion-button fill="outline" (click)="onSaveQrCode()" style="margin-left: 10px;">
+          <ion-icon name="print-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </ion-modal>
   <app-footer></app-footer>
 </ion-content>

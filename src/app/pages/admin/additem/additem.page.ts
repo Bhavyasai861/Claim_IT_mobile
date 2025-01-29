@@ -89,6 +89,8 @@ export class AdditemPage implements OnInit {
     switch (status) {
       case 'CLAIMED':
         return '#e0ffe0'; // Light green
+        case 'PENDING_APPROVAL':
+          return 'rgb(254, 226, 226)';
       case 'PENDING_PICKUP':
         return 'rgb(254, 226, 226)'; // Light red/pink
       case 'UNCLAIMED':

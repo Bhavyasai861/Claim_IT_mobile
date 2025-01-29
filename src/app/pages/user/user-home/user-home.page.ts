@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonicModule, ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
@@ -9,16 +9,17 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
 import { LoadingController } from '@ionic/angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ClaimitService } from '../../SharedServices/claimit.service';
-import { QRCodeModule } from 'angularx-qrcode';
+import { QRCodeComponent, QRCodeModule } from 'angularx-qrcode';
 @Component({
   selector: 'app-user-home',
   templateUrl: './user-home.page.html',
   styleUrls: ['./user-home.page.scss'],
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, FormsModule, IonicModule, NgxDropzoneModule, ReactiveFormsModule,QRCodeModule]
+  imports: [CommonModule, FormsModule, IonicModule, NgxDropzoneModule, ReactiveFormsModule, QRCodeModule]
 })
 export class UserHomePage implements OnInit {
+  @ViewChild('qrCode') qrCode!: QRCodeComponent;
   items: any[] = [];
   searchQuery: string = '';
   isImageModalOpen = false;
@@ -41,6 +42,7 @@ export class UserHomePage implements OnInit {
   isQrModalOpen: boolean = false;
   qrData: any;
   qrItem: any = null;
+  claimedItems = new Set();
   constructor(private fb: FormBuilder, private popoverController: PopoverController, private toastController: ToastController, private modalController: ModalController, private http: HttpClient, private loadingCtrl: LoadingController, private sanitizer: DomSanitizer, private claimService: ClaimitService) { }
 
   ngOnInit() {
@@ -48,8 +50,8 @@ export class UserHomePage implements OnInit {
     this.triggerFileInput()
     this.fetchCategories()
     this.claimForm = this.fb.group({
-      name: [''],
-      email: [''],
+      name: ['', Validators.required],
+      email: ['', Validators.required],
     });
   }
 
@@ -61,24 +63,25 @@ export class UserHomePage implements OnInit {
   closeModal() {
     this.isModalOpen = false;
   }
+
   submitClaimForm() {
     if (this.claimForm.valid) {
       const formValues = this.claimForm.value;
       const REQBODY = {
-        userName: formValues.name, 
+        userName: formValues.name,
         userEmail: formValues.email,
-        itemId: this.selectedItemId, 
+        itemId: this.selectedItemId,
       };
-  
+
       this.claimService.createClaimRequest(REQBODY).subscribe((res: any) => {
         if (res) {
-          this.closeModal(); 
+          this.claimedItems.add(this.selectedItemId);
+          this.fetchItems()
+          this.closeModal();
         }
       });
-    } 
+    }
   }
-  
-
 
   fetchItems() {
     const query = this.searchQuery.trim();
@@ -98,9 +101,9 @@ export class UserHomePage implements OnInit {
       case 'CLAIMED':
         return '#e0ffe0'; // Light green
       case 'PENDING_PICKUP':
-        return 'rgb(254, 226, 226)'; 
-        case 'PENDING_APPROVAL':
-          return 'rgb(254, 226, 226)';
+        return 'rgb(254, 226, 226)';
+      case 'PENDING_APPROVAL':
+        return 'rgb(254, 226, 226)';
       case 'UNCLAIMED':
         return 'rgb(248, 113, 113)'; // Red
       case 'REJECTED':
@@ -110,16 +113,16 @@ export class UserHomePage implements OnInit {
     }
   }
   openPopover(event: any): void {
-    this.popoverEvent = event; // Store the event for positioning the popover
-    this.popoverOpen = true; // Open the popover
+    this.popoverEvent = event; 
+    this.popoverOpen = true;
   }
   openQrModal(item: any): void {
     this.qrData = item;
     this.isQrModalOpen = true;
   }
   generateQRCode(item: any): void {
-    this.qrItem = item;    
- 
+    this.qrItem = item;
+
     this.qrData = JSON.stringify({
       name: item.name,
       receivedDate: item.receivedDate,
@@ -129,24 +132,57 @@ export class UserHomePage implements OnInit {
   }
   generateQrCodeData(element: any): string {
     return JSON.stringify({
-        id: element.uniqueId,
-        name: element.name,
-        status: element.status,
-        verificationLink: element.status === 'UNCLAIMED' 
-            ? `http://localhost:4200/assets/verification.html?itemId=${element.itemId}` 
-            : 'Item is Claimed'
+      id: element.uniqueId,
+      name: element.name,
+      status: element.status,
+      verificationLink: element.status === 'UNCLAIMED'
+        ? `http://localhost:4200/assets/verification.html?itemId=${element.itemId}`
+        : 'Item is Claimed'
     });
-}
+  }
   closeQrModal(): void {
     this.isQrModalOpen = false;
   }
+  onSaveQrCode(): void {
+    const canvas = this.qrCode.qrcElement.nativeElement.querySelector('canvas') as HTMLCanvasElement;
+    if (canvas) {
+        const combinedCanvas = document.createElement('canvas');
+        const context = combinedCanvas.getContext('2d');
+        if (!context) {
+            console.error('Could not get 2D context for canvas.');
+            return;
+        }
+
+        const qrCodeSize = 200;
+        const padding = 20;
+        const idHeight = 30;
+
+        combinedCanvas.width = qrCodeSize + 2 * padding;
+        combinedCanvas.height = qrCodeSize + 2 * padding + idHeight;
+
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+        context.fillStyle = '#000000';
+        context.font = '16px Arial';
+        context.textAlign = 'center';
+        context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, idHeight - 10);
+        context.drawImage(canvas, padding, idHeight + padding, qrCodeSize, qrCodeSize);
+
+        const combinedImage = combinedCanvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = combinedImage;
+        link.download = `qr-code-with-id-${this.qrData.uniqueId}.png`;
+        link.click();
+    } else {
+        console.error('QR code canvas not found.');
+    }
+}
 
   // Select the category and log it
   selectCategory(categoryName: string): void {
-    this.selectedCategory = categoryName;  // Set the selected category name
-    console.log('Selected Category:', this.selectedCategory);  // Log the selected category
+    this.selectedCategory = categoryName;
     const value = this.selectedCategory
-    this.popoverOpen = false;  // Close the popover after selecting a category
+    this.popoverOpen = false;
     this.search(value)
   }
 
@@ -184,8 +220,6 @@ export class UserHomePage implements OnInit {
       (response) => {
         if (response.success) {
           this.matchedItems = response.matchedItems
-
-          // Update the items list to display matchedItems
           this.items = this.matchedItems;
         } else {
           this.pictureSearchCompleted = true;
@@ -219,7 +253,6 @@ export class UserHomePage implements OnInit {
     this.matchedItems = [];
     this.files = [];
     this.pictureSearchCompleted = false;
-    // Fetch the original list of items
     this.fetchItems();
   }
   fetchCategories(): void {
@@ -235,35 +268,6 @@ export class UserHomePage implements OnInit {
         }
       );
   }
-
-
-
-  // async onButtonClick(item: any): Promise<void> {
-  //   const modal = await this.modalController.create({
-  //     component: ClaimModalComponent,
-  //     componentProps: { item },
-  //     // cssClass: 'dialog-modal',  // Custom class for dialog-style modal
-  //   });
-
-  //   modal.onDidDismiss().then(({ data }) => {
-  //     if (data) {
-  //       const REQBODY = {
-  //         userName: data.name,
-  //         userEmail: data.email,
-  //         itemId: item.itemId,
-  //       };
-  //       this.isLoading = true;
-  //       this.claimService.createClaimRequest(REQBODY).subscribe((res: any) => {
-  //         if (res) {
-  //           this.isLoading = false;
-  //           this.showSuccessMessage("Claimed successfully!");
-  //         }
-  //       });
-  //     }
-  //   });
-
-  //   await modal.present();
-  // }
 
   showSuccessMessage(message: string): void {
     // You can use a toast, alert, or other notification method
@@ -288,8 +292,7 @@ export class UserHomePage implements OnInit {
   }
   searchItems() {
     if (this.searchQuery.trim() !== '') {
-      const apiUrl = `http://100.28.242.219:8081/api/users/search?query=${encodeURIComponent(this.searchQuery)}`;
-      this.http.get<any[]>(apiUrl).subscribe(
+      this.claimService.searchItems(this.selectedCategory).subscribe(
         (response) => {
           if (Array.isArray(response)) {
             console.log(response);

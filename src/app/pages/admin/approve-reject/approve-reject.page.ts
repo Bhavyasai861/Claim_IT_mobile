@@ -196,7 +196,28 @@ export class ApproveRejectPage implements OnInit {
       dialog.present();
     });
   }
-
+  getStatusColor(status: string): string {
+    switch (status) {
+      case 'CLAIMED':
+        return '#e0ffe0'; // Light green
+      case 'PENDING_PICKUP':
+        return 'rgb(254, 226, 226)';
+      case 'PENDING_APPROVAL':
+        return 'rgb(254, 226, 226)';
+      case 'UNCLAIMED':
+        return 'rgb(248, 113, 113)'; // Red
+      case 'REJECTED':
+        return '#ec9d9d'; // Darker red
+      default:
+        return '#ffffff';
+    }
+  }
+  getTextColor(status: string): string {
+    if (status === 'UNCLAIMED' || status === 'REJECTED') {
+      return '#fff';
+    }
+    return '#333';
+  }
   clear(event: any) {
     if (event.target.value == '') {
       this.clearSearchData();

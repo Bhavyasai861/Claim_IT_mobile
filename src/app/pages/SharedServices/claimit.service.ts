@@ -96,4 +96,8 @@ export class ClaimitService {
   public updateNotification(reqbody: any) {
     return this.http.put(environment.updateNotification, reqbody);
   }
+  searchItems(query: string): Observable<any[]> {
+    const url = `${environment.searchItems}?query=${encodeURIComponent(query)}`;
+    return this.http.get<any[]>(url);
+  }
 }

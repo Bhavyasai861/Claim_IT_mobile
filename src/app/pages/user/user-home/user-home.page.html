@@ -78,67 +78,72 @@
         </p>
       </ion-col>
       <ion-col size="2" style="text-align: center;">
-        <ion-icon name="qr-code-outline" class="qrIcon"  (click)="openQrModal(item)"></ion-icon>
-        <ion-button expand="block" size="small" (click)="onButtonClick(item.itemId)" *ngIf="item.status === 'UNCLAIMED'">
+        <ion-icon name="qr-code-outline" class="qrIcon" (click)="openQrModal(item)"
+          *ngIf="item.status === 'PENDING_APPROVAL'"></ion-icon>
+        <ion-button expand="block" size="small" (click)="onButtonClick(item.itemId)" *ngIf="item.status === 'UNCLAIMED'"
+          style="--background: #00897b; color: white;">
           Claim
         </ion-button>
       </ion-col>
     </ion-row>
     <ion-modal [isOpen]="isQrModalOpen" (ionModalDidDismiss)="closeQrModal()" canDismiss="true"
-    style="--width: 300px; --height: 300px; --max-width: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-    <ion-content>
-      <ion-button fill="clear" (click)="closeQrModal()" class="close-button">
-        <ion-icon name="close-outline"></ion-icon>
-      </ion-button>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>QR Code</ion-title>
-        </ion-toolbar>
-      </ion-header>
-      <ion-card *ngIf="qrData">
-        <ion-card-header>
-          <ion-card-title>QR Code</ion-card-title>
-        </ion-card-header>
-        <div class="text-lg font-medium">
-          ID: {{ qrData.uniqueId }}
-      </div>
-        <ion-card-content style="text-align: center;">
-          <qrcode  #qrCode [qrdata]="qrData" [qrdata]="generateQrCodeData(qrData)"></qrcode>
-        </ion-card-content>
-      </ion-card>
-    </ion-content>
-  </ion-modal>
+      style="--width: 300px; --height: 350px; --max-width: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+      <div *ngIf="qrData">
+        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <h2>QR code</h2>
+          <ion-icon name="close-circle" style="color: red; font-size: x-large;" (click)="closeQrModal()"></ion-icon>
+        </div>        
+        <qrcode #qrCode [qrdata]="generateQrCodeData(qrData)" style="text-align: center; margin-bottom: 10px;"></qrcode>
+        <div style="font-size: 14px; color: #555; text-align: center;">
+          <div class="text-lg font-medium" >
+            ID: {{ qrData.uniqueId }}
+          </div>
+          <ion-button fill="outline" (click)="onSaveQrCode()" style="margin-left: 10px;">
+            <ion-icon name="print-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </div>      
+    </ion-modal>
     <ion-modal [isOpen]="isModalOpen"
       style="--width: 300px; --height: 300px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
       <ng-template>
-        <form [formGroup]="claimForm" (ngSubmit)="submitClaimForm()">
-          <ion-item>
-            <ion-label position="floating">Name</ion-label>
-            <ion-input formControlName="name" placeholder="Enter your name" type="text"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating">Email</ion-label>
-            <ion-input formControlName="email" placeholder="Enter your email" type="email"></ion-input>
-          </ion-item>
-          <div class="button-container">
-            <ion-button expand="block" type="submit" [disabled]="!claimForm.valid">Submit</ion-button>
-          </div>
+        <div style="text-align: right; padding: 10px;margin-bottom: -30px;">
+          <ion-icon name="close-circle" style="color: red; font-size: x-large;" (click)="closeModal()"></ion-icon>
+        </div>
+        <form [formGroup]="claimForm" (ngSubmit)="submitClaimForm()" style="padding: 10px;">
+          <ion-grid>
+            <ion-row>
+              <ion-col size="12">
+                <ion-item>
+                  <ion-input label="Name" label-placement="floating" formControlName="name" fill="outline"
+                    placeholder="Enter name" required></ion-input>
+                </ion-item>
+                <ion-text color="danger" *ngIf="claimForm.get('name')?.invalid && claimForm.get('name')?.touched">
+                  Name is required
+                </ion-text>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12">
+                <ion-item>
+                  <ion-input label="Email" label-placement="floating" formControlName="email" fill="outline"
+                    placeholder="Enter email" type="email" required></ion-input>
+                </ion-item>
+                <ion-text color="danger" *ngIf="claimForm.get('email')?.invalid && claimForm.get('email')?.touched">
+                  Enter a valid email
+                </ion-text>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" class="button-container" style="text-align: center;">
+                <ion-button type="submit" [disabled]="claimForm.invalid" style="--background: #00897b; color: white;">
+                  Submit
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
         </form>
       </ng-template>
     </ion-modal>
   </ion-grid>
-  <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"
-    style="--width: 300px; --height: 270px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-    <ng-template>
-      <ion-content>
-        <div style="text-align: center;">
-          <img [src]="selectedImage" alt="Selected Image" style="width: 90%; height: 250px; object-fit: contain;" />
-          <ion-button fill="clear" (click)="closeImageModal()" style="position: absolute; top: 10px; right: 10px;">
-            <ion-icon name="close" style="color: #f90000;"></ion-icon>
-          </ion-button>
-        </div>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-
 </ion-content>
