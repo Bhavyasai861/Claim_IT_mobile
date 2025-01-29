@@ -100,8 +100,10 @@ export class UserHomePage implements OnInit {
     this.claimService.listOfItems(query).subscribe(
       (res: any) => {
         this.isLoading = false
-        this.items=res.data
-        // this.items = res.data.filter((item: any) => item.status === 'UNCLAIMED');
+        // this.items=res.data
+        this.items = res.data.filter((item: any) => 
+  item.status === 'UNCLAIMED' || item.status === 'PENDING_APPROVAL'
+);
         // this.items = res.data.filter((item: any) => item.status === 'UNCLAIMED');
       });
   }
