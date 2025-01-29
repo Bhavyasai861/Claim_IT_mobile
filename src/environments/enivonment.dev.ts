@@ -19,5 +19,5 @@ export const environment = {
     contactUs: 'http://100.28.242.219:8081/api/users/submit',
     getNotifications:'http://100.28.242.219:8081/api/admin/notifications',
     updateNotification:'http://100.28.242.219:8081/api/admin/update-claimrequest',
-    searchItems:`http://172.17.12.101:8081/api/users/search`,
+    searchItems:`http://100.28.242.219:/api/users/search`,
   };
