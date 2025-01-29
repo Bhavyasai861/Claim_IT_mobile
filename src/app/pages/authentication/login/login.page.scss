@@ -1,16 +1,16 @@
 ion-content {
-  overflow: hidden !important; /* Prevent scrolling */
-  height: 100% !important;     /* Ensure full height */
+  overflow: hidden !important; 
+  height: 100% !important;    
 }
 .inner-scroll {
   overflow: unset;
 }
 html, body {
-  overflow: hidden; /* Prevent scrolling on body */
-  height: 100%;     /* Prevent body scrollbars */
+  overflow: hidden;
+  height: 100%;    
 }
 .slogan-section {
-  background-color: #32a095; /* Background color */
+  background-color: #32a095;
   padding: 60px 20px;
   text-align: center;
   position: relative;
@@ -26,14 +26,13 @@ h1 {
   display: inline-block;
   position: relative;
   padding: 50px;
-  background: rgba(255, 255, 255, 0.2); /* Translucent circle */
+  background: rgba(255, 255, 255, 0.2); 
   border-radius: 50%;
   width: 200px;
   height: 200px;
   margin: 0 auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
- 
  
 .slogan {
   font-size: 1.5em;
@@ -54,23 +53,20 @@ svg.wave {
   color: white;
   letter-spacing: 1px;
 }
- 
- 
+  
 .wave-container {
   position: relative;
   margin-top: -10px;
 }
- 
- 
+  
 .wave {
   display: block;
   width: 180%;
   height: auto;
-}
- 
+} 
  
 .form-container {
-  background-color: #ffffff; /* White background for credentials card */
+  background-color: #ffffff; 
   padding: 30px;
   margin: -40px 20px 0;
   border-radius: 12px;
@@ -79,8 +75,7 @@ svg.wave {
   margin-left: auto;
   margin-right: auto;
   z-index: 1;
-}
- 
+} 
  
 .input-field {
   margin-bottom: 20px;
@@ -103,6 +98,6 @@ svg.wave {
  
 .login-button {
   margin-top: 20px;
-  background: #32a095; /* Dark Blue Button */
+  background: #32a095; 
   color: white;
 }

@@ -64,23 +64,34 @@ export class UserHomePage implements OnInit {
     this.isModalOpen = false;
   }
 
-  submitClaimForm() {
+ async submitClaimForm() {
     if (this.claimForm.valid) {
       const formValues = this.claimForm.value;
       const REQBODY = {
-        userName: formValues.name,
-        userEmail: formValues.email,
+        name: formValues.name,
+        email: formValues.email,
         itemId: this.selectedItemId,
       };
 
       this.claimService.createClaimRequest(REQBODY).subscribe((res: any) => {
-        if (res) {
+        if (res && res.success) { // Ensure success flag exists
           this.claimedItems.add(this.selectedItemId);
-          this.fetchItems()
+          this.showToast('Claim request successful');
+          this.fetchItems();
           this.closeModal();
+        } else {
+          this.showToast('Claim request failed. Please try again.');
         }
       });
     }
+  }
+  async showToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      position: 'top',
+    });
+    await toast.present();
   }
 
   fetchItems() {
@@ -89,7 +100,7 @@ export class UserHomePage implements OnInit {
     this.claimService.listOfItems(query).subscribe(
       (res: any) => {
         this.isLoading = false
-        this.items = res.data;
+        this.items = res.data.filter((item: any) => item.status === 'UNCLAIMED');
       });
   }
   getImage(base64String: string): string {

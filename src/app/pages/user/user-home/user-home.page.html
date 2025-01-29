@@ -68,7 +68,7 @@
           style="width: 60%; max-height: 100px; margin: auto; display: block;" (click)="openImageModal(item.image)" />
       </ion-col>
       <ion-col size="6" style="font-size: 14px; color: #666;">
-        <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.name }}</p>
+        <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.categoryName }}</p>
         <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date: 'shortDate' }}</p>
         <p style="font-size: 12px; padding: 5px; border-radius: 5px;width: fit-content;" [ngStyle]="{
         'background-color': getStatusColor(item.status),
