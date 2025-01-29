@@ -87,13 +87,17 @@ export class ApproveRejectPage implements OnInit {
       this.isLoading = true;
       this.claimService.adminRemoveItem(itemId).subscribe(
         (res: any) => {
-          this.search(); // Refresh the data table
+          this.search(); 
           this.isLoading = false;
+          this.isPopoverOpen = false; 
         },
         (error) => {
-          console.error('Error removing item:', error); // Debug API error
+          this.isPopoverOpen = false; 
+          console.error('Error removing item:', error);
         }
       );
+    } else {
+      this.isPopoverOpen = false; 
     }
   }
 
@@ -110,22 +114,31 @@ export class ApproveRejectPage implements OnInit {
           await this.presentConfirmationDialog('Success!!', 'Claim Request Approved Successfully');
           this.search();
           this.isLoading = false;
+          this.isPopoverOpen = false;
         },
         (error) => {
           console.error('Error approving claim:', error);
+          this.isPopoverOpen = false; 
         }
       );
+    } else {
+      this.isPopoverOpen = false;
     }
   }
+  
 
   async rejectClaim(event: any) {
+    this.isPopoverOpen = false; 
+  
     const reason = await this.presentRejectClaimDialog('Reject Claim', 'Are you sure you want to reject this claim?');
+  
     if (reason) {
       const params = {
         itemId: event.itemId,
         status: 'REJECTED',
         reasonForReject: reason,
       };
+  
       this.isLoading = true;
       this.claimService.approveOrRejectClaim(params).subscribe(
         async (res: any) => {
@@ -138,16 +151,26 @@ export class ApproveRejectPage implements OnInit {
         }
       );
     }
+  
+    this.isPopoverOpen = false; 
   }
 
   async markClaimed(event: any) {
-    const confirmed = await this.presentConfirmationDialog('Mark as Claimed', 'Are you sure you want to mark this item as Claimed?');
+    this.isPopoverOpen = false;  
+    await new Promise(resolve => setTimeout(resolve, 200)); 
+  
+    const confirmed = await this.presentConfirmationDialog(
+      'Mark as Claimed', 
+      'Are you sure you want to mark this item as Claimed?'
+    );
+  
     if (confirmed === 'yes') {
       const params = {
         itemId: event.itemId,
         claimStatus: 'CLAIMED',
         userId: event.userId,
       };
+  
       this.isLoading = true;
       this.claimService.markASClaimed(params).subscribe(
         async (res: any) => {
@@ -160,8 +183,11 @@ export class ApproveRejectPage implements OnInit {
         }
       );
     }
+    setTimeout(() => {
+      this.isPopoverOpen = false;
+    }, 200);
   }
-
+  
   async presentConfirmationDialog(title: string, message: string): Promise<string> {
     return new Promise<string>((resolve) => {
       const dialog = document.createElement('ion-alert');
