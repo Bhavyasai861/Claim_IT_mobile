@@ -15,7 +15,7 @@
   </div>
   <ion-item-divider class="searchBarFixed">
     <ion-searchbar class="search-bar" placeholder="{{ currentFilterPlaceholder }}" [(ngModel)]="searchValue"
-      (ionClear)="clearSearch()" (keyup.enter)="filterSearch()">
+      (ionClear)="clear($event)" (keyup.enter)="filterSearch()">
     </ion-searchbar>
     <ion-icon name="filter" class="addIcon" size="large" (click)="toggleFilterPopover($event)"></ion-icon>
   </ion-item-divider>
@@ -53,8 +53,10 @@
         <ion-button fill="clear" (click)="presentPopover($event)">
           <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
         </ion-button>   
-        <ion-popover [isOpen]="isPopoverOpen" (didDismiss)="isPopoverOpen = false" [event]="popoverEvent">
-          <ng-template>
+        <ion-popover [isOpen]="isPopoverOpen" trigger="popover-button" backdropDismiss="true" (didDismiss)="isPopoverOpen = false" [event]="popoverEvent"  side="bottom"    
+        alignment="end"  
+        class="custom-popover">
+          <ng-template  #popoverContent>
             <ion-content class="ion-padding">
               <ion-list>
                 <ion-item button detail="false" (click)="approveClaim(item)">

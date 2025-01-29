@@ -218,21 +218,11 @@ export class ApproveRejectPage implements OnInit {
     }
     return '#333';
   }
-  clear(event: any) {
-    if (event.target.value == '') {
-      this.clearSearchData();
-      this.filterSearch();  
-    }
-  }
-  clearSearch() {
-    this.searchValue = ''; 
-    this.clearSearchData();
-  }
-  clearSearchData() {
+  clear(event: any) { 
     this.searchValue = '';
-    this.clearSearchData();
-    
+    this.searchResults = [...this.normalResponse]; 
   }
+
 
   selectFilter(filter: string) {
     this.currentFilter = filter; 

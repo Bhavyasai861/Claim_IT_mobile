@@ -90,13 +90,23 @@ ion-modal ion-datetime {
 }
 
 .custom-button {
-  font-size: 14px; /* Adjust the text size */
-  padding: 4px 12px; /* Reduce padding for smaller button size */
-  height: 36px; /* Set a consistent height */
-  min-width: 80px; /* Ensure buttons have a consistent width */
-  white-space: nowrap; /* Prevent text wrapping */
+  font-size: 14px; 
+  padding: 4px 12px; 
+  height: 36px; 
+  min-width: 80px; 
+  white-space: nowrap; 
 }
 
 ion-row {
-  margin: 0; /* Optional: Remove unnecessary spacing between rows */
+  margin: 0;
+}
+.custom-popover {
+  --backdrop-opacity: 0;
+  --ion-background-color: white; 
+  z-index: 9999; 
+}
+
+
+ion-backdrop {
+  background: transparent !important; 
 }
