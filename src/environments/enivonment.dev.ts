@@ -4,7 +4,7 @@ export const environment = {
     getAllItems:'http://100.28.242.219:8081/api/users/claim-history',
     unClaim:'http://100.28.242.219:8081/api/users/updateStatus',
     listOfItems:'http://100.28.242.219:8081/api/admin/listOfItems',
-    listOfItemsAddItem:'http://100.28.242.219:8081/api/admin/grouped-items',
+    listOfItemsAddItem:'http://172.17.12.101:8081/api/admin/grouped-items',
     organizationList:'http://100.28.242.219:8081/api/admin/listOfOrganisation',
     adminUploadItem:'http://100.28.242.219:8081/api/admin/upload',
     adminRemoveItem:'http://100.28.242.219:8081/api/admin/archive-expired-items',

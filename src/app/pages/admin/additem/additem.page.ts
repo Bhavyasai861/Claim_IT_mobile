@@ -174,7 +174,7 @@ export class AdditemPage implements OnInit {
       
       this.formData.append('image', this.files[0].file);
       this.formData.append('orgId', this.selectedOrgId);
-      this.http.post('https://100.28.242.219.nip.io/api/admin/image',  this.formData).subscribe(
+      this.http.post(' https://100.28.242.219.nip.io/api/admin/image',  this.formData).subscribe(
         (response) => {
           this.formatResponse(response);          
         this.imageDataResponse = response
