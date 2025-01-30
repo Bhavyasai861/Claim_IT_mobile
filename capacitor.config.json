@@ -1,7 +1,19 @@
-
 {
   "appId": "com.claimit.app",
   "appName": "ionic-claim-it",
   "webDir": "www",
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
+  "plugins": {
+    "Keyboard": {
+      "resize": "body", 
+      "style": "light",  
+      "hideFormAccessoryBar": true 
+    },
+    "StatusBar": {
+      "style": "LIGHT", 
+      "backgroundColor": "#ffffff", 
+      "overlaysWebView": false 
+    }
+  },
+  "cordova": {}
 }

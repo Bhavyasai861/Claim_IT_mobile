@@ -35,3 +35,19 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+ion-input, ion-textarea {
+    background: #ffffff; /* White background */
+    color: #000000; /* Black text */
+  }
+  
+  ion-menu {
+    --background: #ffffff; /* White background */
+    --color: #000000; /* Black text */
+  }
+  
+  ion-button {
+    --background: #008080; /* Button color */
+    --color: #ffffff; /* Button text color */
+  }
+  
