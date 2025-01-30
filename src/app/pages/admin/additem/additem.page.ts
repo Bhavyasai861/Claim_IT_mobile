@@ -139,6 +139,7 @@ export class AdditemPage implements OnInit {
     this.isImageModalOpen = false;
   }
   addItem() {
+    this.resetForm();
     this.isModalOpen = true;
     const url = 'https://100.28.242.219.nip.io/api/admin/listOfOrganisation';
     this.http.get<any>(url).subscribe((response) => {
@@ -190,6 +191,13 @@ export class AdditemPage implements OnInit {
     this.editableDescription = item.value;
     this.isEditingDescription = true;
   }
+  resetForm() {
+    this.currentStep = 1;
+    this.files = [];
+    this.formattedData = [];
+    this.isEditingDescription = false;
+    this.editableDescription = '';
+  }
   submitItem() {
     const updatedData = { ...this.imageDataResponse };
     if (this.isEditingDescription) {
@@ -236,39 +244,70 @@ openQrModal(item: any): void {
   // this.qrDataString = this.generateQrCodeData(item);
   this.isQrModalOpen = true;
 }
+// onSaveQrCode(): void {
+//     const canvas = this.qrCode.qrcElement.nativeElement.querySelector('canvas') as HTMLCanvasElement;
+//     if (canvas) {
+//         const combinedCanvas = document.createElement('canvas');
+//         const context = combinedCanvas.getContext('2d');
+//         if (!context) {
+//             console.error('Could not get 2D context for canvas.');
+//             return;
+//         }
+
+//         const qrCodeSize = 200;
+//         const padding = 20;
+//         const idHeight = 30;
+
+//         combinedCanvas.width = qrCodeSize + 2 * padding;
+//         combinedCanvas.height = qrCodeSize + 2 * padding + idHeight;
+
+//         context.fillStyle = '#ffffff';
+//         context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+//         context.fillStyle = '#000000';
+//         context.font = '16px Arial';
+//         context.textAlign = 'center';
+//         context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, idHeight - 10);
+//         context.drawImage(canvas, padding, idHeight + padding, qrCodeSize, qrCodeSize);
+
+//         const combinedImage = combinedCanvas.toDataURL('image/png');
+//         const link = document.createElement('a');
+//         link.href = combinedImage;
+//         link.download = `qr-code-with-id-${this.qrData.uniqueId}.png`;
+//         link.click();
+//     } else {
+//         console.error('QR code canvas not found.');
+//     }
+// }
 onSaveQrCode(): void {
-    const canvas = this.qrCode.qrcElement.nativeElement.querySelector('canvas') as HTMLCanvasElement;
-    if (canvas) {
-        const combinedCanvas = document.createElement('canvas');
-        const context = combinedCanvas.getContext('2d');
-        if (!context) {
-            console.error('Could not get 2D context for canvas.');
-            return;
-        }
+  const combinedCanvas = document.createElement('canvas');
+  const context = combinedCanvas.getContext('2d');
+  if (!context) {
+      console.error('Could not get 2D context for canvas.');
+      return;
+  }
 
-        const qrCodeSize = 200;
-        const padding = 20;
-        const idHeight = 30;
+  const qrCodeSize = 200;
+  const padding = 20;
+  const idHeight = 30;
 
-        combinedCanvas.width = qrCodeSize + 2 * padding;
-        combinedCanvas.height = qrCodeSize + 2 * padding + idHeight;
+  // Set canvas size to fit only the ID text
+  combinedCanvas.width = qrCodeSize + 2 * padding;
+  combinedCanvas.height = idHeight + 2 * padding;
 
-        context.fillStyle = '#ffffff';
-        context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
-        context.fillStyle = '#000000';
-        context.font = '16px Arial';
-        context.textAlign = 'center';
-        context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, idHeight - 10);
-        context.drawImage(canvas, padding, idHeight + padding, qrCodeSize, qrCodeSize);
+  context.fillStyle = '#ffffff';
+  context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+  context.fillStyle = '#000000';
+  context.font = '16px Arial';
+  context.textAlign = 'center';
+  
+  // Draw only the ID text
+  context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, combinedCanvas.height / 2);
 
-        const combinedImage = combinedCanvas.toDataURL('image/png');
-        const link = document.createElement('a');
-        link.href = combinedImage;
-        link.download = `qr-code-with-id-${this.qrData.uniqueId}.png`;
-        link.click();
-    } else {
-        console.error('QR code canvas not found.');
-    }
+  const combinedImage = combinedCanvas.toDataURL('image/png');
+  const link = document.createElement('a');
+  link.href = combinedImage;
+  link.download = `id-${this.qrData.uniqueId}.png`;
+  link.click();
 }
 
 onPrintQrCode(): void {

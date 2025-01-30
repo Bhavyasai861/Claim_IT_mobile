@@ -14,13 +14,13 @@
     <ion-spinner name="crescent"></ion-spinner>
   </div>
   <ion-item-divider class="searchBarFixed">
-    <ion-searchbar class="search-bar" placeholder="{{ currentFilterPlaceholder }}" [(ngModel)]="searchValue"
+    <ion-searchbar class="search-bar" placeholder="{{ currentFilterPlaceholder }}" [(ngModel)]="searchValue"  show-clear-button="always" 
       (ionClear)="clear($event)" (keyup.enter)="filterSearch()">
     </ion-searchbar>
     <ion-icon name="filter" class="addIcon" size="large" (click)="toggleFilterPopover($event)"></ion-icon>
   </ion-item-divider>
-  <ion-popover [isOpen]="isFilterPopoverOpen" (didDismiss)="popoverOpen = false"
-    style="--width: 300px; --height: auto; --top: 10% !important; --left: 10% !important; transform: translate(-10%, -10%) !important;">
+  <ion-popover [isOpen]="isFilterPopoverOpen" [event]="popoverEvent" (didDismiss)="isFilterPopoverOpen = false"
+  style="--width: 200px; --height: auto;">
     <ng-template>
       <div class="custom-dropdown">
         <ion-item button (click)="selectFilter('name')">Name</ion-item>
@@ -31,49 +31,67 @@
     </ng-template>
   </ion-popover>
   <ion-grid class="custom-card">
-    <ion-row *ngFor="let item of searchResults" class="ion-margin-bottom ion-padding card-row"
+    <ion-row *ngFor="let item of searchResults; let i = index" class="ion-margin-bottom ion-padding card-row"
       style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;">
+      
+      <!-- Image Column -->
       <ion-col size="4">
         <img [src]="getImage(item.image)" alt="Item Image"
-        style="width: 60%; max-height: 100px; margin: auto; display: block;"
+          style="width: 60%; max-height: 100px; margin: auto; display: block;"
           (click)="openImageModal(item.image)" />
       </ion-col>
+  
+      <!-- Details Column -->
       <ion-col size="6" style="font-size: 14px; color: #666;">
         <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.name }}</p>
         <p style="font-size: 12px; font-weight: bold; color: #333;">{{ item.email }}</p>
         <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date: 'shortDate' }}</p>
-        <p style="font-size: 12px; padding: 5px; border-radius: 5px;width: fit-content;" [ngStyle]="{
-          'background-color': getStatusColor(item.status),
-          'color': getTextColor(item.status)
-        }">
-            {{ item.status }}
-          </p>          
+        <p 
+          style="font-size: 12px; padding: 5px; border-radius: 5px; width: fit-content;"
+          [ngStyle]="{
+            'background-color': getStatusColor(getStatus(item.receivedDate, item.status)),
+            'color': getTextColor(getStatus(item.receivedDate, item.status))
+          }">
+          {{ getStatus(item.receivedDate, item.status) }}
+        </p>            
       </ion-col>
+  
+      <!-- Actions Column (Fix applied) -->
       <ion-col size="2">
-        <ion-button fill="clear" (click)="presentPopover($event)">
-          <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+        <ion-button fill="clear"  size="small" (click)="presentPopover($event, item, i)" [id]="'popover-button-' + i">
+          <ion-icon slot="icon-only" name="ellipsis-vertical" slot="end" style="color: #00897b;"></ion-icon>
         </ion-button>   
+  
         <ion-popover 
-        [isOpen]="isPopoverOpen" 
-        (didDismiss)="isPopoverOpen = false" 
-        [event]="popoverEvent" 
-        side="bottom" 
-        alignment="end"  
-        class="custom-popover">
-          <ng-template  #popoverContent>
+          [isOpen]="isPopoverOpen && selectedItemIndex === i" 
+          (didDismiss)="isPopoverOpen = false" 
+          [event]="popoverEvent" 
+          side="bottom" 
+          alignment="end" 
+          [showBackdrop]="false" style="--width: 280px; --height: auto;" 
+          class="custom-popover">
+          <ng-template #popoverContent>
             <ion-content class="ion-padding">
               <ion-list>
-                <ion-item button detail="false" (click)="approveClaim(item)">
+                <!-- Approve Button -->
+                <ion-item *ngIf="item.status === 'PENDING_APPROVAL'" button detail="false" (click)="approveClaim(item)">
                   Approve
                 </ion-item>
-                <ion-item button detail="false" (click)="rejectClaim(item)">
+  
+                <!-- Reject Button -->
+                <ion-item *ngIf="item.status === 'ARCHIVED' || item.status === 'PENDING_APPROVAL'" 
+                  button detail="false" (click)="rejectClaim(item)">
                   Reject
                 </ion-item>
-                <ion-item button detail="false" *ngIf="item.status !== 'ARCHIVED' && item.status !== 'EXPIRED'"
-                  (click)="confirmRemove(item)">
-                  Remove
+  
+                <!-- Remove Button -->
+                <ion-item *ngIf="item.status === 'REJECTED' || item.status === 'UNCLAIMED'" 
+                  button detail="false" (click)="confirmRemove(item)">
+                  Expired
                 </ion-item>
-                <ion-item button detail="false" *ngIf="item.status === 'PENDING_PICKUP'" (click)="markClaimed(item)">
+  
+                <!-- Claimed Button -->
+                <ion-item *ngIf="item.status === 'PENDING_PICKUP'" button detail="false" (click)="markClaimed(item)">
                   Claimed
                 </ion-item>
               </ion-list>
@@ -81,8 +99,10 @@
           </ng-template>
         </ion-popover>
       </ion-col>
+  
     </ion-row>
   </ion-grid>
+  
   <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"
     style="--width: 300px; --height: 270px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
     <ng-template>

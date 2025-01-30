@@ -31,6 +31,7 @@ export class ApproveRejectPage implements OnInit {
   popoverOpen = false;
   popoverEvent: any;
   isImageModalOpen = false;
+  selectedItemIndex: number | null = null;
   selectedImage: string = '';
   isLoading: boolean = false;
   public statusDropDown: any = [
@@ -48,11 +49,16 @@ export class ApproveRejectPage implements OnInit {
     private modalController: ModalController
   ) {}
 
-  presentPopover(event: Event) {
-    this.popoverEvent = event; 
-    this.isPopoverOpen = true;
+  presentPopover(event: Event, item: any, index: number) {
+    this.popoverEvent = event;
+    if (this.selectedItemIndex === index) {
+      this.isPopoverOpen = false;
+      this.selectedItemIndex = null;
+    } else {
+      this.isPopoverOpen = true;
+      this.selectedItemIndex = index;
+    }
   }
-
   ngOnInit() {
     this.approveRejectForm = this.fb.group({
       email: [''],
@@ -65,10 +71,12 @@ export class ApproveRejectPage implements OnInit {
 
   toggleFilterPopover(event: Event) {
     this.isFilterPopoverOpen = true;
+    this.popoverEvent = event;
   }
 
   toggleFilterPopoverApprove(event: Event) {
     this.PopoverOpen = true;
+    this.popoverEvent = event
   }
 
   openImageModal(image: string) {
@@ -79,7 +87,13 @@ export class ApproveRejectPage implements OnInit {
   closeImageModal() {
     this.isImageModalOpen = false;
   }
-
+  getStatus(receivedDate: string, currentStatus: string): string {
+    const received = new Date(receivedDate);
+    const currentDate = new Date();
+    const differenceInTime = currentDate.getTime() - received.getTime();
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24); 
+    return differenceInDays > 30 ? 'EXPIRED' : currentStatus;
+  }
   async confirmRemove(event: any) {
     const confirmed = await this.presentConfirmationDialog('Remove', 'Are you sure you want to remove this item?');
     if (confirmed === 'yes') {
@@ -225,15 +239,17 @@ export class ApproveRejectPage implements OnInit {
   getStatusColor(status: string): string {
     switch (status) {
       case 'CLAIMED':
-        return '#e0ffe0'; // Light green
+        return 'rgb(182, 235, 180)'; // Light green
       case 'PENDING_PICKUP':
         return 'rgb(254, 226, 226)';
       case 'PENDING_APPROVAL':
-        return 'rgb(254, 226, 226)';
+        return 'rgb(181, 231, 231)';
       case 'UNCLAIMED':
         return 'rgb(248, 113, 113)'; // Red
       case 'REJECTED':
         return '#ec9d9d'; // Darker red
+        case 'EXPIRED':
+          return 'rgb(243, 177, 124)'
       default:
         return '#ffffff';
     }
@@ -247,9 +263,21 @@ export class ApproveRejectPage implements OnInit {
   clear(event: any) { 
     this.searchValue = '';
     this.searchResults = [...this.normalResponse]; 
+    if (event.target.value == '') {
+      this.clearSearchData();
+      this.filterSearch();  
+    }
   }
 
-
+ clearSearch() {
+    this.searchValue = ''; 
+    this.clearSearchData();
+  }
+  clearSearchData() {
+    this.searchValue = '';
+    this.clearSearchData();
+    
+  }
   selectFilter(filter: string) {
     this.currentFilter = filter; 
     this.isFilterPopoverOpen = false;

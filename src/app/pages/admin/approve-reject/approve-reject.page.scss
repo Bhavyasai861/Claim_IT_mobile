@@ -1,112 +1,145 @@
-//Input box outline style
 .fieldBox {
-    border: 1px solid #cccccc;
-    border-radius: 5px;
-    padding: 1px;
-    margin-top: 8px;
-}
-//Input field heading style
-.fieldHeading {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #000000b9;
-    font-family: "Roboto";
-}
-.buttons {
-    --background: #00897b;
-}
-
-ion-icon .select-icon.md.hydrated {
-    position: absolute !important;
-    right: 2px !important;
-}
-.modal-header {
-    position: sticky;
-    top: 0;
-    background-color: white;
-    z-index: 1;
-    padding-bottom: 8px;
-    // padding-top: 8px;
-    border-bottom: 1px solid #ddd;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  padding: 1px;
+  margin-top: 8px;
   }
-.modal {
-    --width: 290px;
-    --height: 397px;
-    --border-radius: 8px;
-}
-.loading-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+  //Input field heading style
+  .fieldHeading {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #000000b9;
+  font-family: "Roboto";
   }
+  .buttons {
+  --background: #00897b;
+  }
+ 
+  .filter-popover {
+  position: absolute;
+  top: 10%; 
+  left: 20%; 
+  transform: translate(-50%, -50%); 
+  z-index: 1000; 
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+  padding: 15px; 
+  width: 280px; 
+  max-width: 90%;
+  }
+   
+  :host {
+  background-color: green;
+  }
+  .filter-popover .close-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #555; 
+  }
+   
+ 
+  .popover-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4); 
+  z-index: 999; 
+  }
+   
 
-ion-modal ion-datetime {
-    height: 382px;
-}
-.searchBarFixed {
-    position: sticky;
-    top: 0;
-}
-.searchBars{
-    flex: 1;
-    --background: #f1f1f1;
-    --color: #000;
-    --box-shadow: none;
-    --border-radius: 2px;
-    border: none;
-    margin-top: 1px
-}
-.custom-card {
+   
+  ion-popover {
+  --width: 200px;
+  --height: auto;
+  --border-radius: 0.2px black;
+  
+  --box-shadow:none;
+  --background: #00897b
+  ;
+  }
+   
+  ion-list {
+  padding: 0;
+  }
+   
+  ion-item {
+  font-size: 14px;
+  color: #333;
+  }
+   
+  .addIcon {
+  cursor: pointer;
+  }
+   
+  ion-icon {
+  --color: #00897b;
+  --size: 24px;
+  }
+   
+  .modal-header {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1;
+  padding-bottom: 8px;
+  // padding-top: 8px;
+  border-bottom: 1px solid #ddd;
+  }
+  .modal {
+  --width: 290px;
+  --height: 397px;
+  --border-radius: 8px;
+  }
+  .loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+  }
+   
+  ion-modal ion-datetime {
+  height: 382px;
+  }
+  .searchBarFixed {
+  position: sticky;
+  top: 0;
+  }
+  .searchBars{
+  flex: 1;
+  --background: #f1f1f1;
+  --color: #000;
+  --box-shadow: none;
+  --border-radius: 2px;
+  border: none;
+  margin-top: 1px
+  }
+  .custom-card {
   margin: 10px;
-  height: 135px;
-}  
-.card-row {
+  }
+   
+  .card-row {
   display: flex;
   align-items: center;
   margin-bottom: 15px; 
   padding: 10px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); 
-  border: 1px solid #e0e0e0; 
+  border: 1px solid #e0e0e0;
   background-color: #ffffff; 
-}
-
-  
-.custom-dropdown {
-  padding: 20px;
-}
-
-.button-col {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0 4px;
-}
-
-.custom-button {
-  font-size: 14px; 
-  padding: 4px 12px; 
-  height: 36px; 
-  min-width: 80px; 
-  white-space: nowrap; 
-}
-
-ion-row {
-  margin: 0;
-}
-.custom-popover {
-  --backdrop-opacity: 0;
-  --ion-background-color: white; 
-  z-index: 9999; 
-}
-
-
-ion-backdrop {
-  background: transparent !important; 
-}
+  }
+   
+   
+  .custom-dropdown {
+  padding: 5px;
+  }

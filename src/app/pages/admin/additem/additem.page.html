@@ -17,16 +17,18 @@
   <ion-modal [isOpen]="isModalOpen" (willDismiss)="onModalDismiss()"
     style="--width: 500px; --height: 450px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
     <ng-template>
-      <div class="content ">
+      <div class="content">
         <div class="modal-header">
           <h2>Add an Item</h2>
           <ion-icon name="close-circle" style="color: red; font-size: x-large;" (click)="closeModal()"></ion-icon>
         </div>
+  
         <div class="scrollable-content">
           <div class="stepper-header">
             <div (click)="goToStep(1)" [class.active]="currentStep === 1" class="step"> Upload</div>
-            <div (click)="goToStep(1)" [class.active]="currentStep === 2" class="step"> Preview</div>
+            <div (click)="goToStep(2)" [class.active]="currentStep === 2" class="step"> Preview</div>
           </div>
+  
           <div *ngIf="currentStep === 1">
             <div class="upload-box">
               <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInput />
@@ -40,39 +42,39 @@
                 </div>
               </div>
             </div>
-            <ion-button (click)="goToNextStep();submitItem1()" [disabled]="!files.length" class="next">Next</ion-button>
+            <ion-button (click)="goToNextStep(); submitItem1()" [disabled]="!files.length" class="next">Next</ion-button>
           </div>
+  
           <div *ngIf="currentStep === 2">
             <h3>Preview</h3>
             <ion-list>
               <ion-item *ngFor="let item of formattedData">
                 <ion-label>
                   <span *ngIf="item.key !== 'description'">
-                    {{ isTruncated && item.key === 'description' ? (item.value | slice: 0: 100) + '...' : item.value }}
+                    {{ isTruncated && item.key === 'description' ? (item.value | slice: 0:100) + '...' : item.value }}
                   </span>
                   <span *ngIf="item.key === 'description'">
                     <ng-container *ngIf="!isEditingDescription">
-                      {{ isTruncated ? (item.value | slice: 0: 100) + '...' : item.value }}
-                      <a *ngIf="item.key === 'description'" href="javascript:void(0)" (click)="toggleTruncate()">
+                      {{ isTruncated ? (item.value | slice: 0:100) + '...' : item.value }}
+                      <a href="javascript:void(0)" (click)="toggleTruncate()">
                         {{ isTruncated ? 'Read More' : 'Show Less' }}
                       </a>
                       <ion-icon name="create" (click)="editDescription(item)"></ion-icon>
                     </ng-container>
                     <ng-container *ngIf="isEditingDescription">
-                      <ion-input [(ngModel)]="editableDescription" placeholder="Edit description"></ion-input>
+                      <textarea [(ngModel)]="editableDescription" placeholder="Edit description" rows="4" class="styled-textarea"></textarea>
                     </ng-container>
                   </span>
                 </ion-label>
-
               </ion-item>
             </ion-list>
             <ion-button (click)="submitItem()" class="additem" expand="full">Submit</ion-button>
           </div>
-
         </div>
       </div>
     </ng-template>
   </ion-modal>
+  
   <div *ngIf="isLoading" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
   </div>
