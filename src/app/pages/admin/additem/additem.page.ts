@@ -299,16 +299,36 @@ onSaveQrCode(): void {
   context.fillStyle = '#000000';
   context.font = '16px Arial';
   context.textAlign = 'center';
-  
+
   // Draw only the ID text
   context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, combinedCanvas.height / 2);
 
   const combinedImage = combinedCanvas.toDataURL('image/png');
+
+  // Create a link element to trigger the download
   const link = document.createElement('a');
   link.href = combinedImage;
   link.download = `id-${this.qrData.uniqueId}.png`;
-  link.click();
+
+  // Try to trigger the download on desktop and mobile
+  if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
+      // For mobile devices, let's first try opening in a new tab and let the user download manually
+      const imageWindow = window.open();
+      if (imageWindow) {
+          imageWindow.document.write('<img src="' + combinedImage + '" style="width:100%"/>');
+          imageWindow.document.close();
+          setTimeout(() => {
+              imageWindow.location.href = combinedImage; // Force it to open and allow saving
+          }, 500);
+      }
+  } else {
+      // For desktop, trigger the download directly as before
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+  }
 }
+
 
 onPrintQrCode(): void {
     const canvas = this.qrCode.qrcElement.nativeElement.querySelector('canvas') as HTMLCanvasElement;

@@ -34,20 +34,31 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
 
+ion-icon {
+    color: #000000;
+}
 ion-input, ion-textarea {
-    background: #ffffff; /* White background */
-    color: #000000; /* Black text */
-  }
-  
-  ion-menu {
-    --background: #ffffff; /* White background */
-    --color: #000000; /* Black text */
-  }
-  
-  ion-button {
-    --background: #008080; /* Button color */
-    --color: #ffffff; /* Button text color */
-  }
-  
+    background: #ffffff; 
+    color: #000000 !important; 
+}
+
+ion-input::part(input), ion-textarea::part(textarea) {
+    color: #000000 !important; 
+    background: #ffffff !important; 
+}
+
+
+ion-label {
+    color: #000000; 
+}
+
+ion-button {
+    --background: #008080;
+    --color: #ffffff; 
+}
+
+ion-menu {
+    --background: #333333; 
+    --color: #ffffff; 
+}

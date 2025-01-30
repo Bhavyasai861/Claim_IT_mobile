@@ -143,3 +143,18 @@
   .custom-dropdown {
   padding: 5px;
   }
+
+  .custom-button {
+    --border-width: 0px;        
+    --background: transparent;  
+    --box-shadow: none;         
+  }
+  
+  :host-context(.dark) .custom-button {
+    --color: #000;  
+  }
+  
+  :host-context(.light) .custom-button {
+    --color: #000; 
+  }
+  

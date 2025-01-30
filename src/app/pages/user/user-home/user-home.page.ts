@@ -159,39 +159,56 @@ export class UserHomePage implements OnInit {
     this.isQrModalOpen = false;
   }
   onSaveQrCode(): void {
-    const canvas = this.qrCode.qrcElement.nativeElement.querySelector('canvas') as HTMLCanvasElement;
-    if (canvas) {
-        const combinedCanvas = document.createElement('canvas');
-        const context = combinedCanvas.getContext('2d');
-        if (!context) {
-            console.error('Could not get 2D context for canvas.');
-            return;
+    const combinedCanvas = document.createElement('canvas');
+    const context = combinedCanvas.getContext('2d');
+    if (!context) {
+        console.error('Could not get 2D context for canvas.');
+        return;
+    }
+
+    const qrCodeSize = 200;
+    const padding = 20;
+    const idHeight = 30;
+
+    // Set canvas size to fit only the ID text
+    combinedCanvas.width = qrCodeSize + 2 * padding;
+    combinedCanvas.height = idHeight + 2 * padding;
+
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+    context.fillStyle = '#000000';
+    context.font = '16px Arial';
+    context.textAlign = 'center';
+
+    // Draw only the ID text
+    context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, combinedCanvas.height / 2);
+
+    const combinedImage = combinedCanvas.toDataURL('image/png');
+
+    // Create a link element to trigger the download
+    const link = document.createElement('a');
+    link.href = combinedImage;
+    link.download = `id-${this.qrData.uniqueId}.png`;
+
+    // Try to trigger the download on desktop and mobile
+    if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
+        // For mobile devices, let's first try opening in a new tab and let the user download manually
+        const imageWindow = window.open();
+        if (imageWindow) {
+            imageWindow.document.write('<img src="' + combinedImage + '" style="width:100%"/>');
+            imageWindow.document.close();
+            setTimeout(() => {
+                imageWindow.location.href = combinedImage; // Force it to open and allow saving
+            }, 500);
         }
-
-        const qrCodeSize = 200;
-        const padding = 20;
-        const idHeight = 30;
-
-        combinedCanvas.width = qrCodeSize + 2 * padding;
-        combinedCanvas.height = qrCodeSize + 2 * padding + idHeight;
-
-        context.fillStyle = '#ffffff';
-        context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
-        context.fillStyle = '#000000';
-        context.font = '16px Arial';
-        context.textAlign = 'center';
-        context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, idHeight - 10);
-        context.drawImage(canvas, padding, idHeight + padding, qrCodeSize, qrCodeSize);
-
-        const combinedImage = combinedCanvas.toDataURL('image/png');
-        const link = document.createElement('a');
-        link.href = combinedImage;
-        link.download = `qr-code-with-id-${this.qrData.uniqueId}.png`;
-        link.click();
     } else {
-        console.error('QR code canvas not found.');
+        // For desktop, trigger the download directly as before
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 }
+
 
   // Select the category and log it
   selectCategory(categoryName: string): void {
@@ -256,7 +273,7 @@ export class UserHomePage implements OnInit {
     this.isLoading = true
     const formData: FormData = new FormData();
     formData.append('image', file, file.name);
-    const picUrl = 'http://172.17.12.101:8081/api/users/search-by-image';
+    const picUrl = 'https://100.28.242.219.nip.io/api/users/search-by-image';
     this.isLoading = false
 
     return this.http.post(picUrl, formData, {
@@ -271,7 +288,7 @@ export class UserHomePage implements OnInit {
     this.fetchItems();
   }
   fetchCategories(): void {
-    this.http.get<{ id: number; name: string }[]>('http://172.17.12.101:8081/api/admin/getcategories')
+    this.http.get<{ id: number; name: string }[]>('https://100.28.242.219.nip.io/api/admin/getcategories')
       .subscribe(
         (response) => {
           this.categories = response;
@@ -295,7 +312,7 @@ export class UserHomePage implements OnInit {
       .then((toast: { present: () => any; }) => toast.present());
   }
   search(search: any): void {
-    const apiUrl = `http://172.17.12.101:8081/api/users/search?query=${search}`;
+    const apiUrl = `https://100.28.242.219.nip.io/api/users/search?query=${search}`;
     this.http.get<any[]>(apiUrl).subscribe(
       (data: any) => {
         if (Array.isArray(data)) {
@@ -307,7 +324,7 @@ export class UserHomePage implements OnInit {
   }
   searchItems() {
     if (this.searchQuery.trim() !== '') {
-      this.claimService.searchItems(this.selectedCategory).subscribe(
+      this.claimService.searchItems(this.searchQuery).subscribe(
         (response) => {
           if (Array.isArray(response)) {
             console.log(response);

@@ -58,8 +58,8 @@
   
       <!-- Actions Column (Fix applied) -->
       <ion-col size="2">
-        <ion-button fill="clear"  size="small" (click)="presentPopover($event, item, i)" [id]="'popover-button-' + i">
-          <ion-icon slot="icon-only" name="ellipsis-vertical" slot="end" style="color: #00897b;"></ion-icon>
+        <ion-button fill="clear" class="custom-button"  size="small" (click)="presentPopover($event, item, i)" [id]="'popover-button-' + i">
+          <ion-icon slot="icon-only" name="ellipsis-vertical" slot="end" ></ion-icon>
         </ion-button>   
   
         <ion-popover 
