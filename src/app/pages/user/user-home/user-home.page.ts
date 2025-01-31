@@ -29,6 +29,8 @@ export class UserHomePage implements OnInit {
   pictureSearchCompleted: boolean = false;
   selectedCategory: any;
   popoverOpen = false;
+  hasMoreItems = true;
+  currentPage = 0;
   popoverEvent: any;
   categories: { id: number; name: string }[] = [];
   categerorydata: any = [];
@@ -36,6 +38,7 @@ export class UserHomePage implements OnInit {
   searchResults: any = [];
   dropdownVisible: boolean = false;
   isLoading: boolean = false
+  itemsFound: boolean = true;
   isModalOpen = false;
   claimForm!: FormGroup;
   selectedItemId: any;
@@ -94,18 +97,33 @@ export class UserHomePage implements OnInit {
     await toast.present();
   }
 
-  fetchItems() {
-    const query = this.searchQuery.trim();
-    this.isLoading = true
-    this.claimService.listOfItems(query).subscribe(
+  fetchItems(event?: any) {
+    if (!this.hasMoreItems) {
+      if (event) event.target.complete();
+      return;
+    }
+  
+    this.isLoading = true;
+  
+    this.claimService.listOfItems(this.currentPage).subscribe(
       (res: any) => {
-        this.isLoading = false
-        // this.items=res.data
-        this.items = res.data.filter((item: any) => 
-  item.status === 'UNCLAIMED' || item.status === 'PENDING_APPROVAL'
-);
-        // this.items = res.data.filter((item: any) => item.status === 'UNCLAIMED');
-      });
+        this.isLoading = false;
+  
+        if (res.data.length > 0) {
+          this.items = [...this.items, ...res.data];
+          this.currentPage++; // Increase page count for next load
+        } else {
+          this.hasMoreItems = false; // Stop further requests when no data left
+        }
+  
+        if (event) event.target.complete(); // Complete infinite scroll event
+      },
+      (error) => {
+        console.error('Error fetching items:', error);
+        this.isLoading = false;
+        if (event) event.target.complete();
+      }
+    );
   }
   getImage(base64String: string): string {
     return `data:image/jpeg;base64,${base64String}`;
@@ -274,6 +292,10 @@ export class UserHomePage implements OnInit {
     this.searchQuery = '';
     this.matchedItems = [];
     this.files = [];
+    this.items = [];    
+    this.itemsFound = true;     
+    this.currentPage = 0;  
+    this.hasMoreItems = true; 
     this.pictureSearchCompleted = false;
     this.fetchItems();
   }
@@ -316,13 +338,24 @@ export class UserHomePage implements OnInit {
     if (this.searchQuery.trim() !== '') {
       this.claimService.searchItems(this.searchQuery).subscribe(
         (response) => {
-          if (Array.isArray(response)) {
-            console.log(response);
-            this.items = response
+          if (Array.isArray(response) && response.length > 0) {
+            this.items = response;
+            this.itemsFound = true;
+          } else {
+            this.itemsFound = false;
+            this.items = []; 
           }
+        },
+        (error) => {
+          console.error(error);
+          this.itemsFound = false;
+          this.items = [];
         }
       );
+    } else {
+      this.itemsFound = true;
+      this.items = [];
     }
-
   }
+
 }

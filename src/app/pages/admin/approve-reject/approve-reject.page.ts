@@ -289,7 +289,7 @@ export class ApproveRejectPage implements OnInit {
         this.currentFilterPlaceholder = 'Search by email';
         break;
       case 'date':
-        this.currentFilterPlaceholder = 'Search by date';
+        this.currentFilterPlaceholder = 'Search by MM/DD/YYYY';
         break;
 
         case 'status':

@@ -56,8 +56,9 @@ export class ClaimitService {
     return this.http.get(environment.listOfItemsAddItem);
   }
   //List of itetems
-  public listOfItems(query: any) {
-    return this.http.get(environment.listOfItems);
+  public listOfItems(page: number) {
+    const url = `${environment.listOfItems}?page=${page}&size=5`;
+    return this.http.get(url);
   }
   public getAllItems(query: any) {
     return this.http.get(environment.getAllItems + 
