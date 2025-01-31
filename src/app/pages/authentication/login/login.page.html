@@ -1,4 +1,4 @@
-<ion-content [scrollY]="false" fullscreen>
+<ion-content [scrollY]="false">
   <div class="slogan-section">
     <div class="circle-background">
       <h1 class="slogan">Claim It</h1>
@@ -19,20 +19,30 @@
     <form [formGroup]="loginForm">
       <ion-item class="input-field">
         <ion-icon slot="start" name="mail-outline" class="input-icon"></ion-icon>
-        <ion-label position="floating">Email</ion-label>
-        <ion-input type="email" formControlName="email"></ion-input>
+        <!-- <ion-item class="input-field"> -->
+          <ion-label position="stacked">Email</ion-label>  
+          <ion-input 
+            type="email" 
+            formControlName="email" 
+            placeholder=""
+            (ionBlur)="email?.markAsTouched()"
+            (ionChange)="email?.setValue($event.detail.value)">
+          </ion-input>
+        <!-- </ion-item> -->
+        
+       
       </ion-item>
       <ion-text *ngIf="email?.invalid && email?.touched" color="danger">
         <p>Please enter a valid email address.</p>
       </ion-text>
-
+     
       <ion-item class="input-field">
         <ion-icon slot="start" name="lock-closed-outline" class="input-icon"></ion-icon>
-        <ion-label position="floating">Password</ion-label>
+        <ion-label position="stacked">Password</ion-label>
         <ion-input [type]="hidePassword ? 'password' : 'text'" formControlName="password"></ion-input>
         <ion-icon
           slot="end"
-          name="{{ hidePassword ? 'eye-off-outline' : 'eye-outline' }} "
+          name="{{ hidePassword ? 'eye-off-outline' : 'eye-outline' }}"
           class="password-icon"
           (click)="togglePasswordVisibility()"
         ></ion-icon>
@@ -42,62 +52,9 @@
       </ion-text>
 
       <div class="links">
-        <a (click)="userNavigate()" color="[#32a095]" class="user-link">Are you a user?</a>
+        <a (click)="userNavigate()" color="[#32a095]" class="user-link">You Lost Something?</a>
       </div>
-      
       <ion-button expand="block" class="login-button" color="[#32a095]" (click)="onSubmit()">Log in</ion-button>
     </form>
   </div>
 </ion-content>
-
-<style>
-  .slogan-section {
-    text-align: center;
-    padding: 20px;
-  }
-
-  .circle-background {
-    background-color: #32a095;
-    border-radius: 50%;
-    padding: 10px;
-    display: inline-block;
-    margin-bottom: 10px;
-  }
-
-  .wave-container {
-    position: relative;
-    bottom: -10px;
-  }
-
-  .form-container {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-  }
-
-  .input-field {
-    margin-bottom: 20px;
-  }
-
-  .login-button {
-    margin-top: 20px;
-    padding: 10px;
-  }
-
-  .user-link {
-    text-align: center;
-    margin-top: 10px;
-  }
-
-  .links {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
-
-  ion-button {
-    margin-top: auto;
-  }
-</style>

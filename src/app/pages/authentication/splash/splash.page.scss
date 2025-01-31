@@ -1,0 +1,23 @@
+.splash-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #fff;
+    overflow: hidden; 
+    position: relative;
+  }
+  
+  .splash-image {
+    max-width: auto; 
+    max-height: 100%; 
+    object-fit: contain;
+    animation: fadeOut 5s ease-in-out forwards;
+    overflow: hidden;
+  }
+  
+  @keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+

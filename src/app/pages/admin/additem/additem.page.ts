@@ -138,22 +138,20 @@ export class AdditemPage implements OnInit {
   closeImageModal() {
     this.isImageModalOpen = false;
   }
-  addItem() {
+  addItem(): void {
     this.resetForm();
     this.isModalOpen = true;
-    const url = 'https://100.28.242.219.nip.io/api/admin/listOfOrganisation';
-    this.http.get<any>(url).subscribe((response) => {
-      this.addItemData = response;
-      console.log(this.addItemData); 
-      if (Array.isArray(this.addItemData)) {
-        this.addItemData.forEach(item => {
-          console.log(item.orgId); 
-          this.selectedOrgId= item.orgId
-        });
-      } else {
-        console.log(this.addItemData.orgId); 
-      }
-    });
+    this.addItemData = [];  
+    console.log(this.addItemData);
+  
+    if (Array.isArray(this.addItemData)) {
+      this.addItemData.forEach(item => {
+        console.log(item.orgId); 
+        this.selectedOrgId = item.orgId;
+      });
+    } else {
+      console.log(this.addItemData.orgId);
+    }
   }
   
   goToNextStep() {

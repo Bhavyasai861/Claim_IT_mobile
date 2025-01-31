@@ -1,19 +1,15 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
+import { SplashPage } from './pages/authentication/splash/splash.page';
 
 
 const routes: Routes = [
-  {
-    path: '',
-    // loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
-    loadChildren: () => import('./pages/authentication/login/login.module').then(m => m.LoginPageModule)
-  },
-
-
+  { path: '', redirectTo: 'splash', pathMatch: 'full' }, // Default route is splash
+  { path: 'splash', component: SplashPage }, // Splash route
   {
     path: 'login',
-    loadChildren: () => import('./pages/authentication/login/login.module').then(m => m.LoginPageModule)
+    loadChildren: () => import('./pages/authentication/login/login.module').then(m => m.LoginPageModule),
   },
   {
     path: 'claimIt',
@@ -52,15 +48,21 @@ const routes: Routes = [
 
 
     ]
+  },
+  {
+    path: 'splash',
+    loadChildren: () => import('./pages/authentication/splash/splash.module').then( m => m.SplashPageModule)
   }
 
 
 
+
 ];
+
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
   ],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class AppRoutingModule { }
