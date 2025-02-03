@@ -142,20 +142,16 @@ export class AdditemPage implements OnInit {
   addItem() {
     this.resetForm();
     this.isModalOpen = true;
-    const url = 'https://100.28.242.219.nip.io/api/admin/listOfOrganisation';
-    this.http.get<any>(url).subscribe((response) => {
-      this.addItemData = response;
-      console.log(this.addItemData); 
-      if (Array.isArray(this.addItemData)) {
-        this.addItemData.forEach(item => {
-          console.log(item.orgId); 
-          this.selectedOrgId= item.orgId
-        });
-      } else {
-        console.log(this.addItemData.orgId); 
-      }
-    });
+    this.addItemData = []; // Ensure addItemData is initialized
+    console.log(this.addItemData); 
+    if (Array.isArray(this.addItemData)) {
+      this.addItemData.forEach(item => {
+        console.log(item.orgId); 
+        this.selectedOrgId = item.orgId;
+      });
+    }
   }
+  
   
   goToNextStep() {
     if (this.currentStep < 2) {
@@ -216,23 +212,24 @@ export class AdditemPage implements OnInit {
   }
 
   
+
   submitItem() {
-    this.isLoading = true;
-    this.uploadMessage = 'Uploading... Please wait';
-  
-    // Simulating API call
-    setTimeout(() => {
-      this.uploadMessage = 'Processing your data...';
-  
-      setTimeout(() => {
-        // Simulating success response
-        this.isLoading = false;
-        this.uploadMessage = '';
-        this.loadData(); // Function to reload data after successful upload
-      }, 2000);
-    }, 2000);
+    const updatedData = { ...this.imageDataResponse };
+    if (this.isEditingDescription) {
+      updatedData.description = this.editableDescription; 
+    }
+    this.isLoading = false
+    this.formData.append('image', this.files[0].file);
+    this.formData.append('orgId', this.selectedOrgId);
+    this.formData.append('editedLabels', this.editableDescription)
+    this.http.post('https://100.28.242.219.nip.io/api/admin/upload',  this.formData)
+      .subscribe(response => {
+        console.log('Data submitted:', response);
+        this.isEditingDescription = false;
+        this.isModalOpen = false;
+        this.getData();
+      });
   }
-  
   loadData() {
     // Simulate new data loading
     setTimeout(() => {
