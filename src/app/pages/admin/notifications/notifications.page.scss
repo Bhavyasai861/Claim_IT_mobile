@@ -1,37 +1,19 @@
-
-// ion-card {
-//     height:150px;
-//     transition: background-color 0.3s ease;
-  
-//     &.unread {
-//       background-color: #00897b2e; /* Blue for unread notifications */
-//     }
-  
-//     &.read {
-//       background-color: #fdfdfd; /* Red for read notifications */
-//     }
-//   }
-//   .notification-card {
-//     margin: 8px;
-//     border-radius: 12px;
-//     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-//     transition: transform 0.3s, box-shadow 0.3s;
-//     cursor: pointer;
-// }
-
 .notification-item {
   margin-bottom: 15px;
-  padding: 10px;
-  border: 1px solid #dcdcdc; 
-  border-radius: 8px; 
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+  padding: 12px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   background-color: #ffffff;
-  transition: all 0.3s ease; 
+  transition: all 0.3s ease;
+  transform: translateY(10px); /* Initial position */
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-in-out forwards; /* Apply animation */
 }
 
 .notification-item:hover {
-  background-color: #f8f8f8; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+  background-color: #f8f8f8;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .unread {
@@ -39,7 +21,7 @@
 }
 
 .read {
-  border-left: 8px solid #00897b; 
+  border-left: 8px solid #00897b;
 }
 
 .notification-item ion-label h2 {
@@ -49,7 +31,7 @@
 }
 
 .notification-item .email {
-  color: #888; 
+  color: #888;
   font-size: 14px;
 }
 
@@ -61,8 +43,10 @@
 
 .notification-item .label {
   font-weight: bold;
-  color: #00897b; 
+  color: #00897b;
 }
+
+/* Add animation to the loading container */
 .loading-container {
   display: flex;
   justify-content: center;
@@ -72,12 +56,20 @@
   top: 0;
   left: 0;
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+  background-color: rgba(255, 255, 255, 0.7);
+  transform: translateY(10px);
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-in-out forwards;
 }
 
-.no-records-container {
-  text-align: center;
-  font-size: 16px;
-  color: #888;
-  margin-top: 50px;
+/* Add fade-in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
 }

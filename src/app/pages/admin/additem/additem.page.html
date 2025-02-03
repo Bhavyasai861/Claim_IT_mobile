@@ -43,18 +43,14 @@
               </div>
             </div>
             <ion-button (click)="goToNextStep(); submitItem1()" [disabled]="!files.length" class="next">Next</ion-button>
-          </div>
-  
+          </div>  
           <div *ngIf="currentStep === 2">
+           
             <h3>Preview</h3>
-          
-            <!-- Show Loader When Data is Not Available -->
-            <div *ngIf="isLoading">
+            <div *ngIf="isLoading" class="spinner-container">
               <ion-spinner name="crescent"></ion-spinner>
-             
             </div>
-          
-            <!-- Show Data When Available -->
+            
             <div *ngIf="!isLoading && formattedData.length > 0">
               <ion-list>
                 <ion-item *ngFor="let item of formattedData">
@@ -81,8 +77,7 @@
                 Submit
               </ion-button>
             </div>
-          </div>
-          
+          </div>          
         </div>
       </div>
     </ng-template>

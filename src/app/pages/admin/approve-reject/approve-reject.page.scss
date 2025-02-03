@@ -3,100 +3,103 @@
   border-radius: 5px;
   padding: 1px;
   margin-top: 8px;
-  }
-  //Input field heading style
-  .fieldHeading {
+}
+
+//Input field heading style
+.fieldHeading {
   font-size: 0.9rem;
   font-weight: 600;
   color: #000000b9;
   font-family: "Roboto";
-  }
-  .buttons {
+}
+
+.buttons {
   --background: #00897b;
-  }
- 
-  .filter-popover {
+}
+
+.filter-popover {
   position: absolute;
-  top: 10%; 
-  left: 20%; 
-  transform: translate(-50%, -50%); 
-  z-index: 1000; 
+  top: 10%;
+  left: 20%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
   background-color: white;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
-  padding: 15px; 
-  width: 280px; 
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  width: 280px;
   max-width: 90%;
-  }
-   
-  :host {
+}
+
+:host {
   background-color: green;
-  }
-  .filter-popover .close-icon {
+}
+
+.filter-popover .close-icon {
   position: absolute;
   top: 10px;
   right: 10px;
   cursor: pointer;
   font-size: 1.2rem;
-  color: #555; 
-  }
-   
- 
-  .popover-backdrop {
+  color: #555;
+}
+
+
+.popover-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.4); 
-  z-index: 999; 
-  }
-   
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 999;
+}
 
-   
-  ion-popover {
+
+
+ion-popover {
   --width: 200px;
   --height: auto;
   --border-radius: 0.2px black;
-  
-  --box-shadow:none;
-  --background: #00897b
-  ;
-  }
-   
-  ion-list {
+
+  --box-shadow: none;
+  --background: #00897b;
+}
+
+ion-list {
   padding: 0;
-  }
-   
-  ion-item {
+}
+
+ion-item {
   font-size: 14px;
   color: #333;
-  }
-   
-  .addIcon {
+}
+
+.addIcon {
   cursor: pointer;
-  }
-   
-  ion-icon {
+}
+
+ion-icon {
   --color: #00897b;
   --size: 24px;
-  }
-   
-  .modal-header {
+}
+
+.modal-header {
   position: sticky;
   top: 0;
   background-color: white;
   z-index: 1;
   padding-bottom: 8px;
-  // padding-top: 8px;
   border-bottom: 1px solid #ddd;
-  }
-  .modal {
+}
+
+.modal {
   --width: 290px;
   --height: 397px;
   --border-radius: 8px;
-  }
-  .loading-container {
+}
+
+.loading-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -105,17 +108,20 @@
   top: 0;
   left: 0;
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
-  }
-   
-  ion-modal ion-datetime {
+  background-color: rgba(255, 255, 255, 0.7);
+  /* Semi-transparent background */
+}
+
+ion-modal ion-datetime {
   height: 382px;
-  }
-  .searchBarFixed {
+}
+
+.searchBarFixed {
   position: sticky;
   top: 0;
-  }
-  .searchBars{
+}
+
+.searchBars {
   flex: 1;
   --background: #f1f1f1;
   --color: #000;
@@ -123,38 +129,60 @@
   --border-radius: 2px;
   border: none;
   margin-top: 1px
-  }
-  .custom-card {
+}
+
+.custom-card {
   margin: 10px;
-  }
-   
-  .card-row {
+}
+
+.card-row {
   display: flex;
   align-items: center;
-  margin-bottom: 15px; 
-  padding: 10px;
+  margin-bottom: 15px;
+  padding: 12px;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
   border: 1px solid #e0e0e0;
-  background-color: #ffffff; 
-  }
-   
-   
-  .custom-dropdown {
-  padding: 5px;
-  }
+  background-color: #ffffff;
+  transform: translateY(10px); /* Initial position */
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-in-out forwards; /* Apply animation */
+}
 
-  .custom-button {
-    --border-width: 0px;        
-    --background: transparent;  
-    --box-shadow: none;         
+/* Add hover effect for better UI */
+.card-row:hover {
+  transform: translateY(0px) scale(1.02);
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Fade-in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
-  :host-context(.dark) .custom-button {
-    --color: #000;  
+  to {
+    opacity: 1;
+    transform: translateY(0px);
   }
-  
-  :host-context(.light) .custom-button {
-    --color: #000; 
-  }
-  
+}
+
+
+
+.custom-dropdown {
+  padding: 5px;
+}
+
+.custom-button {
+  --border-width: 0px;
+  --background: transparent;
+  --box-shadow: none;
+}
+
+:host-context(.dark) .custom-button {
+  --color: #000;
+}
+
+:host-context(.light) .custom-button {
+  --color: #000;
+}
