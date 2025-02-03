@@ -8,6 +8,8 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { QRCodeComponent, QRCodeModule } from 'angularx-qrcode';
 import { Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
+import { Capacitor } from '@capacitor/core';
+import { Share } from '@capacitor/share';
 import { ClaimitService } from '../../SharedServices/claimit.service';
 @Component({
   selector: 'app-additem',
@@ -354,30 +356,74 @@ onSaveQrCode(): void {
 }
 
 
+async onShareQrCode(): Promise<void> {
+  const combinedCanvas = document.createElement('canvas');
+  const context = combinedCanvas.getContext('2d');
+  if (!context) {
+      console.error('Could not get 2D context for canvas.');
+      return;
+  }
+
+  const qrCodeSize = 200;
+  const padding = 20;
+  const idHeight = 30;
+
+  // Set canvas size to fit only the ID text
+  combinedCanvas.width = qrCodeSize + 2 * padding;
+  combinedCanvas.height = idHeight + 2 * padding;
+
+  context.fillStyle = '#ffffff';
+  context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+  context.fillStyle = '#000000';
+  context.font = '16px Arial';
+  context.textAlign = 'center';
+
+  // Draw only the ID text
+  context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, combinedCanvas.height / 2);
+
+  const combinedImage = combinedCanvas.toDataURL('image/png');
+
+  // Check if the platform is native (iOS/Android)
+  const platform = Capacitor.getPlatform();
+
+  if (platform === 'ios' || platform === 'android') {
+      // For native platforms, use the Capacitor Share plugin
+      await Share.share({
+          title: 'Share QR Code',
+          text: `Check out this QR code with ID: ${this.qrData.uniqueId}`,
+          url: combinedImage,
+          dialogTitle: 'Share QR Code'
+      });
+  } else {
+      // For web or non-native platforms
+      console.log('Share functionality is not available on this platform.');
+  }
+}
+
 onPrintQrCode(): void {
-    const canvas = this.qrCode.qrcElement.nativeElement.querySelector('canvas') as HTMLCanvasElement;
-    if (canvas) {
-        const combinedCanvas = document.createElement('canvas');
-        const context = combinedCanvas.getContext('2d');
-        if (!context) {
-            console.error('Could not get 2D context for canvas.');
-            return;
-        }
+  const combinedCanvas = document.createElement('canvas');
+  const context = combinedCanvas.getContext('2d');
+  if (!context) {
+      console.error('Could not get 2D context for canvas.');
+      return;
+  }
 
-        const qrCodeSize = 200;
-        const padding = 20;
-        const idHeight = 30;
+  const qrCodeSize = 200;
+  const padding = 20;
+  const idHeight = 30;
 
-        combinedCanvas.width = qrCodeSize + 2 * padding;
-        combinedCanvas.height = qrCodeSize + 2 * padding + idHeight;
+  // Set canvas size to fit only the ID text
+  combinedCanvas.width = qrCodeSize + 2 * padding;
+  combinedCanvas.height = idHeight + 2 * padding;
 
-        context.fillStyle = '#ffffff';
-        context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
-        context.fillStyle = '#000000';
-        context.font = '16px Arial';
-        context.textAlign = 'center';
-        context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, idHeight - 10);
-        context.drawImage(canvas, padding, idHeight + padding, qrCodeSize, qrCodeSize);
+  context.fillStyle = '#ffffff';
+  context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+  context.fillStyle = '#000000';
+  context.font = '16px Arial';
+  context.textAlign = 'center';
+
+  // Draw only the ID text
+  context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, combinedCanvas.height / 2);
 
         const combinedImage = combinedCanvas.toDataURL('image/png');
         const printWindow = window.open('', '_blank');
@@ -407,10 +453,8 @@ onPrintQrCode(): void {
         printWindow?.document.close();
         printWindow?.print();
         printWindow?.close();
-    } else {
-        console.error('QR code canvas not found.');
-    }
-}
+    } 
+
 
   closeQrModal(): void {
     this.isQrModalOpen = false;

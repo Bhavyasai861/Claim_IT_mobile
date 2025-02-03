@@ -126,14 +126,14 @@ export class ApproveRejectPage implements OnInit {
       this.isLoading = true;
       this.claimService.approveOrRejectClaim(params).subscribe(
         async (res: any) => {
-          await this.presentConfirmationDialog('Success!!', 'Claim Request Approved Successfully');
-          this.search();
           this.isLoading = false;
           this.isPopoverOpen = false;
+          await this.presentConfirmationDialog('Success!!', 'Claim Request Approved Successfully', true);  // Success dialog with only "OK" button
+          this.search();
         },
         (error) => {
           console.error('Error approving claim:', error);
-          this.isPopoverOpen = false; 
+          this.isPopoverOpen = false;
         }
       );
     } else {
@@ -189,19 +189,21 @@ export class ApproveRejectPage implements OnInit {
       this.isLoading = true;
       this.claimService.markASClaimed(params).subscribe(
         async (res: any) => {
-          await this.presentConfirmationDialog('Success!!', 'Item Claimed Successfully');
-          this.search();
           this.isLoading = false;
+          await this.presentConfirmationDialog('Success!!', 'Item Claimed Successfully', true);  // Success dialog with only "OK" button
+          this.search();
         },
         (error) => {
           console.error('Error marking item as claimed:', error);
         }
       );
     }
+  
     setTimeout(() => {
       this.isPopoverOpen = false;
     }, 200);
   }
+  
   
   async  presentConfirmationDialog(title: string, message: string, isSuccess: boolean = false): Promise<string> {
     return new Promise<string>((resolve) => {
