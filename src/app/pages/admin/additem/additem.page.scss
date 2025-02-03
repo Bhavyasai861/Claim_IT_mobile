@@ -21,6 +21,13 @@
   border-radius: 8px;
   float: right;
 }
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh; 
+  margin-top: 50px;
+}
 
 .modal {
   margin-top: 200px;

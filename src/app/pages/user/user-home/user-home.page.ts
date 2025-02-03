@@ -118,11 +118,7 @@ export class UserHomePage implements OnInit {
   
         if (event) event.target.complete(); // Complete infinite scroll event
       },
-      (error) => {
-        console.error('Error fetching items:', error);
-        this.isLoading = false;
-        if (event) event.target.complete();
-      }
+    
     );
   }
   getImage(base64String: string): string {
@@ -238,7 +234,6 @@ export class UserHomePage implements OnInit {
   }
   closeImageModal() {
     this.isImageModalOpen = false;
-    this.clearSearch(); // Reset the list and fetch original items
   }
   triggerFileInput(): void {
     const fileInput = document.querySelector<HTMLInputElement>('#fileInput');

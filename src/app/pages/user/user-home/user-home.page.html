@@ -81,14 +81,14 @@
         </p>
       </ion-col>
       <ion-col size="2" style="text-align: center;">
-        <ion-icon name="qr-code-outline" class="qrIcon" (click)="openQrModal(item)" *ngIf="item.status === 'PENDING_APPROVAL'"
+        <ion-icon name="qr-code-outline" class="qrIcon" (click)="openQrModal(item)" *ngIf="item.status === 'PENDING_APPROVAL' || item.status === 'PENDING_PICKUP'"
          ></ion-icon>
         <ion-button expand="block" size="small" (click)="onButtonClick(item.itemId)" *ngIf="item.status === 'UNCLAIMED'"
           style="--background: #00897b; color: white;">
           Claim
         </ion-button>
       </ion-col>
-    </ion-row>\
+    </ion-row>
     <ion-infinite-scroll (ionInfinite)="fetchItems($event)" threshold="100px">
       <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more items...">
       </ion-infinite-scroll-content>
@@ -116,7 +116,7 @@
     <ng-template>
       <ion-content>
         <div style="text-align: center; position: relative;">
-          <img [src]="selectedImage" alt="Selected Image" style="width: 90%; height: 250px; object-fit: contain;" />
+          <img [src]="selectedImage" alt="Selected Image" style="margin-top: 52px;text-align: center; position: relative;width: 90%; height: 150px; object-fit: contain;" />
           <ion-button fill="clear" (click)="closeImageModal()"
             style="position: absolute; top: 10px; right: 10px; --background: transparent; --box-shadow: none; outline: none;">
             <ion-icon name="close" style="color: #f90000; outline: none;"></ion-icon>
