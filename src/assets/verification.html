@@ -59,7 +59,7 @@
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
       });
 
-      const logoUrl = 'assets/loginLogo.jpg'; 
+      const logoUrl = 'assets/loginLogo.png'; 
       const logo = await toBase64(logoUrl);
 
       pdf.addImage(logo, 'JPEG', 10, 10, 50, 50); 
