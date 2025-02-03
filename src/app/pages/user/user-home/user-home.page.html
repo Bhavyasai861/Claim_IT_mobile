@@ -81,14 +81,14 @@
         </p>
       </ion-col>
       <ion-col size="2" style="text-align: center;">
-        <ion-icon name="qr-code-outline" class="qrIcon" (click)="openQrModal(item)" *ngIf="item.status === 'PENDING_APPROVAL'"
+        <ion-icon name="qr-code-outline" class="qrIcon" (click)="openQrModal(item)" *ngIf="item.status === 'PENDING_APPROVAL' || item.status === 'PENDING_PICKUP'"
          ></ion-icon>
         <ion-button expand="block" size="small" (click)="onButtonClick(item.itemId)" *ngIf="item.status === 'UNCLAIMED'"
           style="--background: #00897b; color: white;">
           Claim
         </ion-button>
       </ion-col>
-    </ion-row>\
+    </ion-row>
     <ion-infinite-scroll (ionInfinite)="fetchItems($event)" threshold="100px">
       <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more items...">
       </ion-infinite-scroll-content>
