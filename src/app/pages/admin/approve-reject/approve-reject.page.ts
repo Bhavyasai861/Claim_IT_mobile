@@ -95,15 +95,16 @@ export class ApproveRejectPage implements OnInit {
     return differenceInDays > 30 ? 'EXPIRED' : currentStatus;
   }
   async confirmRemove(event: any) {
-    const confirmed = await this.presentConfirmationDialog('Remove', 'Are you sure you want to remove this item?');
+    const confirmed = await this.presentConfirmationDialog('Item Expired', 'This item has expired. Do you want to remove it?');
     if (confirmed === 'yes') {
       const itemId = event.itemId;
       this.isLoading = true;
       this.claimService.adminRemoveItem(itemId).subscribe(
-        (res: any) => {
-          this.search(); 
+        async (res: any) => {
           this.isLoading = false;
           this.isPopoverOpen = false; 
+          await this.presentConfirmationDialog('Removal Successful', 'The expired item has been removed.', true);
+          this.search(); 
         },
         (error) => {
           this.isPopoverOpen = false; 
@@ -114,7 +115,7 @@ export class ApproveRejectPage implements OnInit {
       this.isPopoverOpen = false; 
     }
   }
-
+  
   async approveClaim(event: any) {
     const confirmed = await this.presentConfirmationDialog('Approve Claim', 'Are you sure you want to approve this claim?');
     if (confirmed === 'yes') {
@@ -202,19 +203,25 @@ export class ApproveRejectPage implements OnInit {
     }, 200);
   }
   
-  async presentConfirmationDialog(title: string, message: string): Promise<string> {
+  async  presentConfirmationDialog(title: string, message: string, isSuccess: boolean = false): Promise<string> {
     return new Promise<string>((resolve) => {
       const dialog = document.createElement('ion-alert');
       dialog.header = title;
       dialog.message = message;
-      dialog.buttons = [
-        { text: 'Cancel', role: 'cancel', handler: () => resolve('no') },
-        { text: 'Yes', role: 'confirm', handler: () => resolve('yes') },
-      ];
+      if (isSuccess) {
+        dialog.buttons = [{ text: 'OK', role: 'confirm', handler: () => resolve('ok') }];
+      } else {
+        dialog.buttons = [
+          { text: 'Cancel', role: 'cancel', handler: () => resolve('no') },
+          { text: 'Yes', role: 'confirm', handler: () => resolve('yes') },
+        ];
+      }
+  
       document.body.appendChild(dialog);
       dialog.present();
     });
   }
+  
 
   async presentRejectClaimDialog(title: string, message: string): Promise<string | null> {
     return new Promise<string | null>((resolve) => {

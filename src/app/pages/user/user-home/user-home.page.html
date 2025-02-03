@@ -104,6 +104,20 @@
         </div>
       </div>      
     </ion-modal>
+    <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"
+    style="--width: 300px; --height: 270px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+    <ng-template>
+      <ion-content>
+        <div style="text-align: center; position: relative;">
+          <img [src]="selectedImage" alt="Selected Image" style="width: 90%; height: 250px; object-fit: contain;" />
+          <ion-button fill="clear" (click)="closeImageModal()"
+            style="position: absolute; top: 10px; right: 10px; --background: transparent; --box-shadow: none; outline: none;">
+            <ion-icon name="close" style="color: #f90000; outline: none;"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
     <ion-modal [isOpen]="isModalOpen"
       style="--width: 300px; --height: 300px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
       <ng-template>
