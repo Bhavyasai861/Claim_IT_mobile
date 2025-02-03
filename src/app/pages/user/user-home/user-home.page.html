@@ -61,6 +61,9 @@
     <ion-spinner name="crescent"></ion-spinner>
   </div>
   <ion-grid class="custom-card">
+    <ion-row *ngIf="items.length === 0 && searchQuery.trim().length > 0" style="text-align: center; padding: 20px;">
+      <img src="assets/noresults.png" alt="No Results" class="w-32 mx-auto" />
+    </ion-row>
     <ion-row *ngFor="let item of items"
       style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
       <ion-col size="4">
@@ -85,7 +88,11 @@
           Claim
         </ion-button>
       </ion-col>
-    </ion-row>
+    </ion-row>\
+    <ion-infinite-scroll (ionInfinite)="fetchItems($event)" threshold="100px">
+      <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more items...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
     <ion-modal [isOpen]="isQrModalOpen" (ionModalDidDismiss)="closeQrModal()" canDismiss="true"
       style="--width: 300px; --height: 350px; --max-width: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
       <div *ngIf="qrData">

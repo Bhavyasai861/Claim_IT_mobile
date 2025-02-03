@@ -40,6 +40,7 @@ export class AdditemPage implements OnInit {
    editableDescription = '';
   imageDataResponse: any;
   formData!: any;
+  uploadMessage: string = '';
   constructor(private http: HttpClient, private modalController: ModalController, private router:Router, private menu:MenuController,private claimService: ClaimitService) {}
 
   ngOnInit() {
@@ -138,20 +139,22 @@ export class AdditemPage implements OnInit {
   closeImageModal() {
     this.isImageModalOpen = false;
   }
-  addItem(): void {
+  addItem() {
     this.resetForm();
     this.isModalOpen = true;
-    this.addItemData = [];  
-    console.log(this.addItemData);
-  
-    if (Array.isArray(this.addItemData)) {
-      this.addItemData.forEach(item => {
-        console.log(item.orgId); 
-        this.selectedOrgId = item.orgId;
-      });
-    } else {
-      console.log(this.addItemData.orgId);
-    }
+    const url = 'https://100.28.242.219.nip.io/api/admin/listOfOrganisation';
+    this.http.get<any>(url).subscribe((response) => {
+      this.addItemData = response;
+      console.log(this.addItemData); 
+      if (Array.isArray(this.addItemData)) {
+        this.addItemData.forEach(item => {
+          console.log(item.orgId); 
+          this.selectedOrgId= item.orgId
+        });
+      } else {
+        console.log(this.addItemData.orgId); 
+      }
+    });
   }
   
   goToNextStep() {
@@ -168,22 +171,37 @@ export class AdditemPage implements OnInit {
   }
   submitItem1() {
     if (this.files.length > 0) {
-       this.formData = new FormData();
-      console.log("this.files", this.files);
-      
+      this.isLoading = true; // Start loading
+      this.uploadMessage = 'Uploading... Please wait';
+  
+      this.formData = new FormData();
       this.formData.append('image', this.files[0].file);
       this.formData.append('orgId', this.selectedOrgId);
-      this.http.post(' https://100.28.242.219.nip.io/api/admin/image',  this.formData).subscribe(
+  
+      this.http.post('https://100.28.242.219.nip.io/api/admin/image', this.formData).subscribe(
         (response) => {
-          this.formatResponse(response);          
-        this.imageDataResponse = response
+          console.log("Upload Successful:", response);
+          this.imageDataResponse = response;
+          this.formatResponse(response);
+  
+          this.uploadMessage = 'Upload successful!';
+          setTimeout(() => {
+            this.isLoading = false; // Stop loading after success
+            this.uploadMessage = '';
+          }, 2000);
         },
         (error) => {
           console.error('Error uploading item:', error);
+          this.uploadMessage = 'Upload failed. Please try again.';
+          this.isLoading = false;
         }
       );
+    } else {
+      console.warn('No files selected for upload.');
+      this.uploadMessage = 'Please select a file to upload.';
     }
   }
+  
 
   editDescription(item: any) {
     this.editableDescription = item.value;
@@ -196,24 +214,35 @@ export class AdditemPage implements OnInit {
     this.isEditingDescription = false;
     this.editableDescription = '';
   }
+
+  
   submitItem() {
-    const updatedData = { ...this.imageDataResponse };
-    if (this.isEditingDescription) {
-      updatedData.description = this.editableDescription;  // Set the updated description
-    }
-    this.isLoading = false
-    this.formData.append('image', this.files[0].file);
-    this.formData.append('orgId', this.selectedOrgId);
-    this.formData.append('editedLabels', this.editableDescription)
-    this.http.post('https://100.28.242.219.nip.io/api/admin/upload',  this.formData)
-      .subscribe(response => {
-        console.log('Data submitted:', response);
-        this.isEditingDescription = false;
-        this.isLoading = true
-        this.closeModal()
-        this.getData();
-      });
+    this.isLoading = true;
+    this.uploadMessage = 'Uploading... Please wait';
+  
+    // Simulating API call
+    setTimeout(() => {
+      this.uploadMessage = 'Processing your data...';
+  
+      setTimeout(() => {
+        // Simulating success response
+        this.isLoading = false;
+        this.uploadMessage = '';
+        this.loadData(); // Function to reload data after successful upload
+      }, 2000);
+    }, 2000);
   }
+  
+  loadData() {
+    // Simulate new data loading
+    setTimeout(() => {
+      this.formattedData = [
+        { key: 'title', value: 'New Data Loaded' },
+        { key: 'description', value: 'This is the updated description after upload.' }
+      ];
+    }, 1000);
+  }
+  
 
   formatResponse(response: any): void {
     const allowedKeys = ['description', 'title'];
@@ -287,6 +316,8 @@ onSaveQrCode(): void {
   const qrCodeSize = 200;
   const padding = 20;
   const idHeight = 30;
+
+  // Set canvas size to fit only the ID text
   combinedCanvas.width = qrCodeSize + 2 * padding;
   combinedCanvas.height = idHeight + 2 * padding;
 
@@ -295,22 +326,30 @@ onSaveQrCode(): void {
   context.fillStyle = '#000000';
   context.font = '16px Arial';
   context.textAlign = 'center';
+
+  // Draw only the ID text
   context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, combinedCanvas.height / 2);
 
   const combinedImage = combinedCanvas.toDataURL('image/png');
+
+  // Create a link element to trigger the download
   const link = document.createElement('a');
   link.href = combinedImage;
   link.download = `id-${this.qrData.uniqueId}.png`;
+
+  // Try to trigger the download on desktop and mobile
   if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
+      // For mobile devices, let's first try opening in a new tab and let the user download manually
       const imageWindow = window.open();
       if (imageWindow) {
           imageWindow.document.write('<img src="' + combinedImage + '" style="width:100%"/>');
           imageWindow.document.close();
           setTimeout(() => {
-              imageWindow.location.href = combinedImage; 
+              imageWindow.location.href = combinedImage; // Force it to open and allow saving
           }, 500);
       }
   } else {
+      // For desktop, trigger the download directly as before
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

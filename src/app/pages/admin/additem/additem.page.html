@@ -47,29 +47,42 @@
   
           <div *ngIf="currentStep === 2">
             <h3>Preview</h3>
-            <ion-list>
-              <ion-item *ngFor="let item of formattedData">
-                <ion-label>
-                  <span *ngIf="item.key !== 'description'">
-                    {{ isTruncated && item.key === 'description' ? (item.value | slice: 0:100) + '...' : item.value }}
-                  </span>
-                  <span *ngIf="item.key === 'description'">
-                    <ng-container *ngIf="!isEditingDescription">
-                      {{ isTruncated ? (item.value | slice: 0:100) + '...' : item.value }}
-                      <a href="javascript:void(0)" (click)="toggleTruncate()">
-                        {{ isTruncated ? 'Read More' : 'Show Less' }}
-                      </a>
-                      <ion-icon name="create" (click)="editDescription(item)"></ion-icon>
-                    </ng-container>
-                    <ng-container *ngIf="isEditingDescription">
-                      <textarea [(ngModel)]="editableDescription" placeholder="Edit description" rows="4" class="styled-textarea"></textarea>
-                    </ng-container>
-                  </span>
-                </ion-label>
-              </ion-item>
-            </ion-list>
-            <ion-button (click)="submitItem()" class="additem" expand="full">Submit</ion-button>
+          
+            <!-- Show Loader When Data is Not Available -->
+            <div *ngIf="isLoading">
+              <ion-spinner name="crescent"></ion-spinner>
+             
+            </div>
+          
+            <!-- Show Data When Available -->
+            <div *ngIf="!isLoading && formattedData.length > 0">
+              <ion-list>
+                <ion-item *ngFor="let item of formattedData">
+                  <ion-label>
+                    <span *ngIf="item.key !== 'description'">
+                      {{ isTruncated && item.key === 'description' ? (item.value | slice: 0:100) + '...' : item.value }}
+                    </span>
+                    <span *ngIf="item.key === 'description'">
+                      <ng-container *ngIf="!isEditingDescription">
+                        {{ isTruncated ? (item.value | slice: 0:100) + '...' : item.value }}
+                        <a href="javascript:void(0)" (click)="toggleTruncate()">
+                          {{ isTruncated ? 'Read More' : 'Show Less' }}
+                        </a>
+                        <ion-icon name="create" (click)="editDescription(item)"></ion-icon>
+                      </ng-container>
+                      <ng-container *ngIf="isEditingDescription">
+                        <textarea [(ngModel)]="editableDescription" placeholder="Edit description" rows="4" class="styled-textarea"></textarea>
+                      </ng-container>
+                    </span>
+                  </ion-label>
+                </ion-item>
+              </ion-list>
+              <ion-button (click)="submitItem()" [disabled]="isLoading" class="additem">
+                Submit
+              </ion-button>
+            </div>
           </div>
+          
         </div>
       </div>
     </ng-template>
