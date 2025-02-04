@@ -45,14 +45,22 @@ const routes: Routes = [
         path: 'view-claim',
         loadChildren: () => import('./pages/user/view-claim/view-claim.module').then(m => m.ViewClaimPageModule)
       },
-
+      {
+        path: 'expired-items',
+        loadChildren: () => import('./pages/admin/expired-items/expired-items.module').then(m => m.ExpiredItemsPageModule)
+      },
 
     ]
   },
   {
     path: 'splash',
     loadChildren: () => import('./pages/authentication/splash/splash.module').then( m => m.SplashPageModule)
+  },
+  {
+    path: 'expired-items',
+    loadChildren: () => import('./pages/admin/expired-items/expired-items.module').then( m => m.ExpiredItemsPageModule)
   }
+
 
 
 
