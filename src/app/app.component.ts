@@ -27,6 +27,7 @@ export class AppComponent {
         { title: 'Dashboard', url: '/claimIt/admin-home', icon: 'home-outline' },
         { title: 'Additem', url: '/claimIt/additem', icon: 'add-circle-outline' },
         { title: 'Approve / Reject', url: '/claimIt/approve-reject', icon: 'checkmark-circle-outline' },
+        { title: 'Expired Items', url: '/claimIt/expired-items', icon: 'pricetag-outline' },
         { title: 'Notifications', url: '/claimIt/notifications', icon: 'notifications-outline' },
         { title: 'Logout', icon: 'log-out-outline', action: 'logout' }, 
       ];
