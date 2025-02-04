@@ -15,8 +15,6 @@ const routes: Routes = [
     path: 'claimIt',
     component: AppComponent, // Ensure AppComponent is the first to load
     children: [
-
-
       {
         path: 'admin-home',
         loadChildren: () => import('./pages/admin/admin-home/admin-home.module').then(m => m.AdminHomePageModule)
@@ -56,10 +54,12 @@ const routes: Routes = [
     path: 'splash',
     loadChildren: () => import('./pages/authentication/splash/splash.module').then( m => m.SplashPageModule)
   },
+ 
   {
-    path: 'expired-items',
-    loadChildren: () => import('./pages/admin/expired-items/expired-items.module').then( m => m.ExpiredItemsPageModule)
+    path: 'skeleton',
+    loadChildren: () => import('./pages/skeletons/skeleton/skeleton.module').then( m => m.SkeletonPageModule)
   }
+
 
 
 

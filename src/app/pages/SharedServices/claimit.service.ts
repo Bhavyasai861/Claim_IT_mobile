@@ -55,6 +55,13 @@ export class ClaimitService {
   public listOfItemsAddItem(query: any) {
     return this.http.get(environment.listOfItemsAddItem);
   }
+  public getExpiredItems() {
+    return this.http.get(environment.getExpiredItems);
+  }
+  public updateDate(reqbody:any){
+    return this.http.put(environment.updateDate+'?itemId='+reqbody.itemId+'&expiredDate='+reqbody.expiredDate,'')
+  }
+
   //List of itetems
   public listOfItems(page: number) {
     const url = `${environment.listOfItems}?page=${page}&size=5`;

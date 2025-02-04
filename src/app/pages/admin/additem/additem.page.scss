@@ -21,11 +21,12 @@
   border-radius: 8px;
   float: right;
 }
+
 .spinner-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 50vh; 
+  height: 50vh;
   margin-top: 50px;
 }
 
@@ -72,7 +73,7 @@
   border-radius: 10px;
   background-color: #f9f9f9;
   transition: border-color 0.3s ease;
-  
+
   &:hover {
     border-color: #00897b;
   }
@@ -88,31 +89,37 @@
   max-height: calc(90vh - 40px);
   overflow-y: auto;
   padding: 16px;
-  scrollbar-width: thin; 
-  scrollbar-color: #00897b #f1f1f1; 
+  scrollbar-width: thin;
+  scrollbar-color: #00897b #f1f1f1;
 
   /* For Webkit-based browsers */
   &::-webkit-scrollbar {
     width: 8px;
   }
+
   &::-webkit-scrollbar-thumb {
     background-color: #00897b;
     border-radius: 10px;
   }
+
   &::-webkit-scrollbar-track {
     background-color: #f1f1f1;
   }
 }
 
 .modal-header {
-  display: flex;  /* Use flexbox to arrange elements in a row */
-  justify-content: space-between;  /* Distribute space between the items */
-  align-items: center;  /* Vertically center the items */
+  display: flex;
+  /* Use flexbox to arrange elements in a row */
+  justify-content: space-between;
+  /* Distribute space between the items */
+  align-items: center;
+  /* Vertically center the items */
   position: sticky;
   top: 0;
   background-color: white;
   z-index: 1;
-  padding: 8px 16px;  /* Add padding for spacing */
+  padding: 8px 16px;
+  /* Add padding for spacing */
   border-bottom: 1px solid #ddd;
 }
 
@@ -135,7 +142,7 @@ ion-item {
 ion-label {
   font-size: 14px;
   color: #555;
-  
+
   strong {
     color: #333;
     font-weight: 600;
@@ -154,14 +161,14 @@ ion-label {
 
 .image {
   width: 50%;
-  height: 50%; 
-  border-radius: 5px; 
+  height: 50%;
+  border-radius: 5px;
   margin-top: 20px;
 }
 
 .close-icon {
-  color: red; 
-  font-size: 20px; 
+  color: red;
+  font-size: 20px;
   position: relative;
   top: -130px;
 }
@@ -169,19 +176,20 @@ ion-label {
 .custom-card {
   margin: 10px;
   height: 135px;
-}  
+}
+
 .card-row {
   display: flex;
   align-items: center;
   margin-bottom: 15px;
   padding: 12px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border: 1px solid #e0e0e0;
   background-color: #ffffff;
-  transform: translateY(10px); 
+  transform: translateY(10px);
   opacity: 0;
-  animation: fadeInUp 0.5s ease-in-out forwards; 
+  animation: fadeInUp 0.5s ease-in-out forwards;
 }
 
 .card-row:hover {
@@ -194,28 +202,34 @@ ion-label {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0px);
   }
 }
+
 .spinner-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100px; /* Adjust height as needed */
+  height: 100px;
+  /* Adjust height as needed */
   width: 100%;
 }
 
 .claimed-card {
-  background-color: #e0ffe0; 
+  background-color: #e0ffe0;
 }
+
 .pending-card {
-  background-color: #ffeee0; 
+  background-color: #ffeee0;
 }
+
 .rejected-card {
   background-color: #ec9d9d;
 }
+
 .loading-container {
   display: flex;
   justify-content: center;
@@ -225,7 +239,8 @@ ion-label {
   top: 0;
   left: 0;
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+  background-color: rgba(255, 255, 255, 0.7);
+  /* Semi-transparent background */
 }
 
 .no-records-container {
@@ -234,17 +249,19 @@ ion-label {
   color: #888;
   margin-top: 50px;
 }
-.close-button{
+
+.close-button {
   color: red;
 }
+
 .no-records-image {
-  max-width: 100px; 
+  max-width: 100px;
   margin-bottom: 10px;
 }
 
 .scrollable-content {
   max-height: 350px;
-  overflow-y: auto; 
+  overflow-y: auto;
   padding: 10px;
 }
 
@@ -266,30 +283,36 @@ ion-label {
 
 .upload-box {
   width: 100%;
-  height: 200px; /* Adjust height as needed */
+  height: 200px;
+  /* Adjust height as needed */
   border: 2px dashed #ccc;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  overflow: hidden; /* Prevents overflow */
+  overflow: hidden;
+  /* Prevents overflow */
 }
 
 .image-container {
   position: relative;
-  width: 120px; /* Adjust size as needed */
-  height: 120px; /* Adjust size as needed */
+  width: 120px;
+  /* Adjust size as needed */
+  height: 120px;
+  /* Adjust size as needed */
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden; /* Ensures image does not overflow */
-  border: 1px solid #ccc; /* Optional border */
+  overflow: hidden;
+  /* Ensures image does not overflow */
+  border: 1px solid #ccc;
+  /* Optional border */
 }
 
 .image {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Ensures the image fills the container while maintaining aspect ratio */
+  object-fit: cover;
 }
 
 .close-icon {
@@ -301,4 +324,9 @@ ion-label {
   cursor: pointer;
   background: white;
   border-radius: 50%;
+}
+ion-skeleton-text {
+  --border-radius: 9999px;
+  --background: rgba(188, 0, 255, 0.065);
+  --background-rgb: 188, 0, 255;
 }

@@ -17,7 +17,7 @@ import { ClaimitService } from '../../SharedServices/claimit.service';
   styleUrls: ['./additem.page.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, HttpClientModule,QRCodeModule],
+  imports: [CommonModule, FormsModule, IonicModule, HttpClientModule,QRCodeModule,],
 })
 export class AdditemPage implements OnInit {
   @ViewChild('qrCode') qrCode!: QRCodeComponent;
