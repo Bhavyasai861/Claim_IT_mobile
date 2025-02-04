@@ -15,7 +15,7 @@
     </ion-button>
   </div>
   <ion-modal [isOpen]="isModalOpen" (willDismiss)="onModalDismiss()"
-    style="--width: 500px; --height: 450px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+    style="--width: 500px; --height: 400px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
     <ng-template>
       <div class="content">
         <div class="modal-header">
@@ -51,8 +51,7 @@
             </div>
             
             <div *ngIf="!isLoading && formattedData.length > 0">
-              <ion-list>
-                <ion-item *ngFor="let item of formattedData">
+                <div *ngFor="let item of formattedData">
                   <ion-label>
                     <span *ngIf="item.key === 'description'">
                       <ng-container *ngIf="!isEditingDescription">
@@ -67,16 +66,16 @@
                       </ng-container>
                     </span>
                   </ion-label>
-                </ion-item>
+                </div>
                 <ion-item>
-                  <ion-label>Select Category</ion-label>
-                  <ion-select (ionChange)="onCategoryChange($event)">
+                  <ion-label>Category</ion-label>
+                  <ion-select [(ngModel)]="categoryName" (ionChange)="onCategoryChange($event)"  interface="popover">
                     <ion-select-option *ngFor="let category of categoryNames" [value]="category">
                       {{ category }}
                     </ion-select-option>
                   </ion-select>
                 </ion-item>
-              </ion-list>
+                
               <ion-button (click)="submitItem()" [disabled]="isLoading" class="additem">
                 Submit
               </ion-button>

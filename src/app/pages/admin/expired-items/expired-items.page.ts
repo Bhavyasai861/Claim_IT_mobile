@@ -19,14 +19,19 @@ export class ExpiredItemsPage implements OnInit {
   receivedDate: string = '';
   highlightedDates: any = [];
   newSelectedDate: string = '';
+  isLoading: boolean = false;
+  isImageModalOpen = false;
+  selectedImage: string = '';
   constructor(private claimService: ClaimitService, private alertController: AlertController,) { }
 
   ngOnInit() {
     this.getData()
   }
   getData() {
+    this.isLoading = true;
     this.claimService.getExpiredItems().subscribe(
       (res: any) => {
+        this.isLoading = false;
         this.expiredItems = res
       },
       (error) => {
@@ -37,6 +42,13 @@ export class ExpiredItemsPage implements OnInit {
   }
   getImage(base64String: string): string {
     return `data:image/jpeg;base64,${base64String}`;
+  }
+  openImageModal(image: string) {
+    this.selectedImage = `data:image/jpeg;base64,${image}`;
+    this.isImageModalOpen = true;
+  }
+  closeImageModal() {
+    this.isImageModalOpen = false;
   }
   openCalendarDialog(item: any) {
     this.itemId = item.itemId;  

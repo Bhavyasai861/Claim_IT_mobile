@@ -47,11 +47,15 @@ export class AdditemPage implements OnInit {
   imageDataResponse: any;
   formData!: any;
   uploadMessage: string = '';
+  categoryName:string=''
   constructor(private http: HttpClient, private modalController: ModalController, private router:Router, private menu:MenuController,private claimService: ClaimitService) {}
 
   ngOnInit() {
     this.getData();
     this.fetchCategories()
+   
+    
+   
   }
   closeModal() {
     this.isModalOpen = false;
@@ -64,15 +68,6 @@ export class AdditemPage implements OnInit {
     localStorage.clear(); 
     this.router.navigateByUrl('/login'); 
   }
-  // fetchItems() {
-  //   const query = this.searchQuery.trim();
-  //   this.isLoading = true;
-  //   this.claimService.listOfItems(query).subscribe(
-  //     (res: any) => {
-  //       this.isLoading = false;
-  //     this.items = res.data;
-  //   });
-  // }
 
   getData() {
     const query = this.searchQuery.trim();
@@ -84,27 +79,25 @@ export class AdditemPage implements OnInit {
           date: key.split(":")[1], 
           items: res[key]
         }));
-        console.log(this.addItemSearchResults);
       },
       (error) => {
         console.error('Error fetching data:', error);
       }
     );
-
   }
 
   getStatusColor(status: string): string {
     switch (status) {
       case 'CLAIMED':
-        return '#e0ffe0'; // Light green
+        return '#e0ffe0';
         case 'PENDING_APPROVAL':
           return 'rgb(254, 226, 226)';
       case 'PENDING_PICKUP':
-        return 'rgb(254, 226, 226)'; // Light red/pink
+        return 'rgb(254, 226, 226)'; 
       case 'UNCLAIMED':
-        return 'rgb(248, 113, 113)'; // Red
+        return 'rgb(248, 113, 113)';
       case 'REJECTED':
-        return '#ec9d9d'; // Darker red
+        return '#ec9d9d'; 
       default:
         return '#ffffff'; 
     }
@@ -149,11 +142,9 @@ export class AdditemPage implements OnInit {
   addItem() {
     this.resetForm();
     this.isModalOpen = true;
-    this.addItemData = []; // Ensure addItemData is initialized
-    console.log(this.addItemData); 
+    this.addItemData = []; 
     if (Array.isArray(this.addItemData)) {
       this.addItemData.forEach(item => {
-        console.log(item.orgId); 
         this.selectedOrgId = item.orgId;
       });
     }
@@ -163,7 +154,6 @@ export class AdditemPage implements OnInit {
   goToNextStep() {
     if (this.currentStep < 2) {
       this.currentStep++;
-      // this.submitItem()
     }
   }
 
@@ -184,24 +174,20 @@ export class AdditemPage implements OnInit {
   
       this.http.post('https://100.28.242.219.nip.io/api/admin/image', this.formData).subscribe(
         (response) => {
-          console.log("Upload Successful:", response);
           this.imageDataResponse = response;
-          this.formatResponse(response);
-  
+          this.formatResponse(response);  
           this.uploadMessage = 'Upload successful!';
           setTimeout(() => {
-            this.isLoading = false; // Stop loading after success
+            this.isLoading = false;
             this.uploadMessage = '';
           }, 2000);
         },
         (error) => {
-          console.error('Error uploading item:', error);
           this.uploadMessage = 'Upload failed. Please try again.';
           this.isLoading = false;
         }
       );
     } else {
-      console.warn('No files selected for upload.');
       this.uploadMessage = 'Please select a file to upload.';
     }
   }
@@ -234,7 +220,6 @@ export class AdditemPage implements OnInit {
     this.formData.append('editedLabels', this.editableDescription)
     this.http.post('https://100.28.242.219.nip.io/api/admin/upload',  this.formData)
       .subscribe(response => {
-        console.log('Data submitted:', response);
         this.isEditingDescription = false;
         this.isModalOpen = false;
         this.getData();
@@ -250,8 +235,8 @@ export class AdditemPage implements OnInit {
     }, 1000);
   }
   
-
   formatResponse(response: any): void {
+    this.categoryName = response.categoryName; // Set the initial category
     const allowedKeys = ['description', 'title'];
     this.formattedData = Object.entries(response)
       .filter(([key]) => allowedKeys.includes(key))
@@ -290,7 +275,6 @@ fetchCategories(): void {
 
 openQrModal(item: any): void {
   this.qrData = item;
-  // this.qrDataString = this.generateQrCodeData(item);
   this.isQrModalOpen = true;
 }
 // onSaveQrCode(): void {
@@ -427,25 +411,18 @@ onPrintQrCode(): void {
   const combinedCanvas = document.createElement('canvas');
   const context = combinedCanvas.getContext('2d');
   if (!context) {
-      console.error('Could not get 2D context for canvas.');
       return;
   }
-
   const qrCodeSize = 200;
   const padding = 20;
   const idHeight = 30;
-
-  // Set canvas size to fit only the ID text
   combinedCanvas.width = qrCodeSize + 2 * padding;
   combinedCanvas.height = idHeight + 2 * padding;
-
   context.fillStyle = '#ffffff';
   context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
   context.fillStyle = '#000000';
   context.font = '16px Arial';
-  context.textAlign = 'center';
-
-  // Draw only the ID text
+  context.textAlign = 'center'
   context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, combinedCanvas.height / 2);
 
         const combinedImage = combinedCanvas.toDataURL('image/png');
