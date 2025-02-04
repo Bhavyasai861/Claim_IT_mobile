@@ -31,6 +31,7 @@ export class AdminHomePage implements OnInit {
     donated: 0,
   };
   displayedCharities: any[] = [];
+  isCalendarModalOpen = false;
 
   monthName: any = [];
   selectedMonth: Date = new Date();
@@ -198,6 +199,14 @@ i: any;
       item.locationName = 'Retrieved Location'; // Simulate location retrieval
     }
   }
+  categoryItems(month: number, year: number): void {
+    this.claimService.categoryItems(month.toString(), year).subscribe((res: any) => {
+      const labels = res.map((item: any) => item.categoryName);
+      const dataPoints = res.map((item: any) => item.itemCount);
+      this.updatedPieChartData(labels, dataPoints);
+      this.updatedBarChartData(labels, dataPoints);
+    });
+  }
   onSlideChange(event: any) {
     console.log('Slide changed!', event);
   }
@@ -293,6 +302,7 @@ i: any;
     this.barChartData = { ...this.barChartData };
   }
 
+ 
   updateDoughnutChartData(): void {
     const colors = this.generateChartColors(3);
     this.doughnutChartData = {
@@ -312,11 +322,11 @@ i: any;
     const lineChartColors = this.generateChartColors(2);
 
     this.lineChartData = {
-      labels: [this.selectedMonth.toLocaleString('default', { month: 'long' })],
+      labels: [this.monthName],
       datasets: [
         {
           label: 'Claimed Items',
-          data: [this.currentMonthData.claimed],
+          data: [this.currentMonthData.claimed,],
           backgroundColor: lineChartColors[0],
           borderColor: lineChartColors[0],
           fill: false,
@@ -324,14 +334,13 @@ i: any;
         {
           label: 'Unclaimed Items',
           data: [this.currentMonthData.unclaimed],
-          backgroundColor: lineChartColors[1],
+          backgroundColor:lineChartColors[1],
           borderColor: lineChartColors[1],
           fill: false,
         },
       ],
     };
   }
-
   generateChartColors(count: number): string[] {
     const colors = [];
     for (let i = 0; i < count; i++) {
@@ -357,9 +366,18 @@ i: any;
     this.selectedMonth = new Date(year, month - 1);    
     this.statusCount(month,year)
   }
-  openCalendarDialog(): void {
-    this.isModalOpen=true
-  }
+openCalendarModal() {
+  this.isCalendarModalOpen = true;
+}
+
+confirmMonthSelection() {
+  const selectedDate = new Date(this.selectedMonth);
+  this.selectedMonth = selectedDate;
+  this.statusCount(selectedDate.getMonth() + 1, selectedDate.getFullYear());
+  this.categoryItems(selectedDate.getMonth() + 1, selectedDate.getFullYear());
+  this.monthName = selectedDate.toLocaleString('default', { month: 'long' });
+  this.isCalendarModalOpen = false;
+}
   statusCount(month: number, year: number): void {
     this.claimService.statusCount(month.toString(), year).subscribe({
       next: (res: any) => {
