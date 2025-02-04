@@ -45,7 +45,6 @@
             <ion-button (click)="goToNextStep(); submitItem1()" [disabled]="!files.length" class="next">Next</ion-button>
           </div>  
           <div *ngIf="currentStep === 2">
-           
             <h3>Preview</h3>
             <div *ngIf="isLoading" class="spinner-container">
               <ion-spinner name="crescent"></ion-spinner>
@@ -55,9 +54,6 @@
               <ion-list>
                 <ion-item *ngFor="let item of formattedData">
                   <ion-label>
-                    <span *ngIf="item.key !== 'description'">
-                      {{ isTruncated && item.key === 'description' ? (item.value | slice: 0:100) + '...' : item.value }}
-                    </span>
                     <span *ngIf="item.key === 'description'">
                       <ng-container *ngIf="!isEditingDescription">
                         {{ isTruncated ? (item.value | slice: 0:100) + '...' : item.value }}
@@ -67,17 +63,25 @@
                         <ion-icon name="create" (click)="editDescription(item)"></ion-icon>
                       </ng-container>
                       <ng-container *ngIf="isEditingDescription">
-                        <textarea [(ngModel)]="editableDescription" placeholder="Edit description" rows="4" class="styled-textarea"></textarea>
+                        <textarea placeholder="Edit description" rows="4" class="styled-textarea"></textarea>
                       </ng-container>
                     </span>
                   </ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-label>Select Category</ion-label>
+                  <ion-select (ionChange)="onCategoryChange($event)">
+                    <ion-select-option *ngFor="let category of categoryNames" [value]="category">
+                      {{ category }}
+                    </ion-select-option>
+                  </ion-select>
                 </ion-item>
               </ion-list>
               <ion-button (click)="submitItem()" [disabled]="isLoading" class="additem">
                 Submit
               </ion-button>
             </div>
-          </div>          
+          </div>
         </div>
       </div>
     </ng-template>
