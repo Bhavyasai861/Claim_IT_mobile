@@ -28,10 +28,14 @@
       </ion-row>
     </ion-grid>
   <ion-modal [isOpen]="isModalOpen" (ionModalDidDismiss)="onModalDismiss()"
-    style="--width: 500px; --height: 450px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+    style="--width: 500px; --height: 350px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
     <ng-template>
       <ion-content>
-        <ion-icon name="close" style="color: #f90000; outline: none;" (click)="closeCalendarDialog()"></ion-icon>
+        <ion-button fill="clear" (click)="closeCalendarDialog()"
+        style="position: absolute; top: 2px; right: 10px; --background: transparent; --box-shadow: none; outline: none;">
+        <ion-icon name="close" style="color: #f90000; outline: none;"></ion-icon>
+      </ion-button>
+        <!-- <ion-icon name="close" style="color: #f90000; outline: none;" (click)="closeCalendarDialog()"></ion-icon> -->
         <ion-datetime [min]="receivedDate" [value]="receivedDate" [presentation]="'date'"
           [highlightedDates]="highlightedDates" (ionChange)="onDateSelected($event)">
         </ion-datetime>

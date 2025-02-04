@@ -59,7 +59,7 @@ export class ClaimitService {
     return this.http.get(environment.getExpiredItems);
   }
   public updateDate(reqbody:any){
-    return this.http.put(environment.updateDate+'?itemId='+reqbody.itemId+'&expiredDate='+reqbody.expiredDate,'')
+    return this.http.put(environment.updateDate+'?itemId='+reqbody.itemId+'&expirationDate='+reqbody.expirationDate,'')
   }
 
   //List of itetems

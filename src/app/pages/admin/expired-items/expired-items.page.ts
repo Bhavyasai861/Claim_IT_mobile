@@ -85,7 +85,7 @@ export class ExpiredItemsPage implements OnInit {
   updateDate(){
     const params = {
       itemId: this.itemId,
-      expiredDate: this.receivedDate,
+      expirationDate: this.receivedDate,
     };
     this.claimService.updateDate(params).subscribe(
       (response: any) => {  
