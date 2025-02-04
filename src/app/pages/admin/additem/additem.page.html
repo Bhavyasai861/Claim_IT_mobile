@@ -45,7 +45,6 @@
             <ion-button (click)="goToNextStep(); submitItem1()" [disabled]="!files.length" class="next">Next</ion-button>
           </div>  
           <div *ngIf="currentStep === 2">
-           
             <h3>Preview</h3>
             <div *ngIf="isLoading" class="spinner-container">
               <ion-spinner name="crescent"></ion-spinner>
@@ -55,9 +54,6 @@
               <ion-list>
                 <ion-item *ngFor="let item of formattedData">
                   <ion-label>
-                    <span *ngIf="item.key !== 'description'">
-                      {{ isTruncated && item.key === 'description' ? (item.value | slice: 0:100) + '...' : item.value }}
-                    </span>
                     <span *ngIf="item.key === 'description'">
                       <ng-container *ngIf="!isEditingDescription">
                         {{ isTruncated ? (item.value | slice: 0:100) + '...' : item.value }}
@@ -67,17 +63,25 @@
                         <ion-icon name="create" (click)="editDescription(item)"></ion-icon>
                       </ng-container>
                       <ng-container *ngIf="isEditingDescription">
-                        <textarea [(ngModel)]="editableDescription" placeholder="Edit description" rows="4" class="styled-textarea"></textarea>
+                        <textarea placeholder="Edit description" rows="4" class="styled-textarea"></textarea>
                       </ng-container>
                     </span>
                   </ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-label>Select Category</ion-label>
+                  <ion-select (ionChange)="onCategoryChange($event)">
+                    <ion-select-option *ngFor="let category of categoryNames" [value]="category">
+                      {{ category }}
+                    </ion-select-option>
+                  </ion-select>
                 </ion-item>
               </ion-list>
               <ion-button (click)="submitItem()" [disabled]="isLoading" class="additem">
                 Submit
               </ion-button>
             </div>
-          </div>          
+          </div>
         </div>
       </div>
     </ng-template>
@@ -123,40 +127,6 @@
       </div>
   </ng-template>
 </ion-modal>
-
-
-  <!-- <ion-modal [isOpen]="isQrModalOpen" (ionModalDidDismiss)="closeQrModal()" canDismiss="true"
-  style="--width: 300px; --height: 400px; --max-width: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-  <ion-content>
-      <ion-button fill="clear" (click)="closeQrModal()" class="close-button">
-          <ion-icon name="close-outline"></ion-icon>
-      </ion-button>
-      <ion-header>
-          <ion-toolbar>
-              <ion-title>QR Code</ion-title>
-          </ion-toolbar>
-      </ion-header>
-      <ion-card *ngIf="qrData">
-          <ion-card-header>
-              <ion-card-title>QR Code with ID</ion-card-title>
-          </ion-card-header>
-          <ion-card-content style="text-align: center;">
-              <div class="text-lg font-medium">
-                  ID: {{ qrData.uniqueId }}
-              </div>
-              <qrcode #qrCode [qrdata]="generateQrCodeData(qrData)" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
-              <div class="button-group mt-3">
-                <ion-button fill="outline" (click)="onSaveQrCode()">
-                  <ion-icon name="print-outline" slot="icon-only"></ion-icon>
-                </ion-button>
-                <ion-button fill="solid" color="danger" (click)="closeQrModal()">
-                  Close
-                </ion-button>
-              </div>
-          </ion-card-content>
-      </ion-card>
-  </ion-content>
-</ion-modal> -->
   <ion-modal [isOpen]="isQrModalOpen" (ionModalDidDismiss)="closeQrModal()" canDismiss="true"
     style="--width: 300px; --height: 380px; --max-width: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
     <div *ngIf="qrData">

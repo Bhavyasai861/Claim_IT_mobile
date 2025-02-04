@@ -29,6 +29,9 @@ export class AdditemPage implements OnInit {
   isQrModalOpen: boolean = false;
   qrData: any;
   qrItem: any = null;
+  categories: { id: number; name: string }[] = [];
+  categerorydata: any = [];
+  categoryNames: any[] = [];
   formattedData:any;
   isTruncated: boolean = true;
   addItemData:any
@@ -36,6 +39,7 @@ export class AdditemPage implements OnInit {
   selectedOrgId: string = '';
    searchQuery: string = '';
    isImageModalOpen = false;
+   selectedCategory: any;
    selectedImage: string = '';
    isLoading: boolean = false;
    isEditingDescription = false;
@@ -47,6 +51,7 @@ export class AdditemPage implements OnInit {
 
   ngOnInit() {
     this.getData();
+    this.fetchCategories()
   }
   closeModal() {
     this.isModalOpen = false;
@@ -175,6 +180,7 @@ export class AdditemPage implements OnInit {
       this.formData = new FormData();
       this.formData.append('image', this.files[0].file);
       this.formData.append('orgId', this.selectedOrgId);
+      this.formData.append('categoryname',   this.selectedCategory)
   
       this.http.post('https://100.28.242.219.nip.io/api/admin/image', this.formData).subscribe(
         (response) => {
@@ -199,7 +205,9 @@ export class AdditemPage implements OnInit {
       this.uploadMessage = 'Please select a file to upload.';
     }
   }
-  
+  onCategoryChange(event: any): void {
+    this.selectedCategory = event.detail.value;
+  }
 
   editDescription(item: any) {
     this.editableDescription = item.value;
@@ -265,6 +273,21 @@ export class AdditemPage implements OnInit {
             : 'Item is Claimed'
     });
 }
+
+fetchCategories(): void {
+  this.http.get<{ id: number; name: string }[]>('https://100.28.242.219.nip.io/api/admin/getcategories')
+    .subscribe(
+      (response) => {
+        this.categories = response;
+        this.categoryNames = this.categories.map(category => category.name);
+        console.log(this.categoryNames);
+      },
+      (error) => {
+        console.error('Error fetching categories:', error);
+      }
+    );
+}
+
 openQrModal(item: any): void {
   this.qrData = item;
   // this.qrDataString = this.generateQrCodeData(item);
