@@ -53,6 +53,9 @@ export class ViewClaimPage implements OnInit {
     this.selectedImage = `data:image/jpeg;base64,${image}`;
     this.isImageModalOpen = true;
   }
+  closeImageModal() {
+    this.isImageModalOpen = false;
+  }
   getStatusColor(status: string): string {
     switch (status) {
       case 'CLAIMED':

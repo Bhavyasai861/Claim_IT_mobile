@@ -136,7 +136,9 @@ export class UserHomePage implements OnInit {
       case 'UNCLAIMED':
         return 'rgb(248, 113, 113)'; // Red
       case 'REJECTED':
-        return '#ec9d9d'; // Darker red
+        return '#ec9d9d'; 
+        case 'ARCHIVED':
+        return '#ec9d9d';// Darker red
       default:
         return '#ffffff';
     }
