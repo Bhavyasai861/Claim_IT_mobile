@@ -3,6 +3,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AlertController, IonicModule } from '@ionic/angular';
 import { ClaimitService } from '../../SharedServices/claimit.service';
+import { environment } from 'src/environments/enivonment.dev';
 
 @Component({
   selector: 'app-expired-items',
@@ -22,24 +23,32 @@ export class ExpiredItemsPage implements OnInit {
   isLoading: boolean = false;
   isImageModalOpen = false;
   selectedImage: string = '';
+  
   constructor(private claimService: ClaimitService, private alertController: AlertController,) { }
 
   ngOnInit() {
     this.getData()
   }
-  getData() {
+ 
+  getData(selectedMonth?: number, selectedYear?: number) {
     this.isLoading = true;
-    this.claimService.getExpiredItems().subscribe(
+    let url = environment.getExpiredItems; 
+    if (selectedMonth && selectedYear) {
+      url += `?month=${selectedMonth}&year=${selectedYear}`; // Append filters only if selected
+    }
+  
+    this.claimService.getExpiredItems(url).subscribe(
       (res: any) => {
         this.isLoading = false;
-        this.expiredItems = res
+        this.expiredItems = res;
       },
       (error) => {
+        this.isLoading = false;
         console.error('Error fetching data:', error);
       }
     );
-
   }
+  
   getImage(base64String: string): string {
     return `data:image/jpeg;base64,${base64String}`;
   }
@@ -50,24 +59,13 @@ export class ExpiredItemsPage implements OnInit {
   closeImageModal() {
     this.isImageModalOpen = false;
   }
-  openCalendarDialog(item: any) {
-    this.itemId = item.itemId;  
-    console.log(this.itemId,"sdihw");
-    
-    const date = new Date(item.receivedDate);
-    this.receivedDate = date.toISOString().split('T')[0];
-    this.highlightedDates = [
-      {
-        date: this.receivedDate,
-        textColor: 'white',
-        backgroundColor: '#00897b'
-      }
-    ];
-
-    this.isModalOpen = true;
+  openCalendarDialog() {
+      this.isModalOpen = true;
   }
   async onDateSelected(event: any) {
-    const selectedDate = event.detail.value.split('T')[0];    
+    const selectedDate = event.detail.value.split('T')[0];   
+    const selectedMonth = new Date(selectedDate).getMonth() + 1; 
+    const selectedYear = new Date(selectedDate).getFullYear(); 
     if (selectedDate > this.receivedDate) {
       this.newSelectedDate = selectedDate;
       const alert = await this.alertController.create({
@@ -85,8 +83,9 @@ export class ExpiredItemsPage implements OnInit {
             text: 'Yes',
             handler: () => {
               this.receivedDate = this.newSelectedDate;
-              this.updateDate()
+              this.updateDate(selectedMonth, selectedYear)
               this.isModalOpen = false;
+              this.getData();  
             }
           }
         ]
@@ -94,9 +93,11 @@ export class ExpiredItemsPage implements OnInit {
       await alert.present();
     }
   }
-  updateDate(){
+  
+  updateDate(selectedMonth: number, selectedYear: number){
     const params = {
-      itemId: this.itemId,
+      month: selectedMonth,
+      year: selectedYear,
       expirationDate: this.receivedDate,
     };
     this.claimService.updateDate(params).subscribe(

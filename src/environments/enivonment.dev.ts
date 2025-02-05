@@ -21,5 +21,5 @@ export const environment = {
     updateNotification:'https://100.28.242.219.nip.io/api/admin/update-claimrequest',
     searchItems:`https://100.28.242.219.nip.io/api/users/search`,
     getExpiredItems:'https://100.28.242.219.nip.io/api/admin/archived',
-    updateDate:'https://100.28.242.219.nip.io/api/admin/archive'
+    updateDate:'https://100.28.242.219.nip.io/api/admin/archiveExpired'
   };

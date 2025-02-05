@@ -55,11 +55,12 @@ export class ClaimitService {
   public listOfItemsAddItem(query: any) {
     return this.http.get(environment.listOfItemsAddItem);
   }
-  public getExpiredItems() {
-    return this.http.get(environment.getExpiredItems);
+  public getExpiredItems(url: string) {
+    return this.http.get(url);
   }
+  
   public updateDate(reqbody:any){
-    return this.http.put(environment.updateDate+'?itemId='+reqbody.itemId+'&expirationDate='+reqbody.expirationDate,'')
+    return this.http.put(environment.updateDate+'?month='+reqbody.month+'&year='+reqbody.year+'&expirationDate='+reqbody.expirationDate,'')
   }
 
   //List of itetems

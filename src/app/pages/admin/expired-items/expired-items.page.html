@@ -12,6 +12,14 @@
   <div *ngIf="isLoading" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
   </div>
+  <ion-item-divider class="searchBarFixed">
+    <ion-searchbar class="search-bar" 
+      show-clear-button="always" >
+    </ion-searchbar>
+    <p (click)="openCalendarDialog()">
+      <ion-icon name="calendar-outline" slot="start" color="primary" style="font-size: 20px;"></ion-icon>
+    </p>
+  </ion-item-divider>
     <ion-grid class="custom-card">
       <ion-row *ngFor="let item of expiredItems"
         style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
@@ -22,11 +30,6 @@
         <ion-col size="6" style="font-size: 14px; color: #666;">
           <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.title }}</p>
           <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date: 'shortDate' }}</p>
-        </ion-col>
-        <ion-col size="2" >
-          <p (click)="openCalendarDialog(item)">
-            <ion-icon name="calendar-outline" slot="start" color="primary" style="font-size: 20px;"></ion-icon>
-          </p>
         </ion-col>
       </ion-row>
     </ion-grid>
@@ -53,6 +56,9 @@
         <ion-datetime [min]="receivedDate" [value]="receivedDate" [presentation]="'date'"
           [highlightedDates]="highlightedDates" (ionChange)="onDateSelected($event)">
         </ion-datetime>
+        <ion-button expand="full" color="primary" (click)="getData()">
+          Search
+        </ion-button>
       </ion-content>
     </ng-template>
   </ion-modal>

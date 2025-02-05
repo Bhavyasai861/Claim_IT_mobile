@@ -47,7 +47,10 @@ const routes: Routes = [
         path: 'expired-items',
         loadChildren: () => import('./pages/admin/expired-items/expired-items.module').then(m => m.ExpiredItemsPageModule)
       },
-
+      {
+        path: 'category-management',
+        loadChildren: () => import('./pages/admin/category-management/category-management.module').then( m => m.CategoryManagementPageModule)
+      }
     ]
   },
   {
@@ -58,7 +61,9 @@ const routes: Routes = [
   {
     path: 'skeleton',
     loadChildren: () => import('./pages/skeletons/skeleton/skeleton.module').then( m => m.SkeletonPageModule)
-  }
+  },
+  
+
 
 
 
