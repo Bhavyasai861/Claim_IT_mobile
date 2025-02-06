@@ -12,54 +12,72 @@
   <div *ngIf="isLoading" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
   </div>
-  <ion-item-divider class="searchBarFixed">
-    <ion-searchbar class="search-bar" 
-      show-clear-button="always" >
-    </ion-searchbar>
-    <p (click)="openCalendarDialog()">
-      <ion-icon name="calendar-outline" slot="start" color="primary" style="font-size: 20px;"></ion-icon>
-    </p>
-  </ion-item-divider>
-    <ion-grid class="custom-card">
-      <ion-row *ngFor="let item of expiredItems"
-        style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
-        <ion-col size="4">
-          <img [src]="getImage(item.image)" alt="Item Image"
-            style="width: 60%; max-height: 100px; margin: auto; display: block;" (click)="openImageModal(item.image)" />
-        </ion-col>
-        <ion-col size="6" style="font-size: 14px; color: #666;">
-          <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.title }}</p>
-          <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date: 'shortDate' }}</p>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-    <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"
+
+  <ion-row>
+    <!-- Date Range Input Column -->
+    <ion-col size="8">
+      <mat-form-field style="width: 300px;" class="custom-date-picker">
+        <mat-label>Enter a date range</mat-label>
+        <mat-date-range-input [rangePicker]="picker" >
+          <ion-input matStartDate placeholder="Start date" [(ngModel)]="startDate" #startDateInput />
+          <ion-input matEndDate placeholder="End date" [(ngModel)]="endDate" #endDateInput/>
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+      <!-- [matDatepickerFilter]="isDateDisabled" -->
+      <!-- <mat-form-field class="example-full-width">
+        <mat-label>Choose a date</mat-label>
+        <input matInput [matDatepickerFilter]="isDateDisabled" [matDatepicker]="picker">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field> -->
+      
+      
+
+    </ion-col>
+
+    <!-- Buttons Column (aligned to the right) -->
+    <ion-col size="4" class="ion-text-end">
+
+      <ion-button (click)="onDateChange()">
+        <ion-icon style="color: white;" name="search-outline"></ion-icon>
+      </ion-button>
+
+      <ion-button (click)="onUpdate()">Update</ion-button>
+
+    </ion-col>
+  </ion-row>
+
+
+  <ion-grid class="custom-card">
+    <ion-row *ngFor="let item of expiredItems; let i = index"
+      style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
+      <ion-col size="4">
+        <img [src]="getImage(item.image)" alt="Item Image"
+          style="width: 60%; max-height: 100px; margin: auto; display: block;" (click)="openImageModal(item.image)" />
+      </ion-col>
+      <ion-col size="6" style="font-size: 14px; color: #666;">
+        <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.title }}</p>
+        <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate}}</p>
+        <p style="font-size: 12px; color: #999;">Expired Date: {{ item.expirationDate }}</p>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+ 
+  <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"
     style="--width: 300px; --height: 270px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
     <ng-template>
-        <div style="text-align: center; position: relative;">
-          <img [src]="selectedImage" alt="Selected Image" style="margin-top: 52px;text-align: center; position: relative;width: 90%; height: 150px; object-fit: contain;" />
-          <ion-button fill="clear" (click)="closeImageModal()"
-            style="position: absolute; top: 10px; right: 10px; --background: transparent; --box-shadow: none; outline: none;">
-            <ion-icon name="close" style="color: #f90000; outline: none;"></ion-icon>
-          </ion-button>
-        </div>
-    </ng-template>
-  </ion-modal>
-  <ion-modal [isOpen]="isModalOpen" (ionModalDidDismiss)="onModalDismiss()"
-    style="--width: 500px; --height: 350px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-    <ng-template>
-      <ion-content>
-        <ion-button fill="clear" (click)="closeCalendarDialog()"
-        style="position: absolute; top: 2px; right: 10px; --background: transparent; --box-shadow: none; outline: none;">
-        <ion-icon name="close" style="color: #f90000; outline: none;"></ion-icon>
-      </ion-button>
-        <ion-datetime [min]="receivedDate" [value]="receivedDate" [presentation]="'date'"
-          [highlightedDates]="highlightedDates" (ionChange)="onDateSelected($event)">
-        </ion-datetime>
-        <ion-button expand="full" color="primary" (click)="getData()">
-          Search
+      <div style="text-align: center; position: relative;">
+        <img [src]="selectedImage" alt="Selected Image"
+          style="margin-top: 52px;text-align: center; position: relative;width: 90%; height: 150px; object-fit: contain;" />
+        <ion-button fill="clear" (click)="closeImageModal()"
+          style="position: absolute; top: 10px; right: 10px; --background: transparent; --box-shadow: none; outline: none;">
+          <ion-icon name="close" style="color: #f90000; outline: none;"></ion-icon>
         </ion-button>
-      </ion-content>
+      </div>
     </ng-template>
   </ion-modal>
+
 </ion-content>

@@ -60,7 +60,7 @@ export class ClaimitService {
   }
   
   public updateDate(reqbody:any){
-    return this.http.put(environment.updateDate+'?month='+reqbody.month+'&year='+reqbody.year+'&expirationDate='+reqbody.expirationDate,'')
+    return this.http.put(environment.updateDate+'?fromDate='+reqbody.fromDate+'&toDate='+reqbody.toDate+'&expirationDate='+reqbody.expirationDate,'')
   }
 
   //List of itetems
@@ -105,6 +105,13 @@ export class ClaimitService {
   public updateNotification(reqbody: any) {
     return this.http.put(environment.updateNotification, reqbody);
   }
+  public deleteCategory(res:any) {
+    return this.http.delete(environment.DeleteCategory+'?id='+res.id);
+  }
+  public updateCategory(url: string, body: any) {
+    return this.http.put(url, body).toPromise();
+  }
+  
   searchItems(query: string): Observable<any[]> {
     const url = `${environment.searchItems}?query=${encodeURIComponent(query)}`;
     return this.http.get<any[]>(url);
