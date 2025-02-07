@@ -13,7 +13,8 @@ import { ClaimitService } from '../../SharedServices/claimit.service';
 })
 export class CategoryManagementPage implements OnInit {
   categories: any[] = []; // Store the fetched categories
-
+  isModalOpen = false;
+  files: any[] = [];
   constructor(private http: HttpClient, private claimService:ClaimitService,private alertController: AlertController) { }
 
   ngOnInit() {
@@ -98,7 +99,30 @@ export class CategoryManagementPage implements OnInit {
   
     await alert.present();
   }
-  
+  closeModal() {
+    this.isModalOpen = false;
+  }
+  addCategory() {
+    this.isModalOpen = true;   
+  }
+  submitItem(){
+    
+  }
+  onModalDismiss() {
+    this.files = []; 
+  }
+  removeFile(file: any) {
+    this.files = this.files.filter(f => f !== file); 
+  }
+  onFileSelect(event: any) {
+    const file = event.target.files[0]; 
+    if (file) {
+      this.files.push({file:file,
+      preview:URL.createObjectURL(file)})
+      
+    }
+  }
+
   async submitCategoryUpdate(id: any, categoryName: string) {
     const reqBody = {
       categoryName: categoryName,

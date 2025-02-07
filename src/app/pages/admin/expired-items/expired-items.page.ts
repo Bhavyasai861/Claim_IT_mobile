@@ -25,96 +25,74 @@ export class ExpiredItemsPage implements OnInit {
   expiredItems: any[] = []
   newToDate: any;
   isModalOpen = false;
-  searchQuery: string = '';
   itemId: any
   receivedDate: any = '';
-  highlightedDates: any = [];
   newSelectedDate: string = '';
   isLoading: boolean = false;
   isImageModalOpen = false;
   selectedImage: string = '';
-  selectedItems: boolean[] = [];
-  selectedItemIds: any[] = [];
-  isEditing: boolean = false;
-  isAllChecked: boolean = false;
   selectedDate: any
-  isAnyItemSelected: boolean = false;
   toDate: Date | null = null;
   startDate: any;
   endDate: any;
   fromDate: any;  // To store the selected fromDate
-  toDatestore:any
   newExpiryDate: string = '';
   isUpdateMode: boolean = false; 
-  @ViewChild('startDateInput') startDateInput!: ElementRef;
-  @ViewChild('endDateInput') endDateInput!: ElementRef;
-  isDateDisabled(date: Date | null): boolean {
-    if (!date) {
-      return false;
-    }
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set time to 00:00:00 to compare dates only
-    return date < today;
-  }
-  constructor(private datePipe: DatePipe,private claimService: ClaimitService, private alertController: AlertController,) { 
 
-  }
+  selectedFrom: string | null = null;
+  selectedTo: string | null = null;
+  dateError: boolean = false;  
+  today = new Date();
+  minDate: string = '2000-01-01'; // Set minimum selectable date
+  maxDate: string = this.today.toISOString().split('T')[0]; // Disable future dates
+  showCalendar: boolean = false;
+  displayDateRange: string = 'Select Date Range';
+  noRecord: boolean = false;
+  constructor(private datePipe: DatePipe,private claimService: ClaimitService, private alertController: AlertController,) {   }
 
   ngOnInit() {
     this.getData()
   }
   
-  async onDateChange() : Promise<void>{
-    const fromDate = this.startDateInput.nativeElement.value
-      ? this.formatDate(new Date(this.startDateInput.nativeElement.value))
-      : null;
-    const toDate = this.endDateInput.nativeElement.value
-      ? this.formatDate(new Date(this.endDateInput.nativeElement.value))
-      : null;
-
-    console.log("Selected Date Range:", fromDate, toDate);
-
+  async onDateChange(): Promise<void> {
+    const fromDate = this.selectedFrom || null;
+    const toDate = this.selectedTo || null;
+    console.log('Selected Date Range:', fromDate, toDate);
     if (fromDate && toDate) {
-      this.fromDate = fromDate;
-      this.toDatestore = toDate;
-      // const alert = await this.alertController.create({
-      //   header: 'Change Date',
-      //   message: 'Do you want to change the expired date to a new date?',
-      //   inputs: [
-      //     {
-      //       name: 'newToDate',
-      //       type: 'date',
-      //       placeholder: 'Select a new "To Date"',
-      //       value: this.selectedDate // Pre-populate with the current 'toDate'
-      //     }
-      //   ],
-      //   buttons: [
-      //     {
-      //       text: 'Cancel',
-      //       role: 'cancel',
-      //       handler: () => {
-      //         this.newToDate = '';  
-      //       }
-      //     },
-      //     {
-      //       text: 'Yes',
-      //       handler: (data) => {
-      //         this.updateDate();  
-      //       }
-      //     }
-      //   ]
-      // });
       this.getData(fromDate, toDate);
     }
-  } 
+  }
+  updateDateRange(event: any) {
+    const selectedDate = event.detail.value.split('T')[0]; // Extract YYYY-MM-DD
+
+    if (!this.selectedFrom) {
+      this.selectedFrom = selectedDate;
+      this.dateError = false;
+    } else if (!this.selectedTo) {
+      if (selectedDate >= this.selectedFrom) {
+        this.selectedTo = selectedDate;
+        this.dateError = false;
+      } else {
+        this.dateError = true;
+      }
+    } else {
+      // Reset if user selects again
+      this.selectedFrom = selectedDate;
+      this.selectedTo = null;
+      this.dateError = false;
+    }
+  }
+
+  openCalendar() {
+    this.showCalendar = true;
+  }
+  closeModal() {
+    this.showCalendar = false;
+  }
   async onUpdate(): Promise<void> {
     this.isUpdateMode = true; // Enable update mode
-
     // Pre-populate the end date as the current "to date"
-    const toDate = this.endDateInput.nativeElement.value
-      ? this.formatDate(new Date(this.endDateInput.nativeElement.value))
-      : null;
-
+    const toDate = this.selectedTo|| null
     // Open an alert to confirm if they want to update the date
     const alert = await this.alertController.create({
       header: 'Update Date',
@@ -144,7 +122,7 @@ export class ExpiredItemsPage implements OnInit {
             // Capture the selected new "to date"
             this.newExpiryDate = data.newToDate;
             console.log("this.newExpiryDate", this.newExpiryDate);
-            
+        
             this.updateDate(this.newExpiryDate);  // Call update method
           }
         }
@@ -156,9 +134,15 @@ export class ExpiredItemsPage implements OnInit {
   formatDate(date: Date): string {
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
   }
+  clearSelectedDates() {
+    this.selectedFrom = null;
+    this.selectedTo = null;
+    this.noRecord = false;
+    this.getData();
+  }
   updateDate(newExpireDate:any) {
-    const fromDate = this.startDate ? this.formatDate(new Date(this.startDate)) : null;
-    const toDate = this.endDate ? this.formatDate(new Date(this.endDate)) : null;
+    const fromDate =  this.selectedFrom
+    const toDate = this.selectedTo
 
     const params = {
       fromDate: fromDate,
@@ -169,15 +153,18 @@ export class ExpiredItemsPage implements OnInit {
     console.log('Updating with params:', params);
 
     // Call the service to update the date
-    // this.claimService.updateDate(params).subscribe(
-    //   (response: any) => {
-    //     if (response.Success === true) {
-    //       this.getData();  // Refresh data based on updated dates
-    //     } else {
-    //       console.warn('Update was not successful:', response);
-    //     }
-    //   }
-    // );
+    this.claimService.updateDate(params).subscribe(
+      (response: any) => {
+        if (response.Success === true) {
+          this.getData();
+          this.selectedFrom = null;
+          this.selectedTo = null;
+          this.isUpdateMode = false;  // Refresh data based on updated dates
+        } else {
+          console.warn('Update was not successful:', response);
+        }
+      }
+    );
   }
 
   // The rest of your methods...
@@ -211,7 +198,6 @@ export class ExpiredItemsPage implements OnInit {
 
   getData(fromDate?: string, toDate?: string) {
     this.isLoading = true;
-
     // If no date range is selected, use the default URL for archived items
     let url = '';
     if (fromDate && toDate) {
@@ -225,14 +211,20 @@ export class ExpiredItemsPage implements OnInit {
 
     this.claimService.getExpiredItems(url).subscribe(
       (res: any) => {
-        this.isLoading = false;
+        console.log(res.length);
         this.expiredItems = res;
+        if (res.length !== 0) {
+          this.noRecord = false;
+        }
+        else {
+          this.noRecord = true;
+        }
         this.expiredItems.forEach(item => {
           item.receivedDate = new Date(item.receivedDate).toISOString().split('T')[0];
           item.expirationDate = new Date(item.expirationDate).toISOString().split('T')[0];
         });
-       
-        console.log("API Response:", this.expiredItems);
+        this.isLoading = false;
+        console.log("API Response:", this.expiredItems,this.isLoading);
       },
       (error) => {
         this.isLoading = false;

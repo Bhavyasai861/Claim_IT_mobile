@@ -1,0 +1,29 @@
+.modal-header {
+    display: flex;
+    /* Use flexbox to arrange elements in a row */
+    justify-content: space-between;
+    /* Distribute space between the items */
+    align-items: center;
+    /* Vertically center the items */
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
+    padding: 8px 16px;
+    /* Add padding for spacing */
+    border-bottom: 1px solid #ddd;
+  }
+  .additem {
+    --background: #00897b;
+    --color: #ffffff;
+    justify-content: flex-end;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+  }
+  .image {
+    height: 151px;
+    width: 150px;
+    object-fit: cover;
+  }

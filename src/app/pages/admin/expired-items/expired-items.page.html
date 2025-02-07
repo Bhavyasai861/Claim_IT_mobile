@@ -14,44 +14,40 @@
   </div>
 
   <ion-row>
-    <!-- Date Range Input Column -->
     <ion-col size="8">
-      <mat-form-field style="width: 300px;" class="custom-date-picker">
-        <mat-label>Enter a date range</mat-label>
-        <mat-date-range-input [rangePicker]="picker" >
-          <ion-input matStartDate placeholder="Start date" [(ngModel)]="startDate" #startDateInput />
-          <ion-input matEndDate placeholder="End date" [(ngModel)]="endDate" #endDateInput/>
-        </mat-date-range-input>
-        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-date-range-picker #picker></mat-date-range-picker>
-      </mat-form-field>
-      <!-- [matDatepickerFilter]="isDateDisabled" -->
-      <!-- <mat-form-field class="example-full-width">
-        <mat-label>Choose a date</mat-label>
-        <input matInput [matDatepickerFilter]="isDateDisabled" [matDatepicker]="picker">
-        <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field> -->
-      
-      
-
+      <ion-item>
+        <ion-icon name="calendar-outline" slot="start" color="primary" (click)="openCalendar()"></ion-icon>
+        <ion-input *ngIf="selectedFrom && selectedTo" readonly style="top: 22px;" placeholder="">
+          {{ selectedFrom }} to {{ selectedTo }}
+        </ion-input>
+        <ion-icon *ngIf="selectedFrom && selectedTo" name="close-circle" color="danger"
+          style="font-size: 20px; margin-left: 10px; cursor: pointer;" (click)="clearSelectedDates()">
+        </ion-icon>
+      </ion-item>
     </ion-col>
-
+    <ion-modal [isOpen]="showCalendar" (ionModalDidDismiss)="closeModal()"
+      style="--width: 500px; --height: 450px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+      <ng-template>
+        <ion-content>
+          <div style="text-align: right; padding: 10px;margin-bottom: -30px;">
+            <ion-icon name="close-circle" style="color: red; font-size: x-large;" (click)="closeModal()"></ion-icon>
+          </div>
+          <ion-datetime [min]="minDate" [max]="maxDate" (ionChange)="updateDateRange($event)">
+          </ion-datetime>          
+        </ion-content>
+      </ng-template>
+    </ion-modal>
     <!-- Buttons Column (aligned to the right) -->
     <ion-col size="4" class="ion-text-end">
-
       <ion-button (click)="onDateChange()">
         <ion-icon style="color: white;" name="search-outline"></ion-icon>
       </ion-button>
-
       <ion-button (click)="onUpdate()">Update</ion-button>
-
     </ion-col>
   </ion-row>
 
 
-  <ion-grid class="custom-card">
+  <ion-grid class="custom-card" >
     <ion-row *ngFor="let item of expiredItems; let i = index"
       style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
       <ion-col size="4">
@@ -65,7 +61,7 @@
       </ion-col>
     </ion-row>
   </ion-grid>
- 
+
   <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"
     style="--width: 300px; --height: 270px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
     <ng-template>
@@ -79,5 +75,12 @@
       </div>
     </ng-template>
   </ion-modal>
-
+  <div *ngIf="noRecord">
+    <ion-row>
+      <img class="noRecord" src="../../../../assets/noDataImage.jpg" />
+    </ion-row>
+    <ion-row>
+      <p class="noRecord">No Records Found</p>
+    </ion-row>
+  </div>
 </ion-content>
