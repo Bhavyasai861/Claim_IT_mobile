@@ -78,10 +78,10 @@ export class ClaimitService {
   }
   public adminSearch(params: any) {
     const queryParams = new URLSearchParams({
-      name:params.name,
+      username:params.name,
       mail: params.mail,
       status: params.status,
-      receivedDate: params.date
+      date: params.date
     });
   
     return this.http.get(`${environment.adminSearch}?${queryParams.toString()}`);

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AlertController, IonicModule } from '@ionic/angular';
+import { AlertController, IonicModule, ToastController } from '@ionic/angular';
 import { ClaimitService } from '../../SharedServices/claimit.service';
 
 @Component({
@@ -12,12 +12,12 @@ import { ClaimitService } from '../../SharedServices/claimit.service';
   imports: [CommonModule, IonicModule, FormsModule, ReactiveFormsModule]
 })
 export class CategoryManagementPage implements OnInit {
-  categoryForm: FormGroup ;
-  categories: any[] = []; // Store the fetched categories
+  categoryForm: FormGroup;
+  categories: any[] = []; 
   isModalOpen = false;
   files: any[] = [];
   formData!: any;
-  constructor(private http: HttpClient, private claimService: ClaimitService, private alertController: AlertController, private fb: FormBuilder) {
+  constructor(private toastController: ToastController, private http: HttpClient, private claimService: ClaimitService, private alertController: AlertController, private fb: FormBuilder) {
     this.categoryForm = this.fb.group({
       categoryName: ['', Validators.required],
       subcategories: ['']
@@ -25,7 +25,7 @@ export class CategoryManagementPage implements OnInit {
   }
 
   ngOnInit() {
-    this.fetchCategories(); // Fetch categories when the component initializes
+    this.fetchCategories(); 
   }
 
   // Fetch the categories from the API
@@ -44,36 +44,6 @@ export class CategoryManagementPage implements OnInit {
     return `data:image/jpeg;base64,${base64String}`;
   }
 
-
-  // Dynamically assign category icons based on category name
-  getCategoryIcon(value: string): string {
-    switch (value) {
-      case 'Fashion&Apparel':
-        return 'assets/categories/fashion.jpg';
-      case 'Electronics':
-        return 'assets/categories/electronics.jpg';
-      case 'Footwear':
-        return 'assets/categories/footwear.jpg';
-      case 'PersonalAccessories':
-        return 'assets/categories/personal.jpg';
-      case 'Clothes':
-        return 'assets/categories/clothes.jpg';
-      case 'JewellerySets':
-        return 'assets/categories/jewallary.jpg';
-      case 'OfficeTools&Stationary':
-        return 'assets/categories/officeTools.png';
-      case 'MusicalInstruments':
-        return 'assets/categories/musical.png';
-      case 'Watches':
-        return 'assets/categories/watches.jpg';
-      case 'Toys&Baby Products':
-        return 'assets/categories/toys.png';
-      case 'Food & BeverageCarriers':
-        return 'assets/categories/carriers.png';
-      default:
-        return 'assets/categories/default.jpg';
-    }
-  }
   async updateCategory(item: any) {
     const categoryName = item.categoryName;
 
@@ -116,9 +86,6 @@ export class CategoryManagementPage implements OnInit {
   addCategory() {
     this.isModalOpen = true;
   }
-  submitItem() {
-
-  }
   onModalDismiss() {
     this.files = [];
   }
@@ -141,41 +108,40 @@ export class CategoryManagementPage implements OnInit {
       return;
     }
     const categoryName = this.categoryForm.get('categoryName')?.value || '';
-    const subcategoryInput = this.categoryForm.get('subcategories')?.value || '';  
+    const subcategoryInput = this.categoryForm.get('subcategories')?.value || '';
     const subcategoriesArray = subcategoryInput
       .split(',')
-      .map((sub: string) => sub.trim()) // Trim whitespace
-      .filter((sub: string) => sub !== '') // Remove empty strings
-      .map((sub: string) => ({ name: sub })); // Convert to object format
-  
-    // Construct the category data
+      .map((sub: string) => sub.trim())
+      .filter((sub: string) => sub !== '')
+      .map((sub: string) => ({ name: sub }));
     const categoryData = {
       categoryName: categoryName,
       subCategories: subcategoriesArray
     };
-  console.log(categoryData);
-  
     const formData = new FormData();
     if (this.files.length > 0) {
       formData.append('image', this.files[0].file);
     }
     formData.append('category', JSON.stringify(categoryData));
-  
-    console.log("FormData Sent:", categoryData);
-  
-    // Send data to the backend
     this.claimService.uploadCategory(formData).subscribe(
       (response) => {
-        console.log("Category Posted Successfully:", response);
+        this.isModalOpen = false;
+        this.presentToast('Category Posted Successfully!');
       },
       (error) => {
         console.error("Error Posting Category:", error);
       }
     );
   }
-  
-  
-
+  async presentToast(message: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 3000,  
+      position: 'top',
+      color: 'success'
+    });
+    await toast.present();
+  }
 
   async submitCategoryUpdate(id: any, categoryName: string) {
     const reqBody = {
@@ -197,7 +163,6 @@ export class CategoryManagementPage implements OnInit {
       console.error("Error updating category:", error);
     }
   }
-
 
   async deleteCategory(id: any) {
     const alert = await this.alertController.create({
@@ -229,7 +194,6 @@ export class CategoryManagementPage implements OnInit {
         }
       ]
     });
-
     await alert.present();
   }
 

@@ -21,45 +21,45 @@
       <div class="content">
         <div class="modal-header">
           <h2>Add Category</h2>
-          <ion-icon name="close-circle" style="color: rgb(0, 0, 0); font-size: x-large;" (click)="closeModal()"></ion-icon>
+          <ion-icon name="close-circle" style="color: rgb(0, 0, 0); font-size: x-large;"
+            (click)="closeModal()"></ion-icon>
         </div>
         <form [formGroup]="categoryForm">
-        <ion-grid>
-          <ion-row>
-            <ion-col size="6">
-              <ion-input label="Category Name" label-placement="floating" fill="outline"
-                placeholder="Enter Category Name" formControlName="categoryName"></ion-input>
-            </ion-col>
-            <ion-col size="6">
-              <ion-input label="Sub-Category Name" label-placement="floating" fill="outline"
-                placeholder="Enter Sub-Category Name" formControlName="subcategories"></ion-input>
-            </ion-col>
-          </ion-row>
-          <ion-row class="file-upload-row">
-            <ion-col size="12" class="file-upload">
-              <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInput />
-              <div *ngIf="files.length === 0">
-                <p (click)="fileInput.click()">Upload Image</p>
-              </div>
-              <div *ngIf="files.length > 0">
-                <div *ngFor="let file of files" class="image-container">
-                  <img [src]="file.preview" alt="Preview" class="image">
-                  <ion-icon name="close-circle" class="close-icon" (click)="removeFile(file)"></ion-icon>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="6">
+                <ion-input label="Category Name" label-placement="floating" fill="outline"
+                  placeholder="Enter Category Name" formControlName="categoryName"></ion-input>
+              </ion-col>
+              <ion-col size="6">
+                <ion-input label="Sub-Category Name" label-placement="floating" fill="outline"
+                  placeholder="Enter Sub-Category Name" formControlName="subcategories"></ion-input>
+              </ion-col>
+            </ion-row>
+            <ion-row class="file-upload-row">
+              <ion-col size="12" class="file-upload">
+                <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInput />
+                <div *ngIf="files.length === 0">
+                  <p (click)="fileInput.click()">Upload Image</p>
                 </div>
-              </div>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col class="ion-text-center">
-              <ion-button class="additem" (click)="postCategory()">
-                Submit
-              </ion-button>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </form>
+                <div *ngIf="files.length > 0">
+                  <div *ngFor="let file of files" class="image-container">
+                    <img [src]="file.preview" alt="Preview" class="image">
+                    <ion-icon name="close-circle" class="close-icon" (click)="removeFile(file)"></ion-icon>
+                  </div>
+                </div>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col class="ion-text-center">
+                <ion-button class="additem" (click)="postCategory()">
+                  Submit
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </form>
       </div>
-      
     </ng-template>
   </ion-modal>
   <ion-grid>
@@ -67,10 +67,9 @@
       <ion-col size="6" *ngFor="let item of categories">
         <ion-card style="height: 200px;width: 190px;">
           <ion-card-content>
-            <div style="position: relative; height: 150px; width: 100%; overflow: hidden;">
+            <div style="position: relative; height: 150px; width: 100%; overflow: hidden;margin-top: 10px;">
               <img [src]="getImage(item.image)" alt="" style="height: 80%; width: 100%; object-fit: cover;" />
-              <ion-icon name="trash"
-                style="position: absolute; right: 5px; color:red;  border-radius: 50%; padding: 5px;"
+              <ion-icon name="trash" style="position: absolute; right: 5px; color:red;  border-radius: 50%;"
                 (click)="deleteCategory(item.id)">
               </ion-icon>
               <ion-icon name="pencil"

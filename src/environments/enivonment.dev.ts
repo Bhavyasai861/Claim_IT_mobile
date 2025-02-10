@@ -20,7 +20,7 @@ export const environment = {
     getNotifications:'https://100.28.242.219.nip.io/api/admin/notifications',
     updateNotification:'https://100.28.242.219.nip.io/api/admin/update-claimrequest',
     searchItems:`https://100.28.242.219.nip.io/api/users/search`,
-    getExpiredItems:'https://100.28.242.219.nip.io/api/archived',
+    getExpiredItems:'https://100.28.242.219.nip.io/api/admin/archived',
     updateDate:'https://100.28.242.219.nip.io/api/archiveExpired',
     DeleteCategory:'http://172.17.12.101:8081/api/admin/delete',
     updateCategory:'https://100.28.242.219.nip.io/api/categories',

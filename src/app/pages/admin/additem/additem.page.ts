@@ -17,7 +17,7 @@ import { ClaimitService } from '../../SharedServices/claimit.service';
   styleUrls: ['./additem.page.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, HttpClientModule,QRCodeModule,],
+  imports: [CommonModule, FormsModule, IonicModule, HttpClientModule, QRCodeModule,],
 })
 export class AdditemPage implements OnInit {
   @ViewChild('qrCode') qrCode!: QRCodeComponent;
@@ -25,30 +25,30 @@ export class AdditemPage implements OnInit {
   files: any[] = [];
   isModalOpen = false;
   swiperRef: any;
-  currentStep = 1; 
+  currentStep = 1;
   isQrModalOpen: boolean = false;
   qrData: any;
   qrItem: any = null;
   categories: { id: number; name: string }[] = [];
   categerorydata: any = [];
   categoryNames: any[] = [];
-  formattedData:any;
+  formattedData: any;
   isTruncated: boolean = true;
-  addItemData:any
+  addItemData: any
   addItemSearchResults: any
   selectedOrgId: string = '';
-   searchQuery: string = '';
-   isImageModalOpen = false;
-   selectedCategory: any;
-   selectedImage: string = '';
-   isLoading: boolean = false;
-   isEditingDescription = false;
-   editableDescription = '';
+  searchQuery: string = '';
+  isImageModalOpen = false;
+  selectedCategory: any;
+  selectedImage: string = '';
+  isLoading: boolean = false;
+  isEditingDescription = false;
+  editableDescription = '';
   imageDataResponse: any;
   formData!: any;
   uploadMessage: string = '';
-  categoryName:string=''
-  constructor(private http: HttpClient, private modalController: ModalController, private router:Router, private menu:MenuController,private claimService: ClaimitService) {}
+  categoryName: string = ''
+  constructor(private http: HttpClient, private modalController: ModalController, private router: Router, private menu: MenuController, private claimService: ClaimitService) { }
 
   ngOnInit() {
     this.getData();
@@ -58,12 +58,12 @@ export class AdditemPage implements OnInit {
     this.isModalOpen = false;
   }
   viewProfile(): void {
-    this.router.navigateByUrl('/profile'); 
+    this.router.navigateByUrl('/profile');
   }
 
   logout(): void {
-    localStorage.clear(); 
-    this.router.navigateByUrl('/login'); 
+    localStorage.clear();
+    this.router.navigateByUrl('/login');
   }
 
   getData() {
@@ -73,7 +73,7 @@ export class AdditemPage implements OnInit {
       (res: any) => {
         this.isLoading = false;
         this.addItemSearchResults = Object.keys(res).map((key) => ({
-          date: key.split(":")[1], 
+          date: key.split(":")[1],
           items: res[key]
         }));
       },
@@ -87,24 +87,24 @@ export class AdditemPage implements OnInit {
     switch (status) {
       case 'CLAIMED':
         return '#e0ffe0';
-        case 'PENDING_APPROVAL':
-          return 'rgb(254, 226, 226)';
+      case 'PENDING_APPROVAL':
+        return 'rgb(254, 226, 226)';
       case 'PENDING_PICKUP':
-        return 'rgb(254, 226, 226)'; 
+        return 'rgb(254, 226, 226)';
       case 'UNCLAIMED':
         return 'rgb(248, 113, 113)';
       case 'REJECTED':
-        return '#ec9d9d'; 
+        return '#ec9d9d';
       default:
-        return '#ffffff'; 
+        return '#ffffff';
     }
   }
-  
+
   getTextColor(status: string): string {
     if (status === 'UNCLAIMED' || status === 'REJECTED') {
-      return '#fff'; 
+      return '#fff';
     }
-    return '#333'; 
+    return '#333';
   }
   getImage(base64String: string): string {
     return `data:image/jpeg;base64,${base64String}`;
@@ -113,15 +113,17 @@ export class AdditemPage implements OnInit {
     this.currentStep = stepNumber;
   }
   onFileSelect(event: any) {
-    const file = event.target.files[0]; 
+    const file = event.target.files[0];
     if (file) {
-      this.files.push({file:file,
-      preview:URL.createObjectURL(file)})
-      
+      this.files.push({
+        file: file,
+        preview: URL.createObjectURL(file)
+      })
+
     }
   }
   removeFile(file: any) {
-    this.files = this.files.filter(f => f !== file); 
+    this.files = this.files.filter(f => f !== file);
   }
   nextSlide() {
     const swiper = this.swiperRef.swiper;
@@ -139,15 +141,15 @@ export class AdditemPage implements OnInit {
   addItem() {
     this.resetForm();
     this.isModalOpen = true;
-    this.addItemData = []; 
+    this.addItemData = [];
     if (Array.isArray(this.addItemData)) {
       this.addItemData.forEach(item => {
         this.selectedOrgId = item.orgId;
       });
     }
   }
-  
-  
+
+
   goToNextStep() {
     if (this.currentStep < 2) {
       this.currentStep++;
@@ -163,16 +165,16 @@ export class AdditemPage implements OnInit {
     if (this.files.length > 0) {
       this.isLoading = true; // Start loading
       this.uploadMessage = 'Uploading... Please wait';
-  
+
       this.formData = new FormData();
       this.formData.append('image', this.files[0].file);
       this.formData.append('orgId', this.selectedOrgId);
-      this.formData.append('categoryname',   this.selectedCategory)
-  
+      this.formData.append('categoryname', this.selectedCategory)
+
       this.http.post('https://100.28.242.219.nip.io/api/admin/image', this.formData).subscribe(
         (response) => {
           this.imageDataResponse = response;
-          this.formatResponse(response);  
+          this.formatResponse(response);
           this.uploadMessage = 'Upload successful!';
           setTimeout(() => {
             this.isLoading = false;
@@ -204,18 +206,18 @@ export class AdditemPage implements OnInit {
     this.editableDescription = '';
   }
 
-  
+
 
   submitItem() {
     const updatedData = { ...this.imageDataResponse };
     if (this.isEditingDescription) {
-      updatedData.description = this.editableDescription; 
+      updatedData.description = this.editableDescription;
     }
     this.isLoading = false
     this.formData.append('image', this.files[0].file);
     this.formData.append('orgId', this.selectedOrgId);
     this.formData.append('editedLabels', this.editableDescription)
-    this.http.post('https://100.28.242.219.nip.io/api/admin/upload',  this.formData)
+    this.http.post('https://100.28.242.219.nip.io/api/admin/upload', this.formData)
       .subscribe(response => {
         this.isEditingDescription = false;
         this.isModalOpen = false;
@@ -231,7 +233,7 @@ export class AdditemPage implements OnInit {
       ];
     }, 1000);
   }
-  
+
   formatResponse(response: any): void {
     this.categoryName = response.categoryName; // Set the initial category
     const allowedKeys = ['description', 'title'];
@@ -243,188 +245,183 @@ export class AdditemPage implements OnInit {
     this.isTruncated = !this.isTruncated;
   }
   onModalDismiss() {
-    this.files = []; 
+    this.files = [];
   }
   generateQrCodeData(element: any): string {
     return JSON.stringify({
-        id: element.uniqueId,
-        name: element.name,
-        status: element.status,
-        verificationLink: element.status === 'UNCLAIMED' 
-            ? `http://localhost:4200/assets/verification.html?itemId=${element.itemId}` 
-            : 'Item is Claimed'
+      id: element.uniqueId,
+      name: element.name,
+      status: element.status,
+      verificationLink: element.status === 'UNCLAIMED'
+        ? `http://localhost:4200/assets/verification.html?itemId=${element.itemId}`
+        : 'Item is Claimed'
     });
-}
-
-fetchCategories(): void {
-  this.http.get<{ id: number; name: string }[]>('https://100.28.242.219.nip.io/api/admin/getcategories')
-    .subscribe(
-      (response) => {
-        this.categories = response;
-        this.categoryNames = this.categories.map(category => category.name);
-        console.log(this.categoryNames);
-      },
-      (error) => {
-        console.error('Error fetching categories:', error);
-      }
-    );
-}
-
-openQrModal(item: any): void {
-  this.qrData = item;
-  this.isQrModalOpen = true;
-}
-// onSaveQrCode(): void {
-//     const canvas = this.qrCode.qrcElement.nativeElement.querySelector('canvas') as HTMLCanvasElement;
-//     if (canvas) {
-//         const combinedCanvas = document.createElement('canvas');
-//         const context = combinedCanvas.getContext('2d');
-//         if (!context) {
-//             console.error('Could not get 2D context for canvas.');
-//             return;
-//         }
-
-//         const qrCodeSize = 200;
-//         const padding = 20;
-//         const idHeight = 30;
-
-//         combinedCanvas.width = qrCodeSize + 2 * padding;
-//         combinedCanvas.height = qrCodeSize + 2 * padding + idHeight;
-
-//         context.fillStyle = '#ffffff';
-//         context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
-//         context.fillStyle = '#000000';
-//         context.font = '16px Arial';
-//         context.textAlign = 'center';
-//         context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, idHeight - 10);
-//         context.drawImage(canvas, padding, idHeight + padding, qrCodeSize, qrCodeSize);
-
-//         const combinedImage = combinedCanvas.toDataURL('image/png');
-//         const link = document.createElement('a');
-//         link.href = combinedImage;
-//         link.download = `qr-code-with-id-${this.qrData.uniqueId}.png`;
-//         link.click();
-//     } else {
-//         console.error('QR code canvas not found.');
-//     }
-// }
-onSaveQrCode(): void {
-  const combinedCanvas = document.createElement('canvas');
-  const context = combinedCanvas.getContext('2d');
-  if (!context) {
-      console.error('Could not get 2D context for canvas.');
-      return;
   }
 
-  const qrCodeSize = 200;
-  const padding = 20;
-  const idHeight = 30;
+  fetchCategories(): void {
+    this.http.get<{ id: number; name: string }[]>('https://100.28.242.219.nip.io/api/admin/getcategories')
+      .subscribe(
+        (response) => {
+          this.categories = response;
+          this.categoryNames = this.categories.map(category => category.name);
+          console.log(this.categoryNames);
+        },
+        (error) => {
+          console.error('Error fetching categories:', error);
+        }
+      );
+  }
 
-  // Set canvas size to fit only the ID text
-  combinedCanvas.width = qrCodeSize + 2 * padding;
-  combinedCanvas.height = idHeight + 2 * padding;
+  openQrModal(item: any): void {
+    this.qrData = item;
+    this.isQrModalOpen = true;
+  }
+  // onSaveQrCode(): void {
+  //     const canvas = this.qrCode.qrcElement.nativeElement.querySelector('canvas') as HTMLCanvasElement;
+  //     if (canvas) {
+  //         const combinedCanvas = document.createElement('canvas');
+  //         const context = combinedCanvas.getContext('2d');
+  //         if (!context) {
+  //             console.error('Could not get 2D context for canvas.');
+  //             return;
+  //         }
 
-  context.fillStyle = '#ffffff';
-  context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
-  context.fillStyle = '#000000';
-  context.font = '16px Arial';
-  context.textAlign = 'center';
+  //         const qrCodeSize = 200;
+  //         const padding = 20;
+  //         const idHeight = 30;
 
-  // Draw only the ID text
-  context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, combinedCanvas.height / 2);
+  //         combinedCanvas.width = qrCodeSize + 2 * padding;
+  //         combinedCanvas.height = qrCodeSize + 2 * padding + idHeight;
 
-  const combinedImage = combinedCanvas.toDataURL('image/png');
+  //         context.fillStyle = '#ffffff';
+  //         context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+  //         context.fillStyle = '#000000';
+  //         context.font = '16px Arial';
+  //         context.textAlign = 'center';
+  //         context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, idHeight - 10);
+  //         context.drawImage(canvas, padding, idHeight + padding, qrCodeSize, qrCodeSize);
 
-  // Create a link element to trigger the download
-  const link = document.createElement('a');
-  link.href = combinedImage;
-  link.download = `id-${this.qrData.uniqueId}.png`;
+  //         const combinedImage = combinedCanvas.toDataURL('image/png');
+  //         const link = document.createElement('a');
+  //         link.href = combinedImage;
+  //         link.download = `qr-code-with-id-${this.qrData.uniqueId}.png`;
+  //         link.click();
+  //     } else {
+  //         console.error('QR code canvas not found.');
+  //     }
+  // }
+  onSaveQrCode(): void {
+    const combinedCanvas = document.createElement('canvas');
+    const context = combinedCanvas.getContext('2d');
+    if (!context) {
+      console.error('Could not get 2D context for canvas.');
+      return;
+    }
 
-  // Try to trigger the download on desktop and mobile
-  if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
+    const qrCodeSize = 200;
+    const padding = 20;
+    const idHeight = 30;
+
+    // Set canvas size to fit only the ID text
+    combinedCanvas.width = qrCodeSize + 2 * padding;
+    combinedCanvas.height = idHeight + 2 * padding;
+
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+    context.fillStyle = '#000000';
+    context.font = '16px Arial';
+    context.textAlign = 'center';
+
+    // Draw only the ID text
+    context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, combinedCanvas.height / 2);
+
+    const combinedImage = combinedCanvas.toDataURL('image/png');
+
+    // Create a link element to trigger the download
+    const link = document.createElement('a');
+    link.href = combinedImage;
+    link.download = `id-${this.qrData.uniqueId}.png`;
+
+    // Try to trigger the download on desktop and mobile
+    if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
       // For mobile devices, let's first try opening in a new tab and let the user download manually
       const imageWindow = window.open();
       if (imageWindow) {
-          imageWindow.document.write('<img src="' + combinedImage + '" style="width:100%"/>');
-          imageWindow.document.close();
-          setTimeout(() => {
-              imageWindow.location.href = combinedImage; // Force it to open and allow saving
-          }, 500);
+        imageWindow.document.write('<img src="' + combinedImage + '" style="width:100%"/>');
+        imageWindow.document.close();
+        setTimeout(() => {
+          imageWindow.location.href = combinedImage; // Force it to open and allow saving
+        }, 500);
       }
-  } else {
+    } else {
       // For desktop, trigger the download directly as before
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+    }
   }
-}
 
 
-async onShareQrCode(): Promise<void> {
-  const combinedCanvas = document.createElement('canvas');
-  const context = combinedCanvas.getContext('2d');
-  if (!context) {
+  async onShareQrCode(): Promise<void> {
+    const combinedCanvas = document.createElement('canvas');
+    const context = combinedCanvas.getContext('2d');
+    if (!context) {
       console.error('Could not get 2D context for canvas.');
       return;
-  }
+    }
 
-  const qrCodeSize = 200;
-  const padding = 20;
-  const idHeight = 30;
+    const qrCodeSize = 200;
+    const padding = 20;
+    const idHeight = 30;
 
-  // Set canvas size to fit only the ID text
-  combinedCanvas.width = qrCodeSize + 2 * padding;
-  combinedCanvas.height = idHeight + 2 * padding;
+    // Set canvas size to fit only the ID text
+    combinedCanvas.width = qrCodeSize + 2 * padding;
+    combinedCanvas.height = idHeight + 2 * padding;
 
-  context.fillStyle = '#ffffff';
-  context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
-  context.fillStyle = '#000000';
-  context.font = '16px Arial';
-  context.textAlign = 'center';
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+    context.fillStyle = '#000000';
+    context.font = '16px Arial';
+    context.textAlign = 'center';
 
-  // Draw only the ID text
-  context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, combinedCanvas.height / 2);
+    // Draw only the ID text
+    context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, combinedCanvas.height / 2);
 
-  const combinedImage = combinedCanvas.toDataURL('image/png');
-
-  // Check if the platform is native (iOS/Android)
-  const platform = Capacitor.getPlatform();
-
-  if (platform === 'ios' || platform === 'android') {
-      // For native platforms, use the Capacitor Share plugin
+    const combinedImage = combinedCanvas.toDataURL('image/png');
+    const platform = Capacitor.getPlatform();
+    if (platform === 'ios' || platform === 'android') {
       await Share.share({
-          title: 'Share QR Code',
-          text: `Check out this QR code with ID: ${this.qrData.uniqueId}`,
-          url: combinedImage,
-          dialogTitle: 'Share QR Code'
+        title: 'Share QR Code',
+        text: `Check out this QR code with ID: ${this.qrData.uniqueId}`,
+        url: combinedImage,
+        dialogTitle: 'Share QR Code'
       });
-  } else {
-      // For web or non-native platforms
+    } else {
       console.log('Share functionality is not available on this platform.');
+    }
   }
-}
 
-onPrintQrCode(): void {
-  const combinedCanvas = document.createElement('canvas');
-  const context = combinedCanvas.getContext('2d');
-  if (!context) {
+  onPrintQrCode(): void {
+    const combinedCanvas = document.createElement('canvas');
+    const context = combinedCanvas.getContext('2d');
+    if (!context) {
       return;
-  }
-  const qrCodeSize = 200;
-  const padding = 20;
-  const idHeight = 30;
-  combinedCanvas.width = qrCodeSize + 2 * padding;
-  combinedCanvas.height = idHeight + 2 * padding;
-  context.fillStyle = '#ffffff';
-  context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
-  context.fillStyle = '#000000';
-  context.font = '16px Arial';
-  context.textAlign = 'center'
-  context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, combinedCanvas.height / 2);
+    }
+    const qrCodeSize = 200;
+    const padding = 20;
+    const idHeight = 30;
+    combinedCanvas.width = qrCodeSize + 2 * padding;
+    combinedCanvas.height = idHeight + 2 * padding;
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+    context.fillStyle = '#000000';
+    context.font = '16px Arial';
+    context.textAlign = 'center'
+    context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, combinedCanvas.height / 2);
 
-        const combinedImage = combinedCanvas.toDataURL('image/png');
-        const printWindow = window.open('', '_blank');
-        printWindow?.document.write(`
+    const combinedImage = combinedCanvas.toDataURL('image/png');
+    const printWindow = window.open('', '_blank');
+    printWindow?.document.write(`
             <html>
             <head>
                 <title>Print QR Code</title>
@@ -447,10 +444,10 @@ onPrintQrCode(): void {
             </body>
             </html>
         `);
-        printWindow?.document.close();
-        printWindow?.print();
-        printWindow?.close();
-    } 
+    printWindow?.document.close();
+    printWindow?.print();
+    printWindow?.close();
+  }
 
 
   closeQrModal(): void {

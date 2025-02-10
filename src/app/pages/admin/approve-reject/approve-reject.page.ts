@@ -297,7 +297,7 @@ export class ApproveRejectPage implements OnInit {
         this.currentFilterPlaceholder = 'Search by email';
         break;
       case 'date':
-        this.currentFilterPlaceholder = 'Search by MM/DD/YYYY';
+        this.currentFilterPlaceholder = 'Search by YYYY/MM/DD';
         break;
 
         case 'status':
@@ -343,9 +343,21 @@ export class ApproveRejectPage implements OnInit {
       case 'email':
         reqbody.mail = searchValue;
         break;
-      case 'date':
-        reqbody.date = new Date(searchValue).toISOString().split('T')[0]; // Convert to ISO format
-        break;
+        case 'date':
+          const dateObj = new Date(searchValue);
+          if (!isNaN(dateObj.getTime())) { // Ensure it's a valid date
+              const year = dateObj.getFullYear();
+              const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+              const day = String(dateObj.getDate()).padStart(2, '0');
+      
+              reqbody.date = `${year}-${month}-${day}`; // Use hyphens to avoid encoding
+          } else {
+              console.error("Invalid date format:", searchValue);
+          }
+          break;
+      
+      
+      
       case 'status':
         reqbody.status = searchValue;
         break;

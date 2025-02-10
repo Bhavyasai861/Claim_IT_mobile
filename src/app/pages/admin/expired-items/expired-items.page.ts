@@ -204,7 +204,7 @@ export class ExpiredItemsPage implements OnInit {
       url = `${environment.getExpiredItems}?fromDate=${fromDate}&toDate=${toDate}`;
     } else {
       // Use the default URL if no date range is provided
-      url = 'http://172.17.12.38:8081/claimit/items/archived';
+      url = 'https://100.28.242.219.nip.io/api/admin/archived';
     }
 
     console.log("API Request URL:", url); // Log the API request URL
