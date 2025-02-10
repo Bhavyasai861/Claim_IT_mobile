@@ -53,9 +53,6 @@ export class AdditemPage implements OnInit {
   ngOnInit() {
     this.getData();
     this.fetchCategories()
-   
-    
-   
   }
   closeModal() {
     this.isModalOpen = false;

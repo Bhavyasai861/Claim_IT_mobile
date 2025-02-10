@@ -10,7 +10,7 @@ export const environment = {
     adminRemoveItem:'https://100.28.242.219.nip.io/api/admin/archive-expired-items',
     createClaimRequest:'https://100.28.242.219.nip.io/api/admin/popup-claim',
     userSlides:'https://100.28.242.219.nip.io/api/users/search',
-    adminSearch:'https://100.28.242.219.nip.io/api/admin/search',
+    adminSearch:'http://172.17.12.101:8081/api/admin/search',
     approveOrRejectClaim:'https://100.28.242.219.nip.io/api/admin/approved-rejected',
     markASClaimed:'https://100.28.242.219.nip.io/api/admin/history',
     statusCount: 'https://100.28.242.219.nip.io/api/admin/status/counts',
@@ -20,8 +20,9 @@ export const environment = {
     getNotifications:'https://100.28.242.219.nip.io/api/admin/notifications',
     updateNotification:'https://100.28.242.219.nip.io/api/admin/update-claimrequest',
     searchItems:`https://100.28.242.219.nip.io/api/users/search`,
-    getExpiredItems:'https://100.28.242.219.nip.io/api//archived',
+    getExpiredItems:'https://100.28.242.219.nip.io/api/archived',
     updateDate:'https://100.28.242.219.nip.io/api/archiveExpired',
-    DeleteCategory:'https://100.28.242.219.nip.io/api/lookup',
-    updateCategory:'https://100.28.242.219.nip.io/api/categories'
+    DeleteCategory:'http://172.17.12.101:8081/api/admin/delete',
+    updateCategory:'https://100.28.242.219.nip.io/api/categories',
+    uploadCategory:'http://172.17.12.101:8081/api/admin/addCategory'
   };

@@ -78,6 +78,7 @@ export class ClaimitService {
   }
   public adminSearch(params: any) {
     const queryParams = new URLSearchParams({
+      name:params.name,
       mail: params.mail,
       status: params.status,
       receivedDate: params.date
@@ -110,6 +111,9 @@ export class ClaimitService {
   }
   public updateCategory(url: string, body: any) {
     return this.http.put(url, body).toPromise();
+  }
+  public uploadCategory(reqbody:any) {
+    return this.http.post(environment.uploadCategory,reqbody)
   }
   
   searchItems(query: string): Observable<any[]> {

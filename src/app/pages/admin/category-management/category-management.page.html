@@ -23,15 +23,16 @@
           <h2>Add Category</h2>
           <ion-icon name="close-circle" style="color: rgb(0, 0, 0); font-size: x-large;" (click)="closeModal()"></ion-icon>
         </div>
+        <form [formGroup]="categoryForm">
         <ion-grid>
           <ion-row>
             <ion-col size="6">
               <ion-input label="Category Name" label-placement="floating" fill="outline"
-                placeholder="Enter Category Name"></ion-input>
+                placeholder="Enter Category Name" formControlName="categoryName"></ion-input>
             </ion-col>
             <ion-col size="6">
               <ion-input label="Sub-Category Name" label-placement="floating" fill="outline"
-                placeholder="Enter Sub-Category Name"></ion-input>
+                placeholder="Enter Sub-Category Name" formControlName="subcategories"></ion-input>
             </ion-col>
           </ion-row>
           <ion-row class="file-upload-row">
@@ -48,16 +49,15 @@
               </div>
             </ion-col>
           </ion-row>
-      
-          <!-- Submit Button -->
           <ion-row>
             <ion-col class="ion-text-center">
-              <ion-button class="additem">
+              <ion-button class="additem" (click)="postCategory()">
                 Submit
               </ion-button>
             </ion-col>
           </ion-row>
         </ion-grid>
+      </form>
       </div>
       
     </ng-template>
@@ -68,7 +68,7 @@
         <ion-card style="height: 200px;width: 190px;">
           <ion-card-content>
             <div style="position: relative; height: 150px; width: 100%; overflow: hidden;">
-              <img [src]="getCategoryIcon(item.name)" alt="" style="height: 80%; width: 100%; object-fit: cover;" />
+              <img [src]="getImage(item.image)" alt="" style="height: 80%; width: 100%; object-fit: cover;" />
               <ion-icon name="trash"
                 style="position: absolute; right: 5px; color:red;  border-radius: 50%; padding: 5px;"
                 (click)="deleteCategory(item.id)">
@@ -79,9 +79,7 @@
               </ion-icon>
               <ion-card-title style="font-size: 15px;">{{ item.name }}</ion-card-title>
             </div>
-
           </ion-card-content>
-
         </ion-card>
       </ion-col>
     </ion-row>

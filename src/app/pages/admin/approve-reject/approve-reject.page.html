@@ -15,7 +15,7 @@
   </div>
   <ion-item-divider class="searchBarFixed">
     <ion-searchbar class="search-bar" placeholder="{{ currentFilterPlaceholder }}" [(ngModel)]="searchValue"  show-clear-button="always" 
-      (ionClear)="clear($event)" (keyup.enter)="filterSearch()">
+      (ionClear)="clear($event)" (keyup.enter)="filterSearch($event)">
     </ion-searchbar>
     <ion-icon name="filter" class="addIcon" size="large" (click)="toggleFilterPopover($event)"></ion-icon>
   </ion-item-divider>

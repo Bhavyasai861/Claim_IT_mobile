@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AlertController, IonicModule } from '@ionic/angular';
 import { ClaimitService } from '../../SharedServices/claimit.service';
 
@@ -9,13 +9,20 @@ import { ClaimitService } from '../../SharedServices/claimit.service';
   selector: 'app-category-management',
   templateUrl: './category-management.page.html',
   styleUrls: ['./category-management.page.scss'],
-  imports: [CommonModule, IonicModule, FormsModule]
+  imports: [CommonModule, IonicModule, FormsModule, ReactiveFormsModule]
 })
 export class CategoryManagementPage implements OnInit {
+  categoryForm: FormGroup ;
   categories: any[] = []; // Store the fetched categories
   isModalOpen = false;
   files: any[] = [];
-  constructor(private http: HttpClient, private claimService:ClaimitService,private alertController: AlertController) { }
+  formData!: any;
+  constructor(private http: HttpClient, private claimService: ClaimitService, private alertController: AlertController, private fb: FormBuilder) {
+    this.categoryForm = this.fb.group({
+      categoryName: ['', Validators.required],
+      subcategories: ['']
+    });
+  }
 
   ngOnInit() {
     this.fetchCategories(); // Fetch categories when the component initializes
@@ -23,7 +30,7 @@ export class CategoryManagementPage implements OnInit {
 
   // Fetch the categories from the API
   fetchCategories(): void {
-    this.http.get<{ id: number; name: string }[]>('https://100.28.242.219.nip.io/api/admin/getcategories')
+    this.http.get<{ id: number; name: string }[]>('http://172.17.12.101:8081/api/admin/getcategories')
       .subscribe(
         (response) => {
           this.categories = response;
@@ -33,6 +40,10 @@ export class CategoryManagementPage implements OnInit {
         }
       );
   }
+  getImage(base64String: string): string {
+    return `data:image/jpeg;base64,${base64String}`;
+  }
+
 
   // Dynamically assign category icons based on category name
   getCategoryIcon(value: string): string {
@@ -55,17 +66,17 @@ export class CategoryManagementPage implements OnInit {
         return 'assets/categories/musical.png';
       case 'Watches':
         return 'assets/categories/watches.jpg';
-        case 'Toys&Baby Products':
-          return 'assets/categories/toys.png';
-          case 'Food & BeverageCarriers':
-            return 'assets/categories/carriers.png';
+      case 'Toys&Baby Products':
+        return 'assets/categories/toys.png';
+      case 'Food & BeverageCarriers':
+        return 'assets/categories/carriers.png';
       default:
         return 'assets/categories/default.jpg';
     }
   }
   async updateCategory(item: any) {
-    const categoryName = item.categoryName ; 
-  
+    const categoryName = item.categoryName;
+
     const alert = await this.alertController.create({
       header: 'Edit Category',
       inputs: [
@@ -73,7 +84,7 @@ export class CategoryManagementPage implements OnInit {
           name: 'categoryName',
           type: 'text',
           placeholder: 'Enter category name',
-          value: categoryName 
+          value: categoryName
         }
       ],
       buttons: [
@@ -96,41 +107,84 @@ export class CategoryManagementPage implements OnInit {
         }
       ]
     });
-  
+
     await alert.present();
   }
   closeModal() {
     this.isModalOpen = false;
   }
   addCategory() {
-    this.isModalOpen = true;   
+    this.isModalOpen = true;
   }
-  submitItem(){
-    
+  submitItem() {
+
   }
   onModalDismiss() {
-    this.files = []; 
+    this.files = [];
   }
   removeFile(file: any) {
-    this.files = this.files.filter(f => f !== file); 
+    this.files = this.files.filter(f => f !== file);
   }
   onFileSelect(event: any) {
-    const file = event.target.files[0]; 
+    const file = event.target.files[0];
     if (file) {
-      this.files.push({file:file,
-      preview:URL.createObjectURL(file)})
-      
+      this.files.push({
+        file: file,
+        preview: URL.createObjectURL(file)
+      })
+
     }
   }
+  postCategory() {
+    if (!this.categoryForm) {
+      console.error("Form is not initialized.");
+      return;
+    }
+    const categoryName = this.categoryForm.get('categoryName')?.value || '';
+    const subcategoryInput = this.categoryForm.get('subcategories')?.value || '';  
+    const subcategoriesArray = subcategoryInput
+      .split(',')
+      .map((sub: string) => sub.trim()) // Trim whitespace
+      .filter((sub: string) => sub !== '') // Remove empty strings
+      .map((sub: string) => ({ name: sub })); // Convert to object format
+  
+    // Construct the category data
+    const categoryData = {
+      categoryName: categoryName,
+      subCategories: subcategoriesArray
+    };
+  console.log(categoryData);
+  
+    const formData = new FormData();
+    if (this.files.length > 0) {
+      formData.append('image', this.files[0].file);
+    }
+    formData.append('category', JSON.stringify(categoryData));
+  
+    console.log("FormData Sent:", categoryData);
+  
+    // Send data to the backend
+    this.claimService.uploadCategory(formData).subscribe(
+      (response) => {
+        console.log("Category Posted Successfully:", response);
+      },
+      (error) => {
+        console.error("Error Posting Category:", error);
+      }
+    );
+  }
+  
+  
+
 
   async submitCategoryUpdate(id: any, categoryName: string) {
     const reqBody = {
       categoryName: categoryName,
       status: "A"
     };
-  
-    const url = `http://172.17.12.38:8081/claimit/lookup/categories/${id}`;
-  
+
+    const url = `http://172.17.12.101:8081/api/admin/categories/${id}`;
+
     try {
       const response = await this.claimService.updateCategory(url, reqBody);
       if (response) {
@@ -143,9 +197,9 @@ export class CategoryManagementPage implements OnInit {
       console.error("Error updating category:", error);
     }
   }
-  
-  
-  async deleteCategory(id: any) {    
+
+
+  async deleteCategory(id: any) {
     const alert = await this.alertController.create({
       header: 'Confirm Deletion',
       message: 'Are you sure you want to delete this category?',
@@ -160,12 +214,12 @@ export class CategoryManagementPage implements OnInit {
         {
           text: 'Delete',
           handler: () => {
-            const reqBody = { 
-              id: id 
-            };            
+            const reqBody = {
+              id: id
+            };
             this.claimService.deleteCategory(reqBody).subscribe(
               (response: any) => {
-                this.fetchCategories(); 
+                this.fetchCategories();
               },
               (error) => {
                 console.error('Error deleting category:', error);
@@ -175,8 +229,8 @@ export class CategoryManagementPage implements OnInit {
         }
       ]
     });
-  
+
     await alert.present();
   }
-  
+
 }

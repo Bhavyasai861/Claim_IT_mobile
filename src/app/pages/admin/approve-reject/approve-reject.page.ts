@@ -23,7 +23,7 @@ export class ApproveRejectPage implements OnInit {
   adminActions = true;
   alertButtons = ['Action'];
   @ViewChild('popover') popover!: HTMLIonPopoverElement;
-  currentFilter: string = 'name';
+  currentFilter: string = '';
   currentFilterPlaceholder: string = 'Search by name';
   searchValue: string = '';
   isFilterPopoverOpen = false;
@@ -271,10 +271,9 @@ export class ApproveRejectPage implements OnInit {
   }
   clear(event: any) { 
     this.searchValue = '';
-    this.searchResults = [...this.normalResponse]; 
+    this.search()
     if (event.target.value == '') {
       this.clearSearchData();
-      this.filterSearch();  
     }
   }
 
@@ -288,7 +287,7 @@ export class ApproveRejectPage implements OnInit {
     
   }
   selectFilter(filter: string) {
-    this.currentFilter = filter; 
+    this.currentFilter = filter;     
     this.isFilterPopoverOpen = false;
     switch (filter) {
       case 'name':
@@ -305,7 +304,6 @@ export class ApproveRejectPage implements OnInit {
           this.currentFilterPlaceholder = 'Search by status';
           break;
     }
-    this.filterSearch();  
   }
 
   approveReject(e: Event) {
@@ -324,40 +322,52 @@ export class ApproveRejectPage implements OnInit {
   onModalClosed() {
     this.isModalOpen = false;
   }
-
-  // Filter search results based on the selected filter
-  filterSearch() {
-    if (this.searchValue.trim() === '') {
-      // Reset to show all results if the search value is empty
-      this.searchResults = [...this.normalResponse];
-      return;
+  filterSearch(event: any) {
+    console.log("event", event.target?.value);
+    const searchValue = event.target?.value.trim().toLowerCase();
+    console.log(searchValue);
+   
+  
+    // Update reqbody dynamically based on the selected filter
+    const reqbody: any = {
+      mail: '',
+      status: '',
+      name: '',
+      date: ''
+    };
+  
+    switch (this.currentFilter) {
+      case 'name':
+        reqbody.name = searchValue;
+        break;
+      case 'email':
+        reqbody.mail = searchValue;
+        break;
+      case 'date':
+        reqbody.date = new Date(searchValue).toISOString().split('T')[0]; // Convert to ISO format
+        break;
+      case 'status':
+        reqbody.status = searchValue;
+        break;
+      default:
+        return;
     }
   
-    const searchValue = this.searchValue.toLowerCase();
+    console.log("Updated API Params:", reqbody);
   
-    this.searchResults = this.normalResponse.filter((item: any) => {
-      switch (this.currentFilter) {
-        case 'name':
-          return item.name?.toLowerCase().includes(searchValue);
-        case 'email':
-          return item.email?.toLowerCase().includes(searchValue);
-        case 'date':
-          const formattedDate = new Date(item.receivedDate).toLocaleDateString();
-          return formattedDate.includes(searchValue);
-        case 'status':
-          return item.status?.toLowerCase().includes(searchValue);
-        default:
-          return false;
-      }
+    this.isLoading = true;
+    this.claimService.adminSearch(reqbody).subscribe((res: any) => {
+      this.isLoading = false;
+      this.searchResults = res.data;
+      console.log("API Search Results:", this.searchResults);
     });
   }
+  
   
 
   // Main search function
   search() {
     const reqbody = {
-      filterBy: this.currentFilter,
-      filterValue: this.searchValue.toLowerCase(),
       mail: this.approveRejectForm.value.email || '',
       status: this.approveRejectForm.value.status,
       name: this.approveRejectForm.value.name,
@@ -365,13 +375,13 @@ export class ApproveRejectPage implements OnInit {
         ? new Date(this.approveRejectForm.value.date).toISOString().split('T')[0]
         : '',
     };
-
+    console.log(reqbody);
     this.isLoading = true;
     this.claimService.adminSearch(reqbody).subscribe((res: any) => {
       this.isLoading = false;
       this.searchResults = res.data;
-      this.normalResponse = res.data;
-      this.filterSearch();  // Ensure filtering happens after the search
+      console.log(this.searchResults);
+      
     });
   }
 
