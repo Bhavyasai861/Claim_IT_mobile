@@ -17,7 +17,7 @@ export class ApproveRejectPage implements OnInit {
   currentDate: any = new Date();
   searchResults: any = [];
   normalResponse: any = [];
-  selectedDate: Date | null = null; 
+  selectedDate: Date | null = null;
   isModalOpen = false;
   modalOpen = false;
   adminActions = true;
@@ -47,7 +47,7 @@ export class ApproveRejectPage implements OnInit {
     private fb: FormBuilder,
     private claimService: ClaimitService,
     private modalController: ModalController
-  ) {}
+  ) { }
 
   presentPopover(event: Event, item: any, index: number) {
     this.popoverEvent = event;
@@ -91,7 +91,7 @@ export class ApproveRejectPage implements OnInit {
     const received = new Date(receivedDate);
     const currentDate = new Date();
     const differenceInTime = currentDate.getTime() - received.getTime();
-    const differenceInDays = differenceInTime / (1000 * 3600 * 24); 
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
     return differenceInDays > 30 ? 'EXPIRED' : currentStatus;
   }
   async confirmRemove(event: any) {
@@ -102,20 +102,20 @@ export class ApproveRejectPage implements OnInit {
       this.claimService.adminRemoveItem(itemId).subscribe(
         async (res: any) => {
           this.isLoading = false;
-          this.isPopoverOpen = false; 
+          this.isPopoverOpen = false;
           await this.presentConfirmationDialog('Removal Successful', 'The expired item has been removed.', true);
-          this.search(); 
+          this.search();
         },
         (error) => {
-          this.isPopoverOpen = false; 
+          this.isPopoverOpen = false;
           console.error('Error removing item:', error);
         }
       );
     } else {
-      this.isPopoverOpen = false; 
+      this.isPopoverOpen = false;
     }
   }
-  
+
   async approveClaim(event: any) {
     const confirmed = await this.presentConfirmationDialog('Approve Claim', 'Are you sure you want to approve this claim?');
     if (confirmed === 'yes') {
@@ -140,20 +140,18 @@ export class ApproveRejectPage implements OnInit {
       this.isPopoverOpen = false;
     }
   }
-  
+
 
   async rejectClaim(event: any) {
-    this.isPopoverOpen = false; 
-  
+    this.isPopoverOpen = false;
     const reason = await this.presentRejectClaimDialog('Reject Claim', 'Are you sure you want to reject this claim?');
-  
     if (reason) {
       const params = {
         itemId: event.itemId,
         status: 'REJECTED',
         reasonForReject: reason,
       };
-  
+
       this.isLoading = true;
       this.claimService.approveOrRejectClaim(params).subscribe(
         async (res: any) => {
@@ -166,26 +164,25 @@ export class ApproveRejectPage implements OnInit {
         }
       );
     }
-  
-    this.isPopoverOpen = false; 
+
+    this.isPopoverOpen = false;
   }
 
   async markClaimed(event: any) {
-    this.isPopoverOpen = false;  
-    await new Promise(resolve => setTimeout(resolve, 200)); 
-  
+    this.isPopoverOpen = false;
+    await new Promise(resolve => setTimeout(resolve, 200));
     const confirmed = await this.presentConfirmationDialog(
-      'Mark as Claimed', 
+      'Mark as Claimed',
       'Are you sure you want to mark this item as Claimed?'
     );
-  
+
     if (confirmed === 'yes') {
       const params = {
         itemId: event.itemId,
         claimStatus: 'CLAIMED',
         userId: event.userId,
       };
-  
+
       this.isLoading = true;
       this.claimService.markASClaimed(params).subscribe(
         async (res: any) => {
@@ -198,14 +195,14 @@ export class ApproveRejectPage implements OnInit {
         }
       );
     }
-  
+
     setTimeout(() => {
       this.isPopoverOpen = false;
     }, 200);
   }
-  
-  
-  async  presentConfirmationDialog(title: string, message: string, isSuccess: boolean = false): Promise<string> {
+
+
+  async presentConfirmationDialog(title: string, message: string, isSuccess: boolean = false): Promise<string> {
     return new Promise<string>((resolve) => {
       const dialog = document.createElement('ion-alert');
       dialog.header = title;
@@ -218,12 +215,11 @@ export class ApproveRejectPage implements OnInit {
           { text: 'Yes', role: 'confirm', handler: () => resolve('yes') },
         ];
       }
-  
       document.body.appendChild(dialog);
       dialog.present();
     });
   }
-  
+
 
   async presentRejectClaimDialog(title: string, message: string): Promise<string | null> {
     return new Promise<string | null>((resolve) => {
@@ -257,8 +253,8 @@ export class ApproveRejectPage implements OnInit {
         return 'rgb(248, 113, 113)'; // Red
       case 'REJECTED':
         return '#ec9d9d'; // Darker red
-        case 'EXPIRED':
-          return 'rgb(243, 177, 124)'
+      case 'EXPIRED':
+        return 'rgb(243, 177, 124)'
       default:
         return '#ffffff';
     }
@@ -269,7 +265,7 @@ export class ApproveRejectPage implements OnInit {
     }
     return '#333';
   }
-  clear(event: any) { 
+  clear(event: any) {
     this.searchValue = '';
     this.search()
     if (event.target.value == '') {
@@ -277,17 +273,17 @@ export class ApproveRejectPage implements OnInit {
     }
   }
 
- clearSearch() {
-    this.searchValue = ''; 
+  clearSearch() {
+    this.searchValue = '';
     this.clearSearchData();
   }
   clearSearchData() {
     this.searchValue = '';
     this.clearSearchData();
-    
+
   }
   selectFilter(filter: string) {
-    this.currentFilter = filter;     
+    this.currentFilter = filter;
     this.isFilterPopoverOpen = false;
     switch (filter) {
       case 'name':
@@ -300,9 +296,9 @@ export class ApproveRejectPage implements OnInit {
         this.currentFilterPlaceholder = 'Search by YYYY/MM/DD';
         break;
 
-        case 'status':
-          this.currentFilterPlaceholder = 'Search by status';
-          break;
+      case 'status':
+        this.currentFilterPlaceholder = 'Search by status';
+        break;
     }
   }
 
@@ -323,19 +319,14 @@ export class ApproveRejectPage implements OnInit {
     this.isModalOpen = false;
   }
   filterSearch(event: any) {
-    console.log("event", event.target?.value);
     const searchValue = event.target?.value.trim().toLowerCase();
-    console.log(searchValue);
-   
-  
-    // Update reqbody dynamically based on the selected filter
     const reqbody: any = {
       mail: '',
       status: '',
       name: '',
       date: ''
     };
-  
+
     switch (this.currentFilter) {
       case 'name':
         reqbody.name = searchValue;
@@ -343,30 +334,23 @@ export class ApproveRejectPage implements OnInit {
       case 'email':
         reqbody.mail = searchValue;
         break;
-        case 'date':
-          const dateObj = new Date(searchValue);
-          if (!isNaN(dateObj.getTime())) { // Ensure it's a valid date
-              const year = dateObj.getFullYear();
-              const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-              const day = String(dateObj.getDate()).padStart(2, '0');
-      
-              reqbody.date = `${year}-${month}-${day}`; // Use hyphens to avoid encoding
-          } else {
-              console.error("Invalid date format:", searchValue);
-          }
-          break;
-      
-      
-      
+      case 'date':
+        const dateObj = new Date(searchValue);
+        if (!isNaN(dateObj.getTime())) { 
+          const year = dateObj.getFullYear();
+          const month = String(dateObj.getMonth() + 1).padStart(2, '0'); 
+          const day = String(dateObj.getDate()).padStart(2, '0');
+          reqbody.date = `${year}-${month}-${day}`; // Use hyphens to avoid encoding
+        } else {
+          console.error("Invalid date format:", searchValue);
+        }
+        break;
       case 'status':
         reqbody.status = searchValue;
         break;
       default:
         return;
     }
-  
-    console.log("Updated API Params:", reqbody);
-  
     this.isLoading = true;
     this.claimService.adminSearch(reqbody).subscribe((res: any) => {
       this.isLoading = false;
@@ -374,8 +358,8 @@ export class ApproveRejectPage implements OnInit {
       console.log("API Search Results:", this.searchResults);
     });
   }
-  
-  
+
+
 
   // Main search function
   search() {
@@ -393,7 +377,7 @@ export class ApproveRejectPage implements OnInit {
       this.isLoading = false;
       this.searchResults = res.data;
       console.log(this.searchResults);
-      
+
     });
   }
 

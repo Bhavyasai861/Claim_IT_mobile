@@ -18,7 +18,7 @@
       <ion-item>
         <ion-icon name="calendar-outline" slot="start" color="primary" (click)="openCalendar()"></ion-icon>
         <ion-input *ngIf="selectedFrom && selectedTo" readonly style="top: 22px;" placeholder="">
-          {{ selectedFrom }} to {{ selectedTo }}
+          {{ changeDate(selectedFrom) }} to {{ changeDate(selectedTo) }}
         </ion-input>
         <ion-icon *ngIf="selectedFrom && selectedTo" name="close-circle" color="danger"
           style="font-size: 20px; margin-left: 10px; cursor: pointer;" (click)="clearSelectedDates()">
@@ -37,7 +37,6 @@
         </ion-content>
       </ng-template>
     </ion-modal>
-    <!-- Buttons Column (aligned to the right) -->
     <ion-col size="4" class="ion-text-end">
       <ion-button (click)="onDateChange()">
         <ion-icon style="color: white;" name="search-outline"></ion-icon>
@@ -45,8 +44,6 @@
       <ion-button (click)="onUpdate()">Update</ion-button>
     </ion-col>
   </ion-row>
-
-
   <ion-grid class="custom-card" *ngIf="selectedFrom && selectedTo">
     <ion-row *ngFor="let item of expiredItems; let i = index"
       style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">

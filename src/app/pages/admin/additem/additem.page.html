@@ -62,8 +62,14 @@
                         <ion-icon name="create" (click)="editDescription(item)"></ion-icon>
                       </ng-container>
                       <ng-container *ngIf="isEditingDescription">
-                        <textarea placeholder="Edit description" rows="4" class="styled-textarea"></textarea>
+                        <textarea 
+                          [(ngModel)]="editableDescription"
+                          placeholder="Edit description" 
+                          rows="4" 
+                          class="styled-textarea">
+                        </textarea>
                       </ng-container>
+                      
                     </span>
                   </ion-label>
                 </div>

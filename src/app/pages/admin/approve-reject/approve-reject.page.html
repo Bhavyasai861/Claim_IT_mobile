@@ -45,7 +45,7 @@
       <ion-col size="6" style="font-size: 14px; color: #666;">
         <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.name }}</p>
         <p style="font-size: 12px; font-weight: bold; color: #333;">{{ item.email }}</p>
-        <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date: 'shortDate' }}</p>
+        <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date:'yyyy-MM-dd' }}</p>
         <p 
           style="font-size: 12px; padding: 5px; border-radius: 5px; width: fit-content;"
           [ngStyle]="{

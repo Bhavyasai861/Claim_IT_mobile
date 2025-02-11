@@ -161,6 +161,9 @@ export class AdditemPage implements OnInit {
       this.currentStep--;
     }
   }
+  onCategoryChange(event: any): void {
+    this.selectedCategory = event.detail.value;
+  }
   submitItem1() {
     if (this.files.length > 0) {
       this.isLoading = true; // Start loading
@@ -169,9 +172,9 @@ export class AdditemPage implements OnInit {
       this.formData = new FormData();
       this.formData.append('image', this.files[0].file);
       this.formData.append('orgId', this.selectedOrgId);
-      this.formData.append('categoryname', this.selectedCategory)
+      this.formData.append('categoryName', this.selectedCategory)
 
-      this.http.post('https://100.28.242.219.nip.io/api/admin/image', this.formData).subscribe(
+      this.http.post('http://172.17.12.101:8081/api/admin/image', this.formData).subscribe(
         (response) => {
           this.imageDataResponse = response;
           this.formatResponse(response);
@@ -190,34 +193,32 @@ export class AdditemPage implements OnInit {
       this.uploadMessage = 'Please select a file to upload.';
     }
   }
-  onCategoryChange(event: any): void {
-    this.selectedCategory = event.detail.value;
-  }
+
 
   editDescription(item: any) {
+    console.log(item);    
     this.editableDescription = item.value;
     this.isEditingDescription = true;
   }
-  resetForm() {
-    this.currentStep = 1;
-    this.files = [];
-    this.formattedData = [];
-    this.isEditingDescription = false;
-    this.editableDescription = '';
-  }
+
 
 
 
   submitItem() {
     const updatedData = { ...this.imageDataResponse };
+    console.log(updatedData);
+    
     if (this.isEditingDescription) {
       updatedData.description = this.editableDescription;
+      console.log(updatedData.description);      
     }
     this.isLoading = false
     this.formData.append('image', this.files[0].file);
     this.formData.append('orgId', this.selectedOrgId);
-    this.formData.append('editedLabels', this.editableDescription)
-    this.http.post('https://100.28.242.219.nip.io/api/admin/upload', this.formData)
+    this.formData.append('categoryName', this.selectedCategory)
+    this.formData.append('editedLabels', updatedData.description)
+    // this.http.post('http://100.28.242.219.nip.io/api/admin/upload', this.formData)
+    this.http.post('http://172.17.12.101:8081/api/admin/upload', this.formData)
       .subscribe(response => {
         this.isEditingDescription = false;
         this.isModalOpen = false;
@@ -233,7 +234,13 @@ export class AdditemPage implements OnInit {
       ];
     }, 1000);
   }
-
+  resetForm() {
+    this.currentStep = 1;
+    this.files = [];
+    this.formattedData = [];
+    this.isEditingDescription = false;
+    this.editableDescription = '';
+  }
   formatResponse(response: any): void {
     this.categoryName = response.categoryName; // Set the initial category
     const allowedKeys = ['description', 'title'];
@@ -259,7 +266,7 @@ export class AdditemPage implements OnInit {
   }
 
   fetchCategories(): void {
-    this.http.get<{ id: number; name: string }[]>('https://100.28.242.219.nip.io/api/admin/getcategories')
+    this.http.get<{ id: number; name: string }[]>('http://172.17.12.101:8081/api/admin/getcategories')
       .subscribe(
         (response) => {
           this.categories = response;

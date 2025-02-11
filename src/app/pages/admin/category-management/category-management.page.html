@@ -35,21 +35,24 @@
                 <ion-input label="Sub-Category Name" label-placement="floating" fill="outline"
                   placeholder="Enter Sub-Category Name" formControlName="subcategories"></ion-input>
               </ion-col>
-            </ion-row>
+            </ion-row><br>            
+            <div class="upload-box">
             <ion-row class="file-upload-row">
               <ion-col size="12" class="file-upload">
                 <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInput />
                 <div *ngIf="files.length === 0">
                   <p (click)="fileInput.click()">Upload Image</p>
                 </div>
-                <div *ngIf="files.length > 0">
+                <div *ngIf="files.length > 0" class="images-wrapper">
                   <div *ngFor="let file of files" class="image-container">
                     <img [src]="file.preview" alt="Preview" class="image">
                     <ion-icon name="close-circle" class="close-icon" (click)="removeFile(file)"></ion-icon>
                   </div>
                 </div>
+                
               </ion-col>
             </ion-row>
+            </div>
             <ion-row>
               <ion-col class="ion-text-center">
                 <ion-button class="additem" (click)="postCategory()">
@@ -83,5 +86,4 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-
 </ion-content>

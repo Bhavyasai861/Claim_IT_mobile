@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA, Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AlertController, IonicModule } from '@ionic/angular';
@@ -8,14 +8,14 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import {MatInputModule} from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-expired-items',
   templateUrl: './expired-items.page.html',
   styleUrls: ['./expired-items.page.scss'],
-  imports: [CommonModule, IonicModule, FormsModule, MatFormFieldModule, MatDatepickerModule, MatNativeDateModule, MatInputModule ],
+  imports: [CommonModule, IonicModule, FormsModule, MatFormFieldModule, MatDatepickerModule, MatNativeDateModule, MatInputModule],
   providers: [provideNativeDateAdapter(), DatePipe],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -25,35 +25,64 @@ export class ExpiredItemsPage implements OnInit {
   expiredItems: any[] = []
   newToDate: any;
   isModalOpen = false;
-  itemId: any
   receivedDate: any = '';
-  newSelectedDate: string = '';
   isLoading: boolean = false;
   isImageModalOpen = false;
   selectedImage: string = '';
   selectedDate: any
   toDate: Date | null = null;
-  startDate: any;
-  endDate: any;
   fromDate: any;  // To store the selected fromDate
   newExpiryDate: string = '';
-  isUpdateMode: boolean = false; 
-
+  isUpdateMode: boolean = false;
   selectedFrom: string | null = null;
   selectedTo: string | null = null;
-  dateError: boolean = false;  
+  dateError: boolean = false;
   today = new Date();
-  minDate: string = '2000-01-01'; // Set minimum selectable date
-  maxDate: string = this.today.toISOString().split('T')[0]; // Disable future dates
+  minDate: string = '2000-01-01'; 
+  maxDate: string = this.today.toISOString().split('T')[0];
   showCalendar: boolean = false;
   displayDateRange: string = 'Select Date Range';
   noRecord: boolean = false;
-  constructor(private datePipe: DatePipe,private claimService: ClaimitService, private alertController: AlertController,) {   }
+  constructor(private datePipe: DatePipe, private claimService: ClaimitService, private alertController: AlertController,) { }
 
   ngOnInit() {
     this.getData()
   }
-  
+  getData(fromDate?: string, toDate?: string) {
+    this.isLoading = true;
+    let url = '';
+    if (fromDate && toDate) {
+      url = `${environment.getExpiredItems}?fromDate=${fromDate}&toDate=${toDate}`;
+    } else {
+      url = 'https://100.28.242.219.nip.io/api/admin/archived';
+    }
+
+    console.log("API Request URL:", url); // Log the API request URL
+
+    this.claimService.getExpiredItems(url).subscribe(
+      (res: any) => {
+        console.log(res.length);
+        this.expiredItems = res;
+        if (res.length !== 0) {
+          this.noRecord = false;
+        }
+        else {
+          this.noRecord = true;
+        }
+        this.expiredItems.forEach(item => {
+          item.receivedDate = new Date(item.receivedDate).toISOString().split('T')[0];
+          item.expirationDate = new Date(item.expirationDate).toISOString().split('T')[0];
+        });
+        this.isLoading = false;
+        console.log("API Response:", this.expiredItems, this.isLoading);
+      },
+      (error) => {
+        this.isLoading = false;
+        console.error('Error fetching data:', error);
+      }
+    );
+  }
+
   async onDateChange(): Promise<void> {
     const fromDate = this.selectedFrom || null;
     const toDate = this.selectedTo || null;
@@ -62,9 +91,13 @@ export class ExpiredItemsPage implements OnInit {
       this.getData(fromDate, toDate);
     }
   }
+  changeDate(dateString: string | null): string {
+    if (!dateString) return '';
+    return formatDate(dateString, 'MMM-dd-yyyy', 'en-US'); // "Feb 21 2025"
+  }
   updateDateRange(event: any) {
-    const selectedDate = event.detail.value.split('T')[0]; // Extract YYYY-MM-DD
-
+    const selectedDate = event.detail.value.split('T')[0];
+  
     if (!this.selectedFrom) {
       this.selectedFrom = selectedDate;
       this.dateError = false;
@@ -72,16 +105,19 @@ export class ExpiredItemsPage implements OnInit {
       if (selectedDate >= this.selectedFrom) {
         this.selectedTo = selectedDate;
         this.dateError = false;
+  
+        // Automatically fetch data once both dates are set
+        this.onDateChange();
       } else {
         this.dateError = true;
       }
     } else {
-      // Reset if user selects again
       this.selectedFrom = selectedDate;
       this.selectedTo = null;
       this.dateError = false;
     }
   }
+  
 
   openCalendar() {
     this.showCalendar = true;
@@ -90,9 +126,8 @@ export class ExpiredItemsPage implements OnInit {
     this.showCalendar = false;
   }
   async onUpdate(): Promise<void> {
-    this.isUpdateMode = true; // Enable update mode
-    // Pre-populate the end date as the current "to date"
-    const toDate = this.selectedTo|| null
+    this.isUpdateMode = true; 
+    const toDate = this.selectedTo || null
     // Open an alert to confirm if they want to update the date
     const alert = await this.alertController.create({
       header: 'Update Date',
@@ -122,7 +157,7 @@ export class ExpiredItemsPage implements OnInit {
             // Capture the selected new "to date"
             this.newExpiryDate = data.newToDate;
             console.log("this.newExpiryDate", this.newExpiryDate);
-        
+
             this.updateDate(this.newExpiryDate);  // Call update method
           }
         }
@@ -140,8 +175,8 @@ export class ExpiredItemsPage implements OnInit {
     this.noRecord = false;
     this.getData();
   }
-  updateDate(newExpireDate:any) {
-    const fromDate =  this.selectedFrom
+  updateDate(newExpireDate: any) {
+    const fromDate = this.selectedFrom
     const toDate = this.selectedTo
 
     const params = {
@@ -167,71 +202,7 @@ export class ExpiredItemsPage implements OnInit {
     );
   }
 
-  // The rest of your methods...
-
-
-  // Custom method to update the date logic and pass params to API
-  // updateDate() {
-  //   const fromDate = this.startDate ? this.formatDate(new Date(this.startDate)) : null;
-  //   const toDate = this.endDate ? this.formatDate(new Date(this.endDate)) : null;
-
-  //   const params = {
-  //     fromDate: fromDate,
-  //     toDate: toDate,
-  //     expirationDate: this.newToDate,
-  //   };
-
-  //   console.log('Updating with params:', params);
-
-  //   // Call the service to update the date
-  //   this.claimService.updateDate(params).subscribe(
-  //     (response: any) => {
-  //       if (response.Success === true) {
-  //         this.getData();  // Refresh data based on updated dates
-  //       } else {
-  //         console.warn('Update was not successful:', response);
-  //       }
-  //     }
-  //   );
-  // }
-
-
-  getData(fromDate?: string, toDate?: string) {
-    this.isLoading = true;
-    // If no date range is selected, use the default URL for archived items
-    let url = '';
-    if (fromDate && toDate) {
-      url = `${environment.getExpiredItems}?fromDate=${fromDate}&toDate=${toDate}`;
-    } else {
-      // Use the default URL if no date range is provided
-      url = 'https://100.28.242.219.nip.io/api/admin/archived';
-    }
-
-    console.log("API Request URL:", url); // Log the API request URL
-
-    this.claimService.getExpiredItems(url).subscribe(
-      (res: any) => {
-        console.log(res.length);
-        this.expiredItems = res;
-        if (res.length !== 0) {
-          this.noRecord = false;
-        }
-        else {
-          this.noRecord = true;
-        }
-        this.expiredItems.forEach(item => {
-          item.receivedDate = new Date(item.receivedDate).toISOString().split('T')[0];
-          item.expirationDate = new Date(item.expirationDate).toISOString().split('T')[0];
-        });
-        this.isLoading = false;
-        console.log("API Response:", this.expiredItems,this.isLoading);
-      },
-      (error) => {
-        this.isLoading = false;
-        console.error('Error fetching data:', error);
-      }
-    );
-  }
+  
 
 
   getImage(base64String: string): string {
@@ -244,7 +215,6 @@ export class ExpiredItemsPage implements OnInit {
   closeImageModal() {
     this.isImageModalOpen = false;
   }
-
 
   onModalDismiss() {
     setTimeout(() => {

@@ -45,8 +45,7 @@ export class CategoryManagementPage implements OnInit {
   }
 
   async updateCategory(item: any) {
-    const categoryName = item.categoryName;
-
+    const categoryName = item.name ;    
     const alert = await this.alertController.create({
       header: 'Edit Category',
       inputs: [
@@ -149,7 +148,7 @@ export class CategoryManagementPage implements OnInit {
       status: "A"
     };
 
-    const url = `http://172.17.12.101:8081/api/admin/categories/${id}`;
+    const url = `http://172.17.12.101:8081/api/admin/categories?id=${id}`;
 
     try {
       const response = await this.claimService.updateCategory(url, reqBody);

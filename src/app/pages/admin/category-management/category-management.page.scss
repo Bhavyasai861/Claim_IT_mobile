@@ -18,8 +18,55 @@
     align-items: center;
     border-radius: 8px;
   }
-  .image {
-    height: 151px;
-    width: 150px;
-    object-fit: cover;
+  .images-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centers images horizontally */
+    align-items: center; /* Centers vertically if needed */
+    gap: 10px; /* Adds spacing between images */
   }
+  
+  .image-container {
+    position: relative; /* Enables positioning for child elements */
+    display: inline-block;
+  }
+  
+  .image {
+    height: 120px;
+    width: 130px;
+    object-fit: cover;
+    border-radius: 8px; /* Optional: Rounded corners */
+  }
+  
+  .close-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: red;
+    font-size: 22px;
+    cursor: pointer;
+    background: white;
+    border-radius: 50%;
+  }
+  
+  .upload-box {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    border: 2px dashed #aaa;
+    width: 150px;
+    text-align: center;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
+  
+    &:hover {
+      border-color: #00897b;
+    }
+  }
+  
+  .upload-box ion-button {
+    font-size: 16px;
+    padding: 10px 20px;
+  }
+  
