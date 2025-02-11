@@ -174,7 +174,7 @@ export class AdditemPage implements OnInit {
       this.formData.append('orgId', this.selectedOrgId);
       this.formData.append('categoryName', this.selectedCategory)
 
-      this.http.post('http://172.17.12.101:8081/api/admin/image', this.formData).subscribe(
+      this.http.post('https://100.28.242.219.nip.io/api/admin/image', this.formData).subscribe(
         (response) => {
           this.imageDataResponse = response;
           this.formatResponse(response);
@@ -218,7 +218,7 @@ export class AdditemPage implements OnInit {
     this.formData.append('categoryName', this.selectedCategory)
     this.formData.append('editedLabels', updatedData.description)
     // this.http.post('http://100.28.242.219.nip.io/api/admin/upload', this.formData)
-    this.http.post('http://172.17.12.101:8081/api/admin/upload', this.formData)
+    this.http.post('https://100.28.242.219.nip.io/api/admin/upload', this.formData)
       .subscribe(response => {
         this.isEditingDescription = false;
         this.isModalOpen = false;
@@ -266,7 +266,7 @@ export class AdditemPage implements OnInit {
   }
 
   fetchCategories(): void {
-    this.http.get<{ id: number; name: string }[]>('http://172.17.12.101:8081/api/admin/getcategories')
+    this.http.get<{ id: number; name: string }[]>('https://100.28.242.219.nip.io/api/admin/getcategories')
       .subscribe(
         (response) => {
           this.categories = response;

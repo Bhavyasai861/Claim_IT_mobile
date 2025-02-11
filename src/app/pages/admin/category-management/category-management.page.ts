@@ -17,6 +17,7 @@ export class CategoryManagementPage implements OnInit {
   isModalOpen = false;
   files: any[] = [];
   formData!: any;
+  isLoading: boolean = false;
   constructor(private toastController: ToastController, private http: HttpClient, private claimService: ClaimitService, private alertController: AlertController, private fb: FormBuilder) {
     this.categoryForm = this.fb.group({
       categoryName: ['', Validators.required],
@@ -30,9 +31,11 @@ export class CategoryManagementPage implements OnInit {
 
   // Fetch the categories from the API
   fetchCategories(): void {
-    this.http.get<{ id: number; name: string }[]>('http://172.17.12.101:8081/api/admin/getcategories')
+    this.isLoading = true;
+    this.http.get<{ id: number; name: string }[]>('https://100.28.242.219.nip.io/api/admin/getcategories')
       .subscribe(
         (response) => {
+          this.isLoading = false;
           this.categories = response;
         },
         (error) => {
@@ -137,7 +140,6 @@ export class CategoryManagementPage implements OnInit {
       message: message,
       duration: 3000,  
       position: 'top',
-      color: 'success'
     });
     await toast.present();
   }
@@ -148,7 +150,7 @@ export class CategoryManagementPage implements OnInit {
       status: "A"
     };
 
-    const url = `http://172.17.12.101:8081/api/admin/categories?id=${id}`;
+    const url = `https://100.28.242.219.nip.io/api/admin/categories?id=${id}`;
 
     try {
       const response = await this.claimService.updateCategory(url, reqBody);

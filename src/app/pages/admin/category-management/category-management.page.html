@@ -10,11 +10,15 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  
   <div style="display: flex; justify-content: flex-end; padding: 1px;">
     <ion-button class="additem" style="width: auto; padding: 5px 10px;" (click)="addCategory()">
       Add Category
     </ion-button>
   </div>
+  <!-- <div *ngIf="isLoading" class="spinner-container">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div> -->
   <ion-modal [isOpen]="isModalOpen" (willDismiss)="onModalDismiss()"
     style="--width: 500px; --height: 400px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
     <ng-template>
@@ -55,9 +59,9 @@
             </div>
             <ion-row>
               <ion-col class="ion-text-center">
-                <ion-button class="additem" (click)="postCategory()">
+                <ion-button class="additem" (click)="postCategory()" [disabled]="!categoryForm.valid || files.length === 0">
                   Submit
-                </ion-button>
+                </ion-button>                
               </ion-col>
             </ion-row>
           </ion-grid>

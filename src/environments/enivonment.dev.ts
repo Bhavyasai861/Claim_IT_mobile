@@ -10,7 +10,7 @@ export const environment = {
     adminRemoveItem:'https://100.28.242.219.nip.io/api/admin/archive-expired-items',
     createClaimRequest:'https://100.28.242.219.nip.io/api/admin/popup-claim',
     userSlides:'https://100.28.242.219.nip.io/api/users/search',
-    adminSearch:'http://172.17.12.101:8081/api/admin/search',
+    adminSearch:'https://100.28.242.219.nip.io/api/admin/search',
     approveOrRejectClaim:'https://100.28.242.219.nip.io/api/admin/approved-rejected',
     markASClaimed:'https://100.28.242.219.nip.io/api/admin/history',
     statusCount: 'https://100.28.242.219.nip.io/api/admin/status/counts',
@@ -22,7 +22,7 @@ export const environment = {
     searchItems:`https://100.28.242.219.nip.io/api/users/search`,
     getExpiredItems:'https://100.28.242.219.nip.io/api/admin/archived',
     updateDate:'https://100.28.242.219.nip.io/api/archiveExpired',
-    DeleteCategory:'http://172.17.12.101:8081/api/admin/delete',
+    DeleteCategory:'https://100.28.242.219.nip.io/api/admin/delete',
     updateCategory:'https://100.28.242.219.nip.io/api/categories',
-    uploadCategory:'http://172.17.12.101:8081/api/admin/addCategory'
+    uploadCategory:'https://100.28.242.219.nip.io/api/admin/addCategory'
   };
