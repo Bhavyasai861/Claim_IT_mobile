@@ -18,6 +18,7 @@ export class CategoryManagementPage implements OnInit {
   files: any[] = [];
   formData!: any;
   isLoading: boolean = false;
+  noRecord: boolean = false;
   constructor(private toastController: ToastController, private http: HttpClient, private claimService: ClaimitService, private alertController: AlertController, private fb: FormBuilder) {
     this.categoryForm = this.fb.group({
       categoryName: ['', Validators.required],
@@ -37,6 +38,12 @@ export class CategoryManagementPage implements OnInit {
         (response) => {
           this.isLoading = false;
           this.categories = response;
+          if (response.length !== 0) {
+            this.noRecord = false;
+          }
+          else {
+            this.noRecord = true;
+          }
         },
         (error) => {
           console.error('Error fetching categories:', error);

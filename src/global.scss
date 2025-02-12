@@ -79,3 +79,12 @@ ion-menu {
 }
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.noRecord {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 40%;
+  margin: auto;
+  max-width: 64%;
+  text-align: center;
+}

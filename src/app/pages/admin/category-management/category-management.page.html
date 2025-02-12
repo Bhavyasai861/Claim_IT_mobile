@@ -52,8 +52,7 @@
                     <img [src]="file.preview" alt="Preview" class="image">
                     <ion-icon name="close-circle" class="close-icon" (click)="removeFile(file)"></ion-icon>
                   </div>
-                </div>
-                
+                </div>                
               </ion-col>
             </ion-row>
             </div>
@@ -90,4 +89,9 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+  <div *ngIf="noRecord">
+    <ion-row>
+      <img class="noRecord" src="../../../../assets/images/Animation - 1737116880117.gif" />
+    </ion-row>
+  </div>
 </ion-content>
