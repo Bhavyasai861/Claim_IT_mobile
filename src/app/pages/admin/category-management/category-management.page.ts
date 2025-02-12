@@ -136,6 +136,7 @@ export class CategoryManagementPage implements OnInit {
       (response) => {
         this.isModalOpen = false;
         this.presentToast('Category Posted Successfully!');
+        this.fetchCategories();
       },
       (error) => {
         console.error("Error Posting Category:", error);

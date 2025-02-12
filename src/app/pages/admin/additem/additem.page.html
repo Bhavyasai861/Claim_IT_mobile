@@ -137,7 +137,7 @@
     <div *ngIf="qrData">
       <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
         <h2>QR code</h2>
-        <ion-icon name="close-circle" style="color: red; font-size: x-large;" (click)="closeQrModal()"></ion-icon>
+        <ion-icon name="close-circle" style="color: #f90000; font-size: x-large;" (click)="closeQrModal()"></ion-icon>
       </div>
       <qrcode #qrCode [qrdata]="generateQrCodeData(qrData)" style="text-align: center; margin-bottom: 10px;"></qrcode>
       <div style="font-size: 14px; color: #555; text-align: center;">

@@ -56,12 +56,8 @@ export class ExpiredItemsPage implements OnInit {
     } else {
       url = 'https://100.28.242.219.nip.io/api/admin/archived';
     }
-
-    console.log("API Request URL:", url); // Log the API request URL
-
     this.claimService.getExpiredItems(url).subscribe(
       (res: any) => {
-        console.log(res.length);
         this.expiredItems = res;
         if (res.length !== 0) {
           this.noRecord = false;
@@ -73,8 +69,7 @@ export class ExpiredItemsPage implements OnInit {
           item.receivedDate = new Date(item.receivedDate).toISOString().split('T')[0];
           item.expirationDate = new Date(item.expirationDate).toISOString().split('T')[0];
         });
-        this.isLoading = false;
-        console.log("API Response:", this.expiredItems, this.isLoading);
+        this.isLoading = false;        
       },
       (error) => {
         this.isLoading = false;
@@ -86,7 +81,6 @@ export class ExpiredItemsPage implements OnInit {
   async onDateChange(): Promise<void> {
     const fromDate = this.selectedFrom || null;
     const toDate = this.selectedTo || null;
-    console.log('Selected Date Range:', fromDate, toDate);
     if (fromDate && toDate) {
       this.getData(fromDate, toDate);
     }
@@ -96,16 +90,14 @@ export class ExpiredItemsPage implements OnInit {
     return formatDate(dateString, 'MMM-dd-yyyy', 'en-US'); // "Feb 21 2025"
   }
   updateDateRange(event: any) {
-    const selectedDate = event.detail.value.split('T')[0];
-  
+    const selectedDate = event.detail.value.split('T')[0];  
     if (!this.selectedFrom) {
       this.selectedFrom = selectedDate;
       this.dateError = false;
     } else if (!this.selectedTo) {
       if (selectedDate >= this.selectedFrom) {
         this.selectedTo = selectedDate;
-        this.dateError = false;
-  
+        this.dateError = false;  
         // Automatically fetch data once both dates are set
         this.onDateChange();
       } else {
@@ -128,7 +120,6 @@ export class ExpiredItemsPage implements OnInit {
   async onUpdate(): Promise<void> {
     this.isUpdateMode = true; 
     const toDate = this.selectedTo || null
-    // Open an alert to confirm if they want to update the date
     const alert = await this.alertController.create({
       header: 'Update Date',
       message: 'Do you want to update the expired date?',
@@ -137,7 +128,7 @@ export class ExpiredItemsPage implements OnInit {
           name: 'newToDate',
           type: 'date',
           placeholder: 'Select a new "To Date"',
-          value: toDate // Pre-populate with the current 'toDate'
+          value: toDate 
         }
       ],
       buttons: [
@@ -145,8 +136,8 @@ export class ExpiredItemsPage implements OnInit {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            this.isUpdateMode = false;  // Cancel update, reset the flag
-            this.newExpiryDate = '';  // Reset new expiry date
+            this.isUpdateMode = false;  
+            this.newExpiryDate = '';
             console.log("this.newExpiryDate", this.newExpiryDate);
 
           }
@@ -154,11 +145,10 @@ export class ExpiredItemsPage implements OnInit {
         {
           text: 'Yes',
           handler: (data) => {
-            // Capture the selected new "to date"
             this.newExpiryDate = data.newToDate;
             console.log("this.newExpiryDate", this.newExpiryDate);
 
-            this.updateDate(this.newExpiryDate);  // Call update method
+            this.updateDate(this.newExpiryDate);  
           }
         }
       ]
@@ -182,11 +172,8 @@ export class ExpiredItemsPage implements OnInit {
     const params = {
       fromDate: fromDate,
       toDate: toDate,
-      expirationDate: newExpireDate,  // Send the new expiry date
+      expirationDate: newExpireDate,  
     };
-
-    console.log('Updating with params:', params);
-
     // Call the service to update the date
     this.claimService.updateDate(params).subscribe(
       (response: any) => {
@@ -194,16 +181,13 @@ export class ExpiredItemsPage implements OnInit {
           this.getData();
           this.selectedFrom = null;
           this.selectedTo = null;
-          this.isUpdateMode = false;  // Refresh data based on updated dates
+          this.isUpdateMode = false; 
         } else {
           console.warn('Update was not successful:', response);
         }
       }
     );
   }
-
-  
-
 
   getImage(base64String: string): string {
     return `data:image/jpeg;base64,${base64String}`;

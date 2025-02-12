@@ -377,11 +377,13 @@ export class ApproveRejectPage implements OnInit {
     this.claimService.adminSearch(reqbody).subscribe((res: any) => {
       this.isLoading = false;
       this.searchResults = res.data;
-      if (res.length !== 0) {
-        this.noRecord = false;
+      console.log(res.data.length,"res.lenght");
+      
+      if (res.data.lenght == 0) {
+        this.noRecord = true;
       }
       else {
-        this.noRecord = true;
+        this.noRecord = false;
       }
       console.log(this.searchResults);
 
