@@ -98,24 +98,15 @@ export class UserHomePage implements OnInit {
   }
 
   fetchItems(event?: any) {
-    if (!this.hasMoreItems) {
-      if (event) event.target.complete();
-      return;
-    }
-  
-    this.isLoading = true;
-  
-    this.claimService.listOfItems(this.currentPage).subscribe(
+    this.isLoading = true;  
+    this.claimService?.listOfItems(this?.currentPage).subscribe(
       (res: any) => {
         this.isLoading = false;
-  
         if (res.data.length > 0) {
           this.items = [...this.items, ...res.data];
           this.currentPage++; // Increase page count for next load
-        } else {
-          this.hasMoreItems = false; // Stop further requests when no data left
-        }
-  
+        } else {          
+        }  
         if (event) event.target.complete(); // Complete infinite scroll event
       },
     

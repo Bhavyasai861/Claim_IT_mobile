@@ -73,3 +73,12 @@
     transform: translateY(0px);
   }
 }
+.noRecord {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 40%;
+  margin: auto;
+  max-width: 64%;
+  text-align: center;
+}

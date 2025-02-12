@@ -42,7 +42,7 @@
                 </div>
               </div>
             </div>
-            <ion-button (click)="goToNextStep(); submitItem1()" [disabled]="!files.length" class="next">Next</ion-button>
+            <ion-button (click)="goToNextStep(); submitImageReponse()" [disabled]="!files.length" class="next">Next</ion-button>
           </div>  
           <div *ngIf="currentStep === 2">
             <h3>Preview</h3>
@@ -153,5 +153,10 @@
       </div>
     </div>
   </ion-modal>
+  <div *ngIf="noRecord">
+    <ion-row>
+      <img class="noRecord" src="../../../../assets/images/Animation - 1737116880117.gif" />
+    </ion-row>
+  </div>
   <app-footer></app-footer>
 </ion-content>

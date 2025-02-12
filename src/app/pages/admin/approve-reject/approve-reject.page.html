@@ -58,9 +58,9 @@
   
       <!-- Actions Column (Fix applied) -->
       <ion-col size="2">
-        <ion-button fill="clear" class="custom-button"  size="small" (click)="presentPopover($event, item, i)" [id]="'popover-button-' + i">
+        <ion-button fill="clear" class="custom-button"  size="small" (click)="presentPopover($event, item, i)" [id]="'popover-button-' + i" *ngIf="item.status !== 'CLAIMED'">
           <ion-icon slot="icon-only" name="ellipsis-vertical" slot="end" ></ion-icon>
-        </ion-button>   
+        </ion-button>  
   
         <ion-popover 
           [isOpen]="isPopoverOpen && selectedItemIndex === i" 
@@ -109,11 +109,16 @@
       <ion-content>
         <div style="text-align: center;">
           <img [src]="selectedImage" alt="Selected Image" style="width: 90%; height: 250px; object-fit: contain;" />
-          <ion-button fill="clear" (click)="closeImageModal()" style="position: absolute; top: 10px; right: 10px;">
+          <ion-button fill="clear" (click)="closeImageModal()" style="position: absolute; top: 10px; right: 10px;--background: #ffffff;">
             <ion-icon name="close" style="color: #f90000;"></ion-icon>
           </ion-button>
         </div>
       </ion-content>
     </ng-template>
   </ion-modal>
+  <div *ngIf="noRecord">
+    <ion-row>
+      <img class="noRecord" src="../../../../assets/images/Animation - 1737116880117.gif" />
+    </ion-row>
+  </div>
 </ion-content>

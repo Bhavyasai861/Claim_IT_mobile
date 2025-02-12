@@ -13,9 +13,6 @@
   font-family: "Roboto";
 }
 
-.buttons {
-  --background: #00897b;
-}
 
 .filter-popover {
   position: absolute;
@@ -185,4 +182,13 @@ ion-modal ion-datetime {
 
 :host-context(.light) .custom-button {
   --color: #000;
+}
+.noRecord {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 40%;
+  margin: auto;
+  max-width: 64%;
+  text-align: center;
 }

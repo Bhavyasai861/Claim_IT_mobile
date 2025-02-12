@@ -48,6 +48,7 @@ export class AdditemPage implements OnInit {
   formData!: any;
   uploadMessage: string = '';
   categoryName: string = ''
+  noRecord: boolean = false;
   constructor(private http: HttpClient, private modalController: ModalController, private router: Router, private menu: MenuController, private claimService: ClaimitService) { }
 
   ngOnInit() {
@@ -76,6 +77,12 @@ export class AdditemPage implements OnInit {
           date: key.split(":")[1],
           items: res[key]
         }));
+        if (res.length !== 0) {
+          this.noRecord = false;
+        }
+        else {
+          this.noRecord = true;
+        }
       },
       (error) => {
         console.error('Error fetching data:', error);
@@ -164,11 +171,10 @@ export class AdditemPage implements OnInit {
   onCategoryChange(event: any): void {
     this.selectedCategory = event.detail.value;
   }
-  submitItem1() {
+  submitImageReponse() {
     if (this.files.length > 0) {
       this.isLoading = true; // Start loading
       this.uploadMessage = 'Uploading... Please wait';
-
       this.formData = new FormData();
       this.formData.append('image', this.files[0].file);
       this.formData.append('orgId', this.selectedOrgId);
@@ -201,30 +207,27 @@ export class AdditemPage implements OnInit {
     this.isEditingDescription = true;
   }
 
-
-
-
-  submitItem() {
-    const updatedData = { ...this.imageDataResponse };
-    console.log(updatedData);
-    
-    if (this.isEditingDescription) {
-      updatedData.description = this.editableDescription;
-      console.log(updatedData.description);      
-    }
-    this.isLoading = false
-    this.formData.append('image', this.files[0].file);
-    this.formData.append('orgId', this.selectedOrgId);
-    this.formData.append('categoryName', this.selectedCategory)
-    this.formData.append('editedLabels', updatedData.description)
-    // this.http.post('http://100.28.242.219.nip.io/api/admin/upload', this.formData)
-    this.http.post('https://100.28.242.219.nip.io/api/admin/upload', this.formData)
-      .subscribe(response => {
-        this.isEditingDescription = false;
-        this.isModalOpen = false;
-        this.getData();
-      });
+ submitItem() {
+  const updatedData = this.imageDataResponse;
+  
+  if (this.isEditingDescription) {
+    updatedData.description = this.editableDescription;
   }
+  const updatedFormData = new FormData();
+  updatedFormData.append('image', this.files[0].file);
+  updatedFormData.append('orgId', this.selectedOrgId);
+  updatedFormData.append('categoryName', this.selectedCategory);
+  updatedFormData.append('editedLabels', updatedData.description);
+  this.isLoading = true;
+  this.http.post('https://100.28.242.219.nip.io/api/admin/upload', updatedFormData)
+    .subscribe(response => {
+      this.isEditingDescription = false;
+      this.isModalOpen = false;
+      this.isLoading = false;
+      this.getData();
+    });
+}
+
   loadData() {
     // Simulate new data loading
     setTimeout(() => {

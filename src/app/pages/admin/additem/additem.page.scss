@@ -325,8 +325,13 @@ ion-label {
   background: white;
   border-radius: 50%;
 }
-ion-skeleton-text {
-  --border-radius: 9999px;
-  --background: rgba(188, 0, 255, 0.065);
-  --background-rgb: 188, 0, 255;
+
+.noRecord {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 40%;
+  margin: auto;
+  max-width: 64%;
+  text-align: center;
 }

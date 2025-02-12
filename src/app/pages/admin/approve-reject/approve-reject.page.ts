@@ -34,6 +34,7 @@ export class ApproveRejectPage implements OnInit {
   selectedItemIndex: number | null = null;
   selectedImage: string = '';
   isLoading: boolean = false;
+  noRecord: boolean = false;
   public statusDropDown: any = [
     { label: 'REJECTED', value: 'REJECTED' },
     { label: 'PENDING_APPROVAL', value: 'PENDING APPROVAL' },
@@ -376,6 +377,12 @@ export class ApproveRejectPage implements OnInit {
     this.claimService.adminSearch(reqbody).subscribe((res: any) => {
       this.isLoading = false;
       this.searchResults = res.data;
+      if (res.length !== 0) {
+        this.noRecord = false;
+      }
+      else {
+        this.noRecord = true;
+      }
       console.log(this.searchResults);
 
     });
