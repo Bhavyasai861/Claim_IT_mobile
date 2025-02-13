@@ -269,8 +269,7 @@ export class AdditemPage implements OnInit {
   }
 
   fetchCategories(): void {
-    this.http.get<{ id: number; name: string }[]>('https://100.28.242.219.nip.io/api/admin/getcategories')
-      .subscribe(
+    this.claimService.getcategories().subscribe(
         (response) => {
           this.categories = response;
           this.categoryNames = this.categories.map(category => category.name);
@@ -286,40 +285,7 @@ export class AdditemPage implements OnInit {
     this.qrData = item;
     this.isQrModalOpen = true;
   }
-  // onSaveQrCode(): void {
-  //     const canvas = this.qrCode.qrcElement.nativeElement.querySelector('canvas') as HTMLCanvasElement;
-  //     if (canvas) {
-  //         const combinedCanvas = document.createElement('canvas');
-  //         const context = combinedCanvas.getContext('2d');
-  //         if (!context) {
-  //             console.error('Could not get 2D context for canvas.');
-  //             return;
-  //         }
 
-  //         const qrCodeSize = 200;
-  //         const padding = 20;
-  //         const idHeight = 30;
-
-  //         combinedCanvas.width = qrCodeSize + 2 * padding;
-  //         combinedCanvas.height = qrCodeSize + 2 * padding + idHeight;
-
-  //         context.fillStyle = '#ffffff';
-  //         context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
-  //         context.fillStyle = '#000000';
-  //         context.font = '16px Arial';
-  //         context.textAlign = 'center';
-  //         context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, idHeight - 10);
-  //         context.drawImage(canvas, padding, idHeight + padding, qrCodeSize, qrCodeSize);
-
-  //         const combinedImage = combinedCanvas.toDataURL('image/png');
-  //         const link = document.createElement('a');
-  //         link.href = combinedImage;
-  //         link.download = `qr-code-with-id-${this.qrData.uniqueId}.png`;
-  //         link.click();
-  //     } else {
-  //         console.error('QR code canvas not found.');
-  //     }
-  // }
   onSaveQrCode(): void {
     const combinedCanvas = document.createElement('canvas');
     const context = combinedCanvas.getContext('2d');
@@ -327,12 +293,10 @@ export class AdditemPage implements OnInit {
       console.error('Could not get 2D context for canvas.');
       return;
     }
-
     const qrCodeSize = 200;
     const padding = 20;
     const idHeight = 30;
 
-    // Set canvas size to fit only the ID text
     combinedCanvas.width = qrCodeSize + 2 * padding;
     combinedCanvas.height = idHeight + 2 * padding;
 

@@ -86,7 +86,9 @@ export class ClaimitService {
   
     return this.http.get(`${environment.adminSearch}?${queryParams.toString()}`);
   }
-  
+  public getcategories(): Observable<any> {
+    return this.http.get(environment.getCategories)
+  }
   public getNotifications(): Observable<any> {
     return this.http.get(environment.getNotifications)
   }

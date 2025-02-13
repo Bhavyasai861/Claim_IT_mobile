@@ -33,8 +33,7 @@ export class CategoryManagementPage implements OnInit {
   // Fetch the categories from the API
   fetchCategories(): void {
     this.isLoading = true;
-    this.http.get<{ id: number; name: string }[]>('https://100.28.242.219.nip.io/api/admin/getcategories')
-      .subscribe(
+    this.claimService.getcategories().subscribe(
         (response) => {
           this.isLoading = false;
           this.categories = response;

@@ -37,9 +37,9 @@
             </ion-toolbar>
           </ion-header>
           <ion-content>
-            <ion-datetime [(ngModel)]="selectedDate" [displayFormat]="'MMMM DD, YYYY'"></ion-datetime>
-            <ion-button expand="full" (click)="selectDate($event)">Done</ion-button>
-          </ion-content>
+          <ion-datetime [(ngModel)]="selectedDate" (ionChange)="selectDate()" [displayFormat]="'MMMM DD, YYYY'"></ion-datetime>
+          <ion-button expand="full" (click)="selectDate()">Done</ion-button>
+        </ion-content>
         </ng-template>
       </ion-modal>
       <ion-row>

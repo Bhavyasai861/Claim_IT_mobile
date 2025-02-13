@@ -357,13 +357,15 @@ i: any;
   onModalDismiss() {
     console.log('Modal closed');
   }
-  selectDate(event:any) {
-    const { month, year } = event;
-    this.selectedMonth = new Date(this.selectedDate); 
-    this.isModalOpen = false; 
-    this.monthName = this.selectedMonth
-    this.selectedMonth = new Date(year, month - 1);    
-    this.statusCount(month,year)
+  selectDate() {
+    if (!this.selectedDate) return;
+    const selected = new Date(this.selectedDate);
+    this.selectedMonth = selected;
+    this.monthName = selected.toLocaleString('default', { month: 'long' });
+    this.statusCount(selected.getMonth() + 1, selected.getFullYear());
+    this.categoryItems(selected.getMonth() + 1, selected.getFullYear());
+ 
+    this.isModalOpen = false;
   }
 openCalendarModal() {
   this.isModalOpen = true;

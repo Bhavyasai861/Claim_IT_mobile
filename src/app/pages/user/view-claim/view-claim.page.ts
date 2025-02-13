@@ -18,6 +18,7 @@ export class ViewClaimPage implements OnInit {
   selectedImage: string = '';
   isImageModalOpen = false;
   isLoading: boolean = false;
+  noRecord:boolean =false
   constructor(private claimService:ClaimitService) { }
 
   ngOnInit() {
@@ -39,6 +40,12 @@ export class ViewClaimPage implements OnInit {
     this.claimService.getAllItems(searchParams).subscribe(
       (res: any) => {
         this.items = res.claimHistory;
+        if (res.length !== 0) {
+          this.noRecord = false;
+        }
+        else {
+          this.noRecord = true;
+        }
         this.isLoading = false;  
       },
       (error) => {
