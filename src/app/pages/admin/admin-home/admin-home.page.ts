@@ -351,7 +351,6 @@ i: any;
     return colors;
   }
 
-
   closeCalendarDialog() {
     this.isModalOpen = false; 
   }
@@ -367,7 +366,7 @@ i: any;
     this.statusCount(month,year)
   }
 openCalendarModal() {
-  this.isCalendarModalOpen = true;
+  this.isModalOpen = true;
 }
 
 confirmMonthSelection() {

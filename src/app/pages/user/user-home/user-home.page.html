@@ -44,7 +44,7 @@
   <div *ngIf="isLoading" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
   </div>
-  <ion-grid class="custom-card">
+  <ion-grid class="custom-card" *ngIf="!noRecord">
     <ion-row *ngIf="items.length === 0 && searchQuery.trim().length > 0" style="text-align: center; padding: 20px;">
       <img src="assets/noresults.png" alt="No Results" class="w-32 mx-auto" />
     </ion-row>
@@ -151,4 +151,9 @@
       </ng-template>
     </ion-modal>
   </ion-grid>
+  <div *ngIf="noRecord">
+    <ion-row>
+      <img class="noRecord" src="../../../../assets/images/Animation - 1737116880117.gif" />
+    </ion-row>
+  </div>
 </ion-content>

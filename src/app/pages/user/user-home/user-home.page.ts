@@ -46,6 +46,7 @@ export class UserHomePage implements OnInit {
   qrData: any;
   qrItem: any = null;
   claimedItems = new Set();
+  noRecord: boolean = false;
   constructor(private fb: FormBuilder, private popoverController: PopoverController, private toastController: ToastController, private modalController: ModalController, private http: HttpClient, private loadingCtrl: LoadingController, private sanitizer: DomSanitizer, private claimService: ClaimitService) { }
 
   ngOnInit() {
@@ -103,6 +104,7 @@ export class UserHomePage implements OnInit {
       (res: any) => {
         this.isLoading = false;
         if (res.data.length > 0) {
+          this.hasMoreItems = false; 
           this.items = [...this.items, ...res.data];
           this.currentPage++; // Increase page count for next load
         } else {          
@@ -213,6 +215,7 @@ export class UserHomePage implements OnInit {
     const value = this.selectedCategory
     this.popoverOpen = false;
     this.search(value)
+    this.hasMoreItems = false; 
   }
 
   getTextColor(status: string): string {
@@ -247,9 +250,11 @@ export class UserHomePage implements OnInit {
     this.uploadImage(file).subscribe(
       (response) => {
         if (response.success) {
+         
           this.matchedItems = response.matchedItems
           this.items = this.matchedItems;
         } else {
+          this.noRecord=true
           this.pictureSearchCompleted = true;
         }
       },
@@ -263,6 +268,7 @@ export class UserHomePage implements OnInit {
     this.selectedCategory = '';
     this.files = [];
     this.pictureSearchCompleted = false;
+    this.noRecord= false
     this.fetchItems(); // Fetch the original list of items again
   }
   public uploadImage(file: File): Observable<any> {
@@ -292,6 +298,12 @@ export class UserHomePage implements OnInit {
       .subscribe(
         (response) => {
           this.categories = response;
+          if (response.length !== 0) {
+            this.noRecord = false;
+          }
+          else {
+            this.noRecord = true;
+          }
           this.categoryNames = this.categories.map(category => category.name);
           console.log(this.categoryNames);
         },

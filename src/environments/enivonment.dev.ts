@@ -3,7 +3,7 @@ export const environment = {
     adminLogin:'https://100.28.242.219.nip.io/api/admin/login',
     getAllItems:'https://100.28.242.219.nip.io/api/users/claim-history',
     unClaim:'https://100.28.242.219.nip.io/api/users/updateStatus',
-    listOfItems:'http://172.17.12.101:8081/api/admin/listOfItems',
+    listOfItems:'https://100.28.242.219.nip.io/api/admin/listOfItems',
     listOfItemsAddItem:'https://100.28.242.219.nip.io/api/admin/grouped-items',
     organizationList:'https://100.28.242.219.nip.io/api/admin/listOfOrganisation',
     adminUploadItem:'https://100.28.242.219.nip.io/api/admin/upload',

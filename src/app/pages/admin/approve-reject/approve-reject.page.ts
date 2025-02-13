@@ -23,7 +23,7 @@ export class ApproveRejectPage implements OnInit {
   adminActions = true;
   alertButtons = ['Action'];
   @ViewChild('popover') popover!: HTMLIonPopoverElement;
-  currentFilter: string = '';
+  currentFilter: string = 'name';
   currentFilterPlaceholder: string = 'Search by name';
   searchValue: string = '';
   isFilterPopoverOpen = false;
@@ -379,7 +379,7 @@ export class ApproveRejectPage implements OnInit {
       this.searchResults = res.data;
       console.log(res.data.length,"res.lenght");
       
-      if (res.data.lenght == 0) {
+      if (res.data.length == 0) {
         this.noRecord = true;
       }
       else {
