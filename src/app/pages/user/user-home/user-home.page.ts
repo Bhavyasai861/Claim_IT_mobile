@@ -21,7 +21,7 @@ import { QRCodeComponent, QRCodeModule } from 'angularx-qrcode';
 export class UserHomePage implements OnInit {
   @ViewChild('qrCode') qrCode!: QRCodeComponent;
   items: any[] = [];
-  searchQuery: string = '';
+  searchQuery: any = '';
   isImageModalOpen = false;
   selectedImage: string = '';
   files: any[] = [];
@@ -294,16 +294,10 @@ export class UserHomePage implements OnInit {
     this.fetchItems();
   }
   fetchCategories(): void {
-    this.http.get<{ id: number; name: string }[]>('https://100.28.242.219.nip.io/api/admin/getcategories')
-      .subscribe(
+    this.claimService.getcategories().subscribe(
         (response) => {
           this.categories = response;
-          if (response.length !== 0) {
-            this.noRecord = false;
-          }
-          else {
-            this.noRecord = true;
-          }
+        
           this.categoryNames = this.categories.map(category => category.name);
           console.log(this.categoryNames);
         },
@@ -324,24 +318,37 @@ export class UserHomePage implements OnInit {
       .then((toast: { present: () => any; }) => toast.present());
   }
   search(search: any): void {
+    console.log('gggggggggggggg', search);
     const apiUrl = `https://100.28.242.219.nip.io/api/users/search?query=${search}`;
+    
     this.http.get<any[]>(apiUrl).subscribe(
       (data: any) => {
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && data.length > 0) {
           this.categerorydata = data;
           this.items = this.categerorydata;
+          this.noRecord = false; // Hide "No records found" message
+        } else {
+          this.items = [];
+          this.noRecord = true; // Show "No records found" message
         }
       },
+      (error) => {
+        console.error('Error fetching data:', error);
+        this.items = [];
+        this.noRecord = true; // Show "No records found" on error
+      }
     );
   }
+  
   searchItems() {
-    if (this.searchQuery.trim() !== '') {
+    if (this.searchQuery.trim() !== '') {      
       this.claimService.searchItems(this.searchQuery).subscribe(
-        (response) => {
+        (response) => {          
           if (Array.isArray(response) && response.length > 0) {
-            this.items = response;
+            this.items = response;            
             this.itemsFound = true;
           } else {
+            this.noRecord= false
             this.itemsFound = false;
             this.items = []; 
           }

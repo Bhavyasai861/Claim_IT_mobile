@@ -24,7 +24,7 @@
       <ion-searchbar 
         class="search-bar" [(ngModel)]="searchQuery"
         placeholder="Search by Name / Mail"
-        (keyup.enter)="fetchItems()">
+        (keyup.enter)="fetchItems()" (click)="clearAll()">
       </ion-searchbar>
     </ion-item-divider>
   <ion-grid class="custom-card">

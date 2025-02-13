@@ -9,18 +9,24 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
- 
+
   <ion-item-divider class="searchBarFixed">
     <ion-grid>
       <ion-row>
         <ion-col size="9">
           <ion-searchbar class="search-bar" [(ngModel)]="searchQuery" placeholder="Search with item"
-            showCancelButton="focus" (ionClear)="clearSearch()" (keyup.enter)="searchItems()"></ion-searchbar>
+            showCancelButton="focus" aria-modal="true" (ionClear)="clearSearch()"
+            (keyup.enter)="searchItems()"></ion-searchbar>
         </ion-col>
         <ion-col size="1">
           <ion-icon name="filter" style="margin-top: 15px; cursor: pointer; font-size: 25px;"
             (click)="openPopover($event)"></ion-icon>
-          <ion-popover [isOpen]="popoverOpen" (didDismiss)="popoverOpen = false" [event]="popoverEvent">
+            <ion-popover 
+            [isOpen]="popoverOpen"
+            (didDismiss)="popoverOpen = false"
+            [event]="popoverEvent"
+            [attr.inert]="!popoverOpen ? 'true' : null">
+          
             <ng-template>
               <div *ngFor="let category of categories" class="custom-dropdown" (click)="selectCategory(category.name)">
                 {{ category.name }}
@@ -45,9 +51,6 @@
     <ion-spinner name="crescent"></ion-spinner>
   </div>
   <ion-grid class="custom-card" *ngIf="!noRecord">
-    <ion-row *ngIf="items.length === 0 && searchQuery.trim().length > 0" style="text-align: center; padding: 20px;">
-      <img src="assets/noresults.png" alt="No Results" class="w-32 mx-auto" />
-    </ion-row>
     <ion-row *ngFor="let item of items"
       style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
       <ion-col size="4">
@@ -65,8 +68,8 @@
         </p>
       </ion-col>
       <ion-col size="2" style="text-align: center;">
-        <ion-icon name="qr-code-outline" class="qrIcon" (click)="openQrModal(item)" *ngIf="item.status === 'PENDING_APPROVAL' || item.status === 'PENDING_PICKUP'"
-         ></ion-icon>
+        <ion-icon name="qr-code-outline" class="qrIcon" (click)="openQrModal(item)"
+          *ngIf="item.status === 'PENDING_APPROVAL' || item.status === 'PENDING_PICKUP'"></ion-icon>
         <ion-button expand="block" size="small" (click)="onButtonClick(item.itemId)" *ngIf="item.status === 'UNCLAIMED'"
           style="--background: #00897b; color: white;">
           Claim
@@ -83,32 +86,33 @@
         <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
           <h2>QR code</h2>
           <ion-icon name="close-circle" style="color: red; font-size: x-large;" (click)="closeQrModal()"></ion-icon>
-        </div>        
+        </div>
         <qrcode #qrCode [qrdata]="generateQrCodeData(qrData)" style="text-align: center; margin-bottom: 10px;"></qrcode>
         <div style="font-size: 14px; color: #555; text-align: center;">
-          <div class="text-lg font-medium" >
+          <div class="text-lg font-medium">
             ID: {{ qrData.uniqueId }}
           </div>
           <ion-button fill="outline" (click)="onSaveQrCode()" style="margin-left: 10px;">
             <ion-icon name="print-outline" slot="icon-only"></ion-icon>
           </ion-button>
         </div>
-      </div>      
+      </div>
     </ion-modal>
     <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"
-    style="--width: 300px; --height: 270px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-    <ng-template>
-      <ion-content>
-        <div style="text-align: center; position: relative;">
-          <img [src]="selectedImage" alt="Selected Image" style="margin-top: 52px;text-align: center; position: relative;width: 90%; height: 150px; object-fit: contain;" />
-          <ion-button fill="clear" (click)="closeImageModal()"
-            style="position: absolute; top: 10px; right: 10px; --background: transparent; --box-shadow: none; outline: none;">
-            <ion-icon name="close" style="color: #f90000; outline: none;"></ion-icon>
-          </ion-button>
-        </div>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
+      style="--width: 300px; --height: 270px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+      <ng-template>
+        <ion-content>
+          <div style="text-align: center; position: relative;">
+            <img [src]="selectedImage" alt="Selected Image"
+              style="margin-top: 52px;text-align: center; position: relative;width: 90%; height: 150px; object-fit: contain;" />
+            <ion-button fill="clear" (click)="closeImageModal()"
+              style="position: absolute; top: 10px; right: 10px; --background: transparent; --box-shadow: none; outline: none;">
+              <ion-icon name="close" style="color: #f90000; outline: none;"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
     <ion-modal [isOpen]="isModalOpen"
       style="--width: 300px; --height: 300px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
       <ng-template>
@@ -151,7 +155,7 @@
       </ng-template>
     </ion-modal>
   </ion-grid>
-  <div *ngIf="noRecord">
+  <div *ngIf="noRecord || items.length === 0 && searchQuery.trim().length > 0">
     <ion-row>
       <img class="noRecord" src="../../../../assets/images/Animation - 1737116880117.gif" />
     </ion-row>
