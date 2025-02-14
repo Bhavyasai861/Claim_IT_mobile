@@ -30,7 +30,7 @@
       </div>
     </ng-template>
   </ion-popover>
-  <ion-grid class="custom-card">
+  <ion-grid class="custom-card" *ngIf="!noRecord">
     <ion-row *ngFor="let item of searchResults; let i = index" class="ion-margin-bottom ion-padding card-row"
       style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;">
       
@@ -45,7 +45,7 @@
       <ion-col size="6" style="font-size: 14px; color: #666;">
         <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.name }}</p>
         <p style="font-size: 12px; font-weight: bold; color: #333;">{{ item.email }}</p>
-        <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate | date:'yyyy-MM-dd' }}</p>
+        <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate  }}</p>
         <p 
           style="font-size: 12px; padding: 5px; border-radius: 5px; width: fit-content;"
           [ngStyle]="{

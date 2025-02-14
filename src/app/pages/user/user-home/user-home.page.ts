@@ -319,7 +319,7 @@ export class UserHomePage implements OnInit {
   }
   search(search: any): void {
     console.log('gggggggggggggg', search);
-    const apiUrl = `https://100.28.242.219.nip.io/api/users/search?query=${search}`;
+    const apiUrl = `https://100.28.242.219.nip.io/api/users/search?query=${encodeURIComponent(search)}`;
     
     this.http.get<any[]>(apiUrl).subscribe(
       (data: any) => {

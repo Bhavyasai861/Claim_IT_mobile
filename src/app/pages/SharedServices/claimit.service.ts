@@ -70,7 +70,7 @@ export class ClaimitService {
   }
   public getAllItems(query: any) {
     return this.http.get(environment.getAllItems + 
-      `?email=${query.email}&username=${query.userName}`);
+      `?email=${query.email}&userName=${query.userName}`);
   }
   
   public createClaimRequest(REQBODY: any) {

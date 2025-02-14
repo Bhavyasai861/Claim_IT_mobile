@@ -356,6 +356,12 @@ export class ApproveRejectPage implements OnInit {
     this.claimService.adminSearch(reqbody).subscribe((res: any) => {
       this.isLoading = false;
       this.searchResults = res.data;
+      if (res.data.length == 0) {
+        this.noRecord = true;
+      }
+      else {
+        this.noRecord = false;
+      }
       console.log("API Search Results:", this.searchResults);
     });
   }
