@@ -48,6 +48,14 @@ export class ExpiredItemsPage implements OnInit {
   ngOnInit() {
     this.getData()
   }
+  getImage(base64String: string): string {
+    return `data:image/jpeg;base64,${base64String}`;
+  }
+
+
+  data(){
+    
+  }
   getData(fromDate?: string, toDate?: string) {
     this.isLoading = true;
     let url = '';
@@ -189,9 +197,7 @@ export class ExpiredItemsPage implements OnInit {
     );
   }
 
-  getImage(base64String: string): string {
-    return `data:image/jpeg;base64,${base64String}`;
-  }
+ 
   openImageModal(image: string) {
     this.selectedImage = `data:image/jpeg;base64,${image}`;
     this.isImageModalOpen = true;

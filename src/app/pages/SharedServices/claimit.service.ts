@@ -55,7 +55,7 @@ export class ClaimitService {
   public listOfItemsAddItem(query: any) {
     return this.http.get(environment.listOfItemsAddItem);
   }
-  public getExpiredItems(url: string) {
+  public getExpiredItems(url: any) {
     return this.http.get(url);
   }
   

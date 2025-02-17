@@ -8,7 +8,7 @@ export const environment = {
     organizationList:'https://100.28.242.219.nip.io/api/admin/listOfOrganisation',
     adminUploadItem:'https://100.28.242.219.nip.io/api/admin/upload',
     adminRemoveItem:'https://100.28.242.219.nip.io/api/admin/archive-expired-items',
-    createClaimRequest:'http://172.17.12.101:8081/api/admin/popup-claim',
+    createClaimRequest:'https://100.28.242.219.nip.io/api/admin/popup-claim',
     userSlides:'https://100.28.242.219.nip.io/api/users/search',
     adminSearch:'https://100.28.242.219.nip.io/api/admin/search',
     approveOrRejectClaim:'https://100.28.242.219.nip.io/api/admin/approved-rejected',

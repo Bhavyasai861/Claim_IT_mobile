@@ -36,7 +36,7 @@ export class AppComponent {
       return [
         { title: 'Dashboard', url: '/claimIt/dashboard', icon: 'home-outline' },
         { title: 'Search & Claim', url: '/claimIt/user-home', icon: 'search-outline' },
-        { title: 'View / Unclaim', url: '/claimIt/view-claim', icon: 'eye-outline' },
+        { title: 'View items', url: '/claimIt/view-claim', icon: 'eye-outline' },
         { title: 'Logout', icon: 'log-out-outline', action: 'logout' }, 
       ];
     }else{
