@@ -49,6 +49,7 @@ export class AdditemPage implements OnInit {
   uploadMessage: string = '';
   categoryName: string = ''
   noRecord: boolean = false;
+  isCategoryInvalid: boolean = false;
   constructor(private http: HttpClient, private modalController: ModalController, private router: Router, private menu: MenuController, private claimService: ClaimitService) { }
 
   ngOnInit() {
@@ -207,26 +208,37 @@ export class AdditemPage implements OnInit {
     this.isEditingDescription = true;
   }
 
- submitItem() {
-  const updatedData = this.imageDataResponse;
+  submitItem() {
+    // Check if selectedCategory is empty
+    if (!this.selectedCategory) {
+      this.isCategoryInvalid = true; // Flag for error UI
+      return; // Stop form submission
+    }
   
-  if (this.isEditingDescription) {
-    updatedData.description = this.editableDescription;
+    const updatedData = this.imageDataResponse;
+    
+    if (this.isEditingDescription) {
+      updatedData.description = this.editableDescription;
+    }
+  
+    const updatedFormData = new FormData();
+    updatedFormData.append('image', this.files[0].file);
+    updatedFormData.append('orgId', this.selectedOrgId);
+    updatedFormData.append('categoryName', this.selectedCategory);
+    updatedFormData.append('editedLabels', updatedData.description);
+  
+    this.isLoading = true;
+  
+    this.http.post('https://100.28.242.219.nip.io/api/admin/upload', updatedFormData)
+      .subscribe(response => {
+        this.isEditingDescription = false;
+        this.isModalOpen = false;
+        this.isLoading = false;
+        this.isCategoryInvalid = false; // Reset error state
+        this.getData();
+      });
   }
-  const updatedFormData = new FormData();
-  updatedFormData.append('image', this.files[0].file);
-  updatedFormData.append('orgId', this.selectedOrgId);
-  updatedFormData.append('categoryName', this.selectedCategory);
-  updatedFormData.append('editedLabels', updatedData.description);
-  this.isLoading = true;
-  this.http.post('https://100.28.242.219.nip.io/api/admin/upload', updatedFormData)
-    .subscribe(response => {
-      this.isEditingDescription = false;
-      this.isModalOpen = false;
-      this.isLoading = false;
-      this.getData();
-    });
-}
+  
 
   loadData() {
     // Simulate new data loading

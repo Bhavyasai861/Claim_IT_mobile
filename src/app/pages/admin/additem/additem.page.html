@@ -74,13 +74,14 @@
                 </div>
                 <ion-item>
                   <ion-label>Category</ion-label>
-                  <ion-select [(ngModel)]="categoryName" (ionChange)="onCategoryChange($event)"  interface="popover">
+                  <ion-select [(ngModel)]="selectedCategory" (ionChange)="isCategoryInvalid = false" interface="popover"
+                              [class.invalid]="isCategoryInvalid">
                     <ion-select-option *ngFor="let category of categoryNames" [value]="category">
                       {{ category }}
                     </ion-select-option>
                   </ion-select>
                 </ion-item>
-                
+                <p *ngIf="isCategoryInvalid" class="error-text">Please select a category.</p>                
               <ion-button (click)="submitItem()" [disabled]="isLoading" class="additem">
                 Submit
               </ion-button>

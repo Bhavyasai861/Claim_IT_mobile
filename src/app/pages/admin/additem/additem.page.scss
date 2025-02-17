@@ -325,3 +325,13 @@ ion-label {
   background: white;
   border-radius: 50%;
 }
+.invalid {
+  border: 2px solid red !important;
+  border-radius: 5px;
+}
+
+.error-text {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}
