@@ -59,7 +59,7 @@ export class ExpiredItemsPage implements OnInit {
 
   getData(fromDate?: string, toDate?: string, orgId?: string) {
     this.isLoading = true;
-    let url = 'https://100.28.242.219.nip.io/api/admin/archived';
+    let url = 'https://52.45.222.211.nip.io/api/admin/archived';
     const params = [];
     if (fromDate) params.push(`fromDate=${fromDate}`);
     if (toDate) params.push(`toDate=${toDate}`);
