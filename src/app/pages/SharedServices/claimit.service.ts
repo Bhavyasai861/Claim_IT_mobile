@@ -65,7 +65,7 @@ export class ClaimitService {
 
   //List of itetems
   public listOfItems(page: number) {
-    const url = `${environment.listOfItems}?page=${page}&size=5`;
+    const url = `${environment.listOfItems}?offset=0&size=${page}`;
     return this.http.get(url);
   }
   public getAllItems(query: any) {

@@ -30,7 +30,7 @@ export class UserHomePage implements OnInit {
   selectedCategory: any;
   popoverOpen = false;
   hasMoreItems = true;
-  currentPage = 0;
+  currentPage = 1;
   popoverEvent: any;
   categories: { id: number; name: string }[] = [];
   categerorydata: any = [];
@@ -288,7 +288,7 @@ export class UserHomePage implements OnInit {
     this.files = [];
     this.items = [];    
     this.itemsFound = true;     
-    this.currentPage = 0;  
+    this.currentPage = 1;  
     this.hasMoreItems = true; 
     this.pictureSearchCompleted = false;
     this.fetchItems();

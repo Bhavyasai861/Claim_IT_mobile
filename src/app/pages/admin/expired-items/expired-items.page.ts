@@ -1,5 +1,5 @@
 import { CommonModule, formatDate } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA, Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AlertController, IonicModule } from '@ionic/angular';
 import { ClaimitService } from '../../SharedServices/claimit.service';
@@ -47,8 +47,9 @@ export class ExpiredItemsPage implements OnInit {
   popoverOpen = false;
   orgData:any
   selectedOrgId:any
-  constructor(private datePipe: DatePipe, private claimService: ClaimitService, private alertController: AlertController,) { }
+  constructor(private datePipe: DatePipe, private claimService: ClaimitService, private alertController: AlertController,private cdr: ChangeDetectorRef) { }
 
+  
   ngOnInit() {
     this.getData()
     this.getorgId()
@@ -78,6 +79,7 @@ export class ExpiredItemsPage implements OnInit {
           item.expirationDate = new Date(item.expirationDate).toISOString().split('T')[0];
         });
         this.isLoading = false;        
+        this.cdr.detectChanges();
       },
       (error) => {
         this.isLoading = false;
