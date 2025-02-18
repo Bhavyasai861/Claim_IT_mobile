@@ -78,11 +78,11 @@ export class AdditemPage implements OnInit {
           date: key.split(":")[1],
           items: res[key]
         }));
-        if (res.length !== 0) {
-          this.noRecord = false;
+        if (res.length == 0) {
+          this.noRecord = true;
         }
         else {
-          this.noRecord = true;
+          this.noRecord = false;
         }
       },
       (error) => {

@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar style="--background: #00897b;">
+  <ion-toolbar style="--background: #000000de;">
     <ion-buttons slot="start">
       <ion-menu-button auto-hide="false">
         <ion-icon name="menu-outline" style="color: white; font-size: 24px;"></ion-icon>
@@ -71,7 +71,7 @@
         <ion-icon name="qr-code-outline" class="qrIcon" (click)="openQrModal(item)"
           *ngIf="item.status === 'PENDING_APPROVAL' "></ion-icon>
         <ion-button expand="block" size="small" (click)="onButtonClick(item.itemId)" *ngIf="item.status === 'UNCLAIMED' || item.status === 'PENDING_PICKUP'"
-          style="--background: #00897b; color: white;">
+          style="--background: #000000de; color: white;">
           Claim
         </ion-button>
       </ion-col>
@@ -145,7 +145,7 @@
             </ion-row>
             <ion-row>
               <ion-col size="12" class="button-container" style="text-align: center;">
-                <ion-button type="submit" [disabled]="claimForm.invalid" style="--background: #00897b; color: white;">
+                <ion-button type="submit" [disabled]="claimForm.invalid" style="--background: #000000de; color: white;">
                   Submit
                 </ion-button>
               </ion-col>

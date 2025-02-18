@@ -89,6 +89,9 @@ export class ClaimitService {
   public getcategories(): Observable<any> {
     return this.http.get(environment.getCategories)
   }
+  public getOrgId(): Observable<any> {
+    return this.http.get(environment.getOrgId)
+  }
   public getNotifications(): Observable<any> {
     return this.http.get(environment.getNotifications)
   }

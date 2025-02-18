@@ -24,5 +24,6 @@ export const environment = {
     updateDate:'https://100.28.242.219.nip.io/api/archiveExpired',
     DeleteCategory:'https://100.28.242.219.nip.io/api/admin/delete',
     updateCategory:'https://100.28.242.219.nip.io/api/categories',
-    uploadCategory:'https://100.28.242.219.nip.io/api/admin/addCategory'
+    uploadCategory:'https://100.28.242.219.nip.io/api/admin/addCategory',
+    getOrgId: 'http://172.17.12.38:8081/api/users/organisation',
   };

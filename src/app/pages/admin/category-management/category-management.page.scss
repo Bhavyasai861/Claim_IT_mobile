@@ -10,10 +10,9 @@
     border-bottom: 1px solid #ddd;
   }
   .additem {
-    --background: #00897b;
+    --background: #000000de;
     --color: #ffffff;
     justify-content: flex-end;
-    padding: 16px;
     display: flex;
     align-items: center;
     border-radius: 8px;
@@ -61,7 +60,7 @@
     transition: border-color 0.3s ease;
   
     &:hover {
-      border-color: #00897b;
+      border-color: #000000de;
     }
   }
   

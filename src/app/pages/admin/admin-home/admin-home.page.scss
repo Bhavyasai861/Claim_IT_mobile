@@ -23,7 +23,7 @@
 
 /* Header Styles */
 .dashboard-toolbar {
-  --background: #00897b;
+  --background: #000000de;
   color: white;
 }
 
@@ -49,7 +49,7 @@ ion-card-header {
 ion-card-title {
   font-size: 1rem;
   font-weight: bold;
-  color: #00897b;
+  color: #000000de;
 }
 ion-card-content {
   padding: 1rem;
@@ -133,7 +133,7 @@ ion-slide {
 
 h2 {
   font-size: 1.5rem;
-  color: #00897b;
+  color: #000000de;
 }
 
 p {
@@ -145,6 +145,16 @@ p {
     overflow-y: var(--overflow, auto); /* Default to auto if --overflow is not set */
     overscroll-behavior-y: none;
   }
-
-
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background-color: #000000de;
+  color: #e0e0e0;
+  z-index: 1;
+  padding: 2px 8px;
+  border-bottom: 1px solid #ddd;
 }

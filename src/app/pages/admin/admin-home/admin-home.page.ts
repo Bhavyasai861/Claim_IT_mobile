@@ -200,7 +200,11 @@ i: any;
     }
   }
   categoryItems(month: number, year: number): void {
-    this.claimService.categoryItems(month.toString(), year).subscribe((res: any) => {
+    console.log(month);
+    const formattedMonth = month.toString().padStart(2, '0'); // Ensures two-digit format (MM)
+    console.log(formattedMonth);
+    
+    this.claimService.categoryItems(formattedMonth, year).subscribe((res: any) => {
       const labels = res.map((item: any) => item.categoryName);
       const dataPoints = res.map((item: any) => item.itemCount);
       this.updatedPieChartData(labels, dataPoints);
@@ -380,7 +384,10 @@ confirmMonthSelection() {
   this.isCalendarModalOpen = false;
 }
   statusCount(month: number, year: number): void {
-    this.claimService.statusCount(month.toString(), year).subscribe({
+    const formattedMonth = month.toString().padStart(2, '0');
+    console.log(formattedMonth);
+    
+    this.claimService.statusCount(formattedMonth, year).subscribe( {
       next: (res: any) => {
         const data = res.data || res.results;
         if (res && res.length > 0) {

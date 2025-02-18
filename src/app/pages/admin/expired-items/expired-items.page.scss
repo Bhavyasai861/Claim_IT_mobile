@@ -48,5 +48,16 @@
     ::part(mat-calendar) {
       background-color: white !important;
     }
-
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background-color: #000000de;
+      color: #e0e0e0;
+      z-index: 1;
+      padding: 2px 8px;
+      border-bottom: 1px solid #ddd;
+    }
     

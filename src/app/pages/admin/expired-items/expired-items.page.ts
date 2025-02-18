@@ -34,8 +34,8 @@ export class ExpiredItemsPage implements OnInit {
   fromDate: any;  // To store the selected fromDate
   newExpiryDate: string = '';
   isUpdateMode: boolean = false;
-  selectedFrom: string | null = null;
-  selectedTo: string | null = null;
+  selectedFrom: any | null = null;
+  selectedTo: any | null = null;
   dateError: boolean = false;
   today = new Date();
   minDate: string = '2000-01-01'; 
@@ -43,36 +43,36 @@ export class ExpiredItemsPage implements OnInit {
   showCalendar: boolean = false;
   displayDateRange: string = 'Select Date Range';
   noRecord: boolean = false;
+  popoverEvent: any;
+  popoverOpen = false;
+  orgData:any
+  selectedOrgId:any
   constructor(private datePipe: DatePipe, private claimService: ClaimitService, private alertController: AlertController,) { }
 
   ngOnInit() {
     this.getData()
+    this.getorgId()
   }
   getImage(base64String: string): string {
     return `data:image/jpeg;base64,${base64String}`;
   }
 
-
-  data(){
-    
-  }
-  getData(fromDate?: string, toDate?: string) {
+  getData(fromDate?: string, toDate?: string, orgId?: string) {
     this.isLoading = true;
-    let url = '';
-    if (fromDate && toDate) {
-      url = `${environment.getExpiredItems}?fromDate=${fromDate}&toDate=${toDate}`;
-    } else {
-      url = 'https://100.28.242.219.nip.io/api/admin/archived';
+    let url = 'https://100.28.242.219.nip.io/api/admin/archived';
+    const params = [];
+    if (fromDate) params.push(`fromDate=${fromDate}`);
+    if (toDate) params.push(`toDate=${toDate}`);
+    if (orgId) params.push(`orgId=${orgId}`);
+    
+    if (params.length > 0) {
+      url += `?${params.join('&')}`;
     }
+  
     this.claimService.getExpiredItems(url).subscribe(
       (res: any) => {
         this.expiredItems = res;
-        if (res.length !== 0) {
-          this.noRecord = false;
-        }
-        else {
-          this.noRecord = true;
-        }
+        this.noRecord = res.length === 0;
         this.expiredItems.forEach(item => {
           item.receivedDate = new Date(item.receivedDate).toISOString().split('T')[0];
           item.expirationDate = new Date(item.expirationDate).toISOString().split('T')[0];
@@ -85,14 +85,22 @@ export class ExpiredItemsPage implements OnInit {
       }
     );
   }
+  
 
   async onDateChange(): Promise<void> {
     const fromDate = this.selectedFrom || null;
     const toDate = this.selectedTo || null;
+    const selectedOrgId = this.selectedOrgId || null;  
     if (fromDate && toDate) {
-      this.getData(fromDate, toDate);
+      this.getData(fromDate, toDate, selectedOrgId);
     }
   }
+  selectOrg(orgId: string) {
+    this.selectedOrgId = orgId;
+    this.popoverOpen = false;
+    this.getData(this.selectedFrom, this.selectedTo, this.selectedOrgId);
+  }
+  
   changeDate(dateString: string | null): string {
     if (!dateString) return '';
     return formatDate(dateString, 'MMM-dd-yyyy', 'en-US'); // "Feb 21 2025"
@@ -106,7 +114,6 @@ export class ExpiredItemsPage implements OnInit {
       if (selectedDate >= this.selectedFrom) {
         this.selectedTo = selectedDate;
         this.dateError = false;  
-        // Automatically fetch data once both dates are set
         this.onDateChange();
       } else {
         this.dateError = true;
@@ -117,8 +124,21 @@ export class ExpiredItemsPage implements OnInit {
       this.dateError = false;
     }
   }
-  
-
+  getorgId(){
+    this.claimService.getOrgId().subscribe(
+      (response) => {
+        this.orgData = response;
+        console.log(this.orgData);
+      },
+      (error) => {
+        console.error('Error fetching categories:', error);
+      }
+    );
+  }
+  openPopover(event: any): void {
+    this.popoverEvent = event; 
+    this.popoverOpen = true;
+  }
   openCalendar() {
     this.showCalendar = true;
   }
