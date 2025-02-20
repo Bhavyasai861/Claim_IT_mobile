@@ -275,7 +275,7 @@ export class UserHomePage implements OnInit {
     this.isLoading = true
     const formData: FormData = new FormData();
     formData.append('image', file, file.name);
-    const picUrl = 'https://52.45.222.211.nip.io/api/users/search-by-image';
+    const picUrl = 'https://qpatefm329.us-east-1.awsapprunner.com.nip.io/api/users/search-by-image';
     this.isLoading = false
 
     return this.http.post(picUrl, formData, {
@@ -319,7 +319,7 @@ export class UserHomePage implements OnInit {
   }
   search(search: any): void {
     console.log('gggggggggggggg', search);
-    const apiUrl = `https://52.45.222.211.nip.io/api/users/search?query=${encodeURIComponent(search)}`;
+    const apiUrl = `https://qpatefm329.us-east-1.awsapprunner.com.nip.io/api/users/search?query=${encodeURIComponent(search)}`;
     
     this.http.get<any[]>(apiUrl).subscribe(
       (data: any) => {

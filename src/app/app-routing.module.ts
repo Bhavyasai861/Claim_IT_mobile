@@ -61,7 +61,11 @@ const routes: Routes = [
   {
     path: 'skeleton',
     loadChildren: () => import('./pages/skeletons/skeleton/skeleton.module').then( m => m.SkeletonPageModule)
+  },  {
+    path: 'contact',
+    loadChildren: () => import('./pages/contact/contact.module').then( m => m.ContactPageModule)
   },
+
   
 
 

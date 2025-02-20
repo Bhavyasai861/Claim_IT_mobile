@@ -181,7 +181,7 @@ export class AdditemPage implements OnInit {
       this.formData.append('orgId', this.selectedOrgId);
       this.formData.append('categoryName', this.selectedCategory)
 
-      this.http.post('https://52.45.222.211.nip.io/api/admin/image', this.formData).subscribe(
+      this.http.post('https://qpatefm329.us-east-1.awsapprunner.com.nip.io/api/admin/image', this.formData).subscribe(
         (response) => {
           this.imageDataResponse = response;
           this.formatResponse(response);
@@ -229,7 +229,7 @@ export class AdditemPage implements OnInit {
   
     this.isLoading = true;
   
-    this.http.post('https://52.45.222.211.nip.io/api/admin/upload', updatedFormData)
+    this.http.post('https://qpatefm329.us-east-1.awsapprunner.com.nip.io/api/admin/upload', updatedFormData)
       .subscribe(response => {
         this.isEditingDescription = false;
         this.isModalOpen = false;

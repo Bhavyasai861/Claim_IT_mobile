@@ -157,7 +157,7 @@ export class CategoryManagementPage implements OnInit {
       status: "A"
     };
 
-    const url = `https://52.45.222.211.nip.io/api/admin/categories?id=${id}`;
+    const url = `https://qpatefm329.us-east-1.awsapprunner.com.nip.io/api/admin/categories?id=${id}`;
 
     try {
       const response = await this.claimService.updateCategory(url, reqBody);
