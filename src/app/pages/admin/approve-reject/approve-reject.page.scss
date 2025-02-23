@@ -22,7 +22,6 @@
   z-index: 1000;
   background-color: white;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   padding: 15px;
   width: 280px;
   max-width: 90%;
@@ -58,9 +57,8 @@ ion-popover {
   --width: 200px;
   --height: auto;
   --border-radius: 0.2px black;
-
   --box-shadow: none;
-  --background: #000000de;
+ --background: linear-gradient(45deg, #21233d, #71a2ce);
 }
 
 ion-list {
