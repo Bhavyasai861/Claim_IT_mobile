@@ -37,7 +37,7 @@ export class AdditemPage implements OnInit {
   isTruncated: boolean = true;
   addItemData: any
   addItemSearchResults: any
-  selectedOrgId: string = '';
+  selectedOrgId: string = 'Miracle';
   searchQuery: string = '';
   isImageModalOpen = false;
   selectedCategory: any;
@@ -188,8 +188,23 @@ export class AdditemPage implements OnInit {
       this.currentStep--;
     }
   }
+  
   onCategoryChange(event: any): void {
     this.selectedCategory = event.detail.value;
+    console.log( this.selectedCategory );
+    
+  }
+  fetchCategories(): void {
+    this.claimService.getcategories().subscribe(
+        (response) => {
+          this.categories = response;
+          this.categoryNames = this.categories.map(category => category.name);
+          console.log(this.categoryNames);
+        },
+        (error) => {
+          console.error('Error fetching categories:', error);
+        }
+      );
   }
   submitImageReponse() {
     if (this.files.length > 0) {
@@ -198,9 +213,10 @@ export class AdditemPage implements OnInit {
       this.formData = new FormData();
       this.formData.append('image', this.files[0].file);
       this.formData.append('orgId', this.selectedOrgId);
-      this.formData.append('categoryName', this.selectedCategory)
-
-      this.http.post('https://qpatefm329.us-east-1.awsapprunner.com.nip.io/api/admin/image', this.formData).subscribe(
+      this.formData.append('providedCategoryName', this.selectedCategory|| 'default')
+      console.log(this.formData);
+      
+      this.http.post('https://qpatefm329.us-east-1.awsapprunner.com/api/admin/image', this.formData).subscribe(
         (response) => {
           this.imageDataResponse = response;
           this.formatResponse(response);
@@ -248,7 +264,7 @@ export class AdditemPage implements OnInit {
   
     this.isLoading = true;
   
-    this.http.post('https://qpatefm329.us-east-1.awsapprunner.com.nip.io/api/admin/upload', updatedFormData)
+    this.http.post('https://qpatefm329.us-east-1.awsapprunner.com/api/admin/upload', updatedFormData)
       .subscribe(response => {
         this.isEditingDescription = false;
         this.isModalOpen = false;
@@ -299,18 +315,7 @@ export class AdditemPage implements OnInit {
     });
   }
 
-  fetchCategories(): void {
-    this.claimService.getcategories().subscribe(
-        (response) => {
-          this.categories = response;
-          this.categoryNames = this.categories.map(category => category.name);
-          console.log(this.categoryNames);
-        },
-        (error) => {
-          console.error('Error fetching categories:', error);
-        }
-      );
-  }
+
 
   openQrModal(item: any): void {
     this.qrData = item;
@@ -327,39 +332,28 @@ export class AdditemPage implements OnInit {
     const qrCodeSize = 200;
     const padding = 20;
     const idHeight = 30;
-
     combinedCanvas.width = qrCodeSize + 2 * padding;
     combinedCanvas.height = idHeight + 2 * padding;
-
     context.fillStyle = '#ffffff';
     context.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
     context.fillStyle = '#000000';
     context.font = '16px Arial';
     context.textAlign = 'center';
-
-    // Draw only the ID text
     context.fillText(`ID: ${this.qrData.uniqueId}`, combinedCanvas.width / 2, combinedCanvas.height / 2);
-
     const combinedImage = combinedCanvas.toDataURL('image/png');
-
-    // Create a link element to trigger the download
     const link = document.createElement('a');
     link.href = combinedImage;
     link.download = `id-${this.qrData.uniqueId}.png`;
-
-    // Try to trigger the download on desktop and mobile
     if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
-      // For mobile devices, let's first try opening in a new tab and let the user download manually
       const imageWindow = window.open();
       if (imageWindow) {
         imageWindow.document.write('<img src="' + combinedImage + '" style="width:100%"/>');
         imageWindow.document.close();
         setTimeout(() => {
-          imageWindow.location.href = combinedImage; // Force it to open and allow saving
+          imageWindow.location.href = combinedImage; 
         }, 500);
       }
     } else {
-      // For desktop, trigger the download directly as before
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

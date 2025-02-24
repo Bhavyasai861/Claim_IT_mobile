@@ -4,7 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AlertController, IonicModule, ToastController } from '@ionic/angular';
 import { ClaimitService } from '../../SharedServices/claimit.service';
-
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 @Component({
   selector: 'app-category-management',
   templateUrl: './category-management.page.html',
@@ -88,6 +88,24 @@ export class CategoryManagementPage implements OnInit {
 
     await alert.present();
   }
+  async openCamera() {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Camera // Opens Camera
+      });
+
+      const file = {
+        preview: image.dataUrl,
+        name: `photo_${Date.now()}.jpg`
+      };
+      this.files.push(file);
+    } catch (error) {
+      console.error('Camera error:', error);
+    }
+  }
   closeModal() {
     this.isModalOpen = false;
   }
@@ -157,7 +175,7 @@ export class CategoryManagementPage implements OnInit {
       status: "A"
     };
 
-    const url = `https://qpatefm329.us-east-1.awsapprunner.com.nip.io/api/admin/categories?id=${id}`;
+    const url = `https://qpatefm329.us-east-1.awsapprunner.com/api/admin/categories?id=${id}`;
 
     try {
       const response = await this.claimService.updateCategory(url, reqBody);

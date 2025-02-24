@@ -51,7 +51,7 @@ html {
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 
 ion-icon {
-    color: #000000;
+    color: #21233d;
 }
 ion-input, ion-textarea {
     background: #ffffff; 
@@ -59,17 +59,17 @@ ion-input, ion-textarea {
 }
 
 ion-input::part(input), ion-textarea::part(textarea) {
-    color: #000000 !important; 
+    color: #21233d !important; 
     background: #ffffff !important; 
 }
 
 
 ion-label {
-    color: #000000; 
+    color: #21233d; 
 }
 
 ion-button {
-    --background: #000000de;
+    --background: #21233d;
     --color: #ffffff; 
 }
 

@@ -60,7 +60,7 @@ export class ExpiredItemsPage implements OnInit {
 
   getData(fromDate?: string, toDate?: string, orgId?: string) {
     this.isLoading = true;
-    let url = 'https://qpatefm329.us-east-1.awsapprunner.com.nip.io/api/admin/archived';
+    let url = 'https://qpatefm329.us-east-1.awsapprunner.com/api/admin/archived';
     const params = [];
     if (fromDate) params.push(`fromDate=${fromDate}`);
     if (toDate) params.push(`toDate=${toDate}`);
