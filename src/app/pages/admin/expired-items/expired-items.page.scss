@@ -6,11 +6,19 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
     border: 1px solid #e0e0e0;
-    background-color: #ffffff;
+    background: linear-gradient(#e6e6e6, #a0c4e4cf);
     transform: translateY(10px); 
     opacity: 0;
     animation: fadeInUp 0.5s ease-in-out forwards; 
   }
+  ion-popover {
+    --width: 200px;
+    --height: auto;
+    --border-radius: 8px; 
+    --box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    --background: linear-gradient(45deg, #21233d, #71a2ce) !important;
+  }
+  
   
   .card-row:hover {
     transform: translateY(0px) scale(1.02);
@@ -60,4 +68,4 @@
       padding: 2px 8px;
       border-bottom: 1px solid #ddd;
     }
-    
+ 

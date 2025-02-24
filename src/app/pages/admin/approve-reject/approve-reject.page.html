@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content >
   <div *ngIf="isLoading" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
   </div>
@@ -33,15 +33,11 @@
   <ion-grid class="custom-card" *ngIf="!noRecord">
     <ion-row *ngFor="let item of searchResults; let i = index" class="ion-margin-bottom ion-padding card-row"
       style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;">
-      
-      <!-- Image Column -->
       <ion-col size="4">
         <img [src]="getImage(item.image)" alt="Item Image"
           style="width: 60%; max-height: 100px; margin: auto; display: block;"
           (click)="openImageModal(item.image)" />
       </ion-col>
-  
-      <!-- Details Column -->
       <ion-col size="6" style="font-size: 14px; color: #666;">
         <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.name }}</p>
         <p style="font-size: 12px; font-weight: bold; color: #333;">{{ item.email }}</p>
@@ -55,51 +51,24 @@
           {{ getStatus(item.receivedDate, item.status) }}
         </p>            
       </ion-col>
-  
-      <!-- Actions Column (Fix applied) -->
       <ion-col size="2">
         <ion-button fill="clear" class="custom-button"  size="small" (click)="presentPopover($event, item, i)" [id]="'popover-button-' + i" *ngIf="item.status !== 'CLAIMED'">
           <ion-icon slot="icon-only" name="ellipsis-vertical" slot="end" ></ion-icon>
-        </ion-button>  
-  
-        <ion-popover 
-          [isOpen]="isPopoverOpen && selectedItemIndex === i" 
-          (didDismiss)="isPopoverOpen = false" 
-          [event]="popoverEvent" 
-          side="bottom" 
-          alignment="end" 
-          [showBackdrop]="false" style="--width: 280px; --height: auto;" 
-          class="custom-popover">
+        </ion-button>
+        <ion-popover   [isOpen]="isPopoverOpen && selectedItemIndex === i" (didDismiss)="isPopoverOpen = false" 
+        [event]="popoverEvent" 
+        style="--width: 200px; --height: auto;" >
           <ng-template #popoverContent>
-            <ion-content class="ion-padding">
-              <ion-list>
-                <!-- Approve Button -->
-                <ion-item *ngIf="item.status === 'PENDING_APPROVAL'" button detail="false" (click)="approveClaim(item)">
-                  Approve
-                </ion-item>
-  
-                <!-- Reject Button -->
-                <ion-item *ngIf="item.status === 'ARCHIVED' || item.status === 'PENDING_APPROVAL'" 
-                  button detail="false" (click)="rejectClaim(item)">
-                  Reject
-                </ion-item>
-  
-                <!-- Remove Button -->
-                <ion-item *ngIf="item.status === 'REJECTED' || item.status === 'UNCLAIMED'" 
-                  button detail="false" (click)="confirmRemove(item)">
-                  Expired
-                </ion-item>
-  
-                <!-- Claimed Button -->
-                <ion-item *ngIf="item.status === 'PENDING_PICKUP'" button detail="false" (click)="markClaimed(item)">
-                  Claimed
-                </ion-item>
-              </ion-list>
-            </ion-content>
+            <div class="custom-dropdown">
+              <ion-item button *ngIf="item.status === 'PENDING_APPROVAL'" (click)="approveClaim(item)">Approve</ion-item>
+              <ion-item button *ngIf="item.status === 'ARCHIVED' || item.status === 'PENDING_APPROVAL'" 
+             (click)="rejectClaim(item)">Reject</ion-item>
+              <ion-item button *ngIf="item.status === 'REJECTED' || item.status === 'UNCLAIMED'" (click)="confirmRemove(item)">Expired</ion-item>
+              <ion-item button  *ngIf="item.status === 'PENDING_PICKUP'"  detail="false" (click)="markClaimed(item)">Claimed</ion-item>
+            </div>
           </ng-template>
-        </ion-popover>
-      </ion-col>
-  
+        </ion-popover>   
+      </ion-col>  
     </ion-row>
   </ion-grid>
   

@@ -109,20 +109,18 @@
 
 .modal-header {
   display: flex;
-  /* Use flexbox to arrange elements in a row */
   justify-content: space-between;
-  /* Distribute space between the items */
   align-items: center;
-  /* Vertically center the items */
   position: sticky;
   top: 0;
   background-color: white;
   z-index: 1;
   padding: 8px 16px;
-  /* Add padding for spacing */
   border-bottom: 1px solid #ddd;
 }
-
+.container {
+  --background: linear-gradient( #71a2ce);  
+}
 .scrollable-content h3 {
   font-size: 20px;
   font-weight: bold;
@@ -186,7 +184,7 @@ ion-label {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border: 1px solid #e0e0e0;
-  background-color: #ffffff;
+  background: linear-gradient(#e6e6e6, #a0c4e4cf);
   transform: translateY(10px);
   opacity: 0;
   animation: fadeInUp 0.5s ease-in-out forwards;
@@ -214,7 +212,6 @@ ion-label {
   justify-content: center;
   align-items: center;
   height: 100px;
-  /* Adjust height as needed */
   width: 100%;
 }
 
@@ -291,22 +288,17 @@ ion-label {
   justify-content: center;
   flex-wrap: wrap;
   overflow: hidden;
-  /* Prevents overflow */
 }
 
 .image-container {
   position: relative;
   width: 150px;
-  /* Adjust size as needed */
   height: 120px;
-  /* Adjust size as needed */
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  /* Ensures image does not overflow */
   border: 1px solid #ccc;
-  /* Optional border */
 }
 
 .image {

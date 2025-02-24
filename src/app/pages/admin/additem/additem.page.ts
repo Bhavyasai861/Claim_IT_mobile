@@ -11,6 +11,7 @@ import { MenuController } from '@ionic/angular';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
 import { ClaimitService } from '../../SharedServices/claimit.service';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 @Component({
   selector: 'app-additem',
   templateUrl: './additem.page.html',
@@ -119,6 +120,24 @@ export class AdditemPage implements OnInit {
   }
   goToStep(stepNumber: number) {
     this.currentStep = stepNumber;
+  }
+  async openCamera() {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Camera // Opens Camera
+      });
+
+      const file = {
+        preview: image.dataUrl,
+        name: `photo_${Date.now()}.jpg`
+      };
+      this.files.push(file);
+    } catch (error) {
+      console.error('Camera error:', error);
+    }
   }
   onFileSelect(event: any) {
     const file = event.target.files[0];

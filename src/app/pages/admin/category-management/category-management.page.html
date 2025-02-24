@@ -10,11 +10,11 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div style="display: flex; justify-content: flex-end">
+  <!-- <div style="display: flex; justify-content: flex-end">
     <ion-button class="additem" style="width: auto; " (click)="addCategory()">
       Add Category
     </ion-button>
-  </div>
+  </div> -->
   <div *ngIf="isLoading" class="spinner-container">
     <ion-spinner name="crescent"></ion-spinner>
   </div>
@@ -67,7 +67,7 @@
       </div>
     </ng-template>
   </ion-modal>
-    <ion-row>
+    <!-- <ion-row>
       <ion-col size="6" *ngFor="let item of categories">
         <ion-card style="height: 180px;border-radius: 14px;padding: 4px;">
           <ion-icon name="trash" 
@@ -86,7 +86,31 @@
           </ion-row>        
         </ion-card>       
       </ion-col>
-    </ion-row>
+    </ion-row> -->
+    <ion-list class="category-list">
+      <ion-item *ngFor="let item of categories" class="category-item">
+        <ion-thumbnail slot="start">
+          <img [src]="getImage(item.image)" alt="Category Image" />
+        </ion-thumbnail>
+        <ion-label>
+          <h2>{{ item.name }}</h2>
+        </ion-label>    
+        <ion-icon name="create-outline" slot="end" 
+          class="edit-icon" 
+          (click)="updateCategory(item)">
+        </ion-icon>    
+        <ion-icon name="trash" slot="end"
+          class="delete-icon"
+          (click)="deleteCategory(item.id)">
+        </ion-icon>
+      </ion-item>
+    </ion-list>
+    
+    <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+      <ion-fab-button style="--background: linear-gradient(45deg, #21233d, #71a2ce)" (click)="addCategory()">
+        <ion-icon name="add" style="color: white;"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
   <!-- <ion-grid>
     <ion-row>
       <ion-col size="6" *ngFor="let item of categories">
