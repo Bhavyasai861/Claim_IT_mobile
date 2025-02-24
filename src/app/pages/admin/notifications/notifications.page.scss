@@ -4,24 +4,16 @@
   border: 1px solid #dcdcdc;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  background-color: #ffffff;
+  background: linear-gradient(#e6e6e6, #a0c4e4cf);
   transition: all 0.3s ease;
-  transform: translateY(10px); /* Initial position */
+  transform: translateY(10px);
   opacity: 0;
-  animation: fadeInUp 0.5s ease-in-out forwards; /* Apply animation */
+  animation: fadeInUp 0.5s ease-in-out forwards; 
 }
 
 .notification-item:hover {
   background-color: #f8f8f8;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.unread {
-  border-left: 8px solid #888888;
-}
-
-.read {
-  border-left: 8px solid #000000de;
 }
 
 .notification-item ion-label h2 {

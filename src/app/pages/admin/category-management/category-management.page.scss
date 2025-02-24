@@ -1,14 +1,15 @@
 .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    background-color: white;
-    z-index: 1;
-    padding: 8px 16px;
-    border-bottom: 1px solid #ddd;
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: linear-gradient(45deg, #21233d, #71a2ce)!important;
+  color: #e0e0e0;
+  z-index: 1;
+  padding: 2px 8px;
+  border-bottom: 1px solid #ddd;
+}
  .category-list {
   padding: 10px;
   
@@ -20,7 +21,7 @@
   margin-bottom: 10px; 
   padding: 10px;
   border-radius: 10px; 
-  background: #ffffff; 
+  background: linear-gradient(#e6e6e6, #a0c4e4cf);
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); 
 }
 

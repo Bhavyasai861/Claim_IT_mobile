@@ -11,14 +11,14 @@
 
 
 .modal-header {
-  display: flex;  /* Use flexbox to arrange elements in a row */
-  justify-content: space-between;  /* Distribute space between the items */
-  align-items: center;  /* Vertically center the items */
+  display: flex; 
+  justify-content: space-between;  
+  align-items: center;
   position: sticky;
   top: 0;
-  background-color: white;
+  background: linear-gradient(45deg, #21233d, #71a2ce)!important;
   z-index: 1;
-  padding: 8px 16px;  /* Add padding for spacing */
+  padding: 8px 16px;
   border-bottom: 1px solid #ddd;
 }
 
