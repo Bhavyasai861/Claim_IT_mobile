@@ -74,6 +74,10 @@
           style="--background: linear-gradient(45deg, #21233d, #71a2ce); color: white;">
           Claim
         </ion-button>
+        <ion-button expand="block" size="small" (click)="onButtonClick(item.itemId)" *ngIf="item.status === 'PENDING_PICKUP'"
+        style="--background: linear-gradient(45deg, #21233d, #71a2ce); color: white;">
+        Claimed
+      </ion-button>
       </ion-col>
     </ion-row>
     <ion-infinite-scroll (ionInfinite)="fetchItems($event)" threshold="100px">

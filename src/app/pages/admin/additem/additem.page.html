@@ -9,11 +9,6 @@
   </ion-toolbar>
 </ion-header>
 <ion-content class="container">
-  <!-- <div style="display: flex; justify-content: flex-end; padding: 1px;">
-    <ion-button class="additem" style="width: auto; padding: 5px 10px;" (click)="addItem()">
-      Add Item
-    </ion-button>
-  </div> -->
   <ion-modal [isOpen]="isModalOpen" (willDismiss)="onModalDismiss()"
     style="--width: 500px; --height: 400px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
     <ng-template>
@@ -30,8 +25,7 @@
           <div *ngIf="currentStep === 1">
             <div class="upload-box">
               <div *ngIf="files.length === 0" style="display: flex; align-items: center; gap: 10px;">
-                <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInput />
-                
+                <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInput />                
                 <ion-button (click)="fileInput.click()">
                   <ion-icon name="cloud-upload" slot="start" style="color: white;"></ion-icon>
                   Upload Image
@@ -50,27 +44,11 @@
           
             <ion-button (click)="goToNextStep(); submitImageReponse()" [disabled]="!files.length" class="next">Next</ion-button>
           </div>
-          <!-- <div *ngIf="currentStep === 1">
-            <div class="upload-box">
-              <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInput />
-              <div *ngIf="files.length === 0">
-                <p (click)="fileInput.click()" style="margin-top: 90px;">Upload Image</p>
-              </div>
-              <div *ngIf="files.length > 0">
-                <div *ngFor="let file of files" class="image-container">
-                  <img [src]="file.preview" alt="Preview" class="image">
-                  <ion-icon name="close-circle" class="close-icon" (click)="removeFile(file)"></ion-icon>
-                </div>
-              </div>
-            </div>
-            <ion-button (click)="goToNextStep(); submitImageReponse()" [disabled]="!files.length" class="next">Next</ion-button>
-          </div>   -->
           <div *ngIf="currentStep === 2">
             <h3>Preview</h3>
             <div *ngIf="isLoading" class="spinner-container">
               <ion-spinner name="crescent"></ion-spinner>
             </div>
-            
             <div *ngIf="!isLoading && formattedData.length > 0">
                 <div *ngFor="let item of formattedData">
                   <ion-label>

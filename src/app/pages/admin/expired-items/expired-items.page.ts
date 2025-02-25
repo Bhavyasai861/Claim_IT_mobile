@@ -48,6 +48,7 @@ export class ExpiredItemsPage implements OnInit {
   popoverOpen = false;
   orgData:any
   selectedOrgId:any
+  highlightedDates: { date: string, textColor: string, backgroundColor: string }[] = [];
   constructor(private datePipe: DatePipe, private claimService: ClaimitService, private alertController: AlertController,private cdr: ChangeDetectorRef) { }
 
   
@@ -126,15 +127,16 @@ export class ExpiredItemsPage implements OnInit {
     return formatDate(dateString, 'MMM-dd-yyyy', 'en-US'); // "Feb 21 2025"
   }
   updateDateRange(event: any) {
-    const selectedDate = event.detail.value.split('T')[0];  
+    const selectedDate = event.detail.value.split('T')[0];
+
     if (!this.selectedFrom) {
       this.selectedFrom = selectedDate;
+      this.selectedTo = null;
       this.dateError = false;
     } else if (!this.selectedTo) {
       if (selectedDate >= this.selectedFrom) {
         this.selectedTo = selectedDate;
-        this.dateError = false;  
-        this.onDateChange();
+        this.dateError = false;
       } else {
         this.dateError = true;
       }
@@ -142,6 +144,18 @@ export class ExpiredItemsPage implements OnInit {
       this.selectedFrom = selectedDate;
       this.selectedTo = null;
       this.dateError = false;
+    }
+
+    this.updateHighlightedDates();
+  }
+
+  updateHighlightedDates() {
+    this.highlightedDates = [];
+    if (this.selectedFrom) {
+      this.highlightedDates.push({ date: this.selectedFrom, textColor: 'white', backgroundColor: '#3b82f6' });
+    }
+    if (this.selectedTo) {
+      this.highlightedDates.push({ date: this.selectedTo, textColor: 'white', backgroundColor: '#3b82f6' });
     }
   }
   getorgId(){

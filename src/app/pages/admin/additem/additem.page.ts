@@ -343,7 +343,6 @@ export class AdditemPage implements OnInit {
   }
 
 
-
   openQrModal(item: any): void {
     this.qrData = item;
     this.isQrModalOpen = true;

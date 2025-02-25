@@ -55,8 +55,7 @@
           <h5 style="color: white">Select Date</h5>
           <ion-icon name="close-circle" style="color: white; font-size: x-large;" (click)="closeModal()"></ion-icon>
         </div>
-        <ion-datetime [min]="minDate" [max]="maxDate" (ionChange)="updateDateRange($event)">
-        </ion-datetime>          
+        <ion-datetime  [min]="minDate" [max]="maxDate" (ionChange)="updateDateRange($event)" [highlightedDates]="highlightedDates" ></ion-datetime>
       </ion-content>
     </ng-template>
   </ion-modal>
