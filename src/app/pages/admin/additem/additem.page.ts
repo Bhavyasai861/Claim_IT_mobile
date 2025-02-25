@@ -121,24 +121,44 @@ export class AdditemPage implements OnInit {
   goToStep(stepNumber: number) {
     this.currentStep = stepNumber;
   }
+  dataURLtoBlob(dataUrl: string): Blob {
+    const byteString = atob(dataUrl.split(',')[1]);
+    const mimeString = dataUrl.split(',')[0].split(':')[1].split(';')[0];
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const intArray = new Uint8Array(arrayBuffer);
+  
+    for (let i = 0; i < byteString.length; i++) {
+      intArray[i] = byteString.charCodeAt(i);
+    }
+  
+    return new Blob([arrayBuffer], { type: mimeString });
+  }
+  
   async openCamera() {
     try {
       const image = await Camera.getPhoto({
         quality: 90,
         allowEditing: false,
         resultType: CameraResultType.DataUrl,
-        source: CameraSource.Camera // Opens Camera
+        source: CameraSource.Camera
       });
-
-      const file = {
-        preview: image.dataUrl,
-        name: `photo_${Date.now()}.jpg`
-      };
-      this.files.push(file);
+  
+      if (image.dataUrl) {
+        const blob = this.dataURLtoBlob(image.dataUrl);
+        const file = new File([blob], `photo_${Date.now()}.jpg`, { type: "image/jpeg" });
+  
+        this.files.push({
+          file: file, // Store file for upload
+          preview: image.dataUrl // Store preview
+        });
+  
+        console.log("Captured image file:", file);
+      }
     } catch (error) {
       console.error('Camera error:', error);
     }
   }
+  
   onFileSelect(event: any) {
     const file = event.target.files[0];
     if (file) {

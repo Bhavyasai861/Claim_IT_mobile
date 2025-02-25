@@ -81,9 +81,17 @@ ion-item {
   font-size: 16px;
 }
 
+ion-popover {
+  --width: 200px;
+  --height: auto;
+  --background: linear-gradient(45deg, #21233d, #71a2ce);
+  --box-shadow: 0 0 5px 2px #71a2ce; /* Creates a glow effect */
+  border-radius: 5px; /* Optional for rounded corners */
+}
 
 .custom-dropdown {
-  padding: 20px;
+  background-color: #f0f0f0;
+  padding: 15px;
 }
 
 .custom-dropdown:hover {
