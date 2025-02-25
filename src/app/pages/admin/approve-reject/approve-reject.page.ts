@@ -1,15 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { IonicModule, IonLoading, ModalController } from '@ionic/angular';
 import { ClaimitService } from '../../SharedServices/claimit.service';
+import { LoaderComponent } from '../loader/loader.component';
+import { catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-approve-reject',
   templateUrl: './approve-reject.page.html',
   styleUrls: ['./approve-reject.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, IonicModule, FormsModule, ReactiveFormsModule,LoaderComponent],
 })
 export class ApproveRejectPage implements OnInit {
   approveRejectForm!: FormGroup;
@@ -109,10 +111,12 @@ export class ApproveRejectPage implements OnInit {
         },
         (error) => {
           this.isPopoverOpen = false;
+          this.isLoading = false;
           console.error('Error removing item:', error);
         }
       );
     } else {
+      this.isLoading = false;
       this.isPopoverOpen = false;
     }
   }
@@ -133,6 +137,7 @@ export class ApproveRejectPage implements OnInit {
           this.search();
         },
         (error) => {
+          this.isLoading = false;
           console.error('Error approving claim:', error);
           this.isPopoverOpen = false;
         }
@@ -161,6 +166,7 @@ export class ApproveRejectPage implements OnInit {
           this.isLoading = false;
         },
         (error) => {
+          this.isLoading = false;
           console.error('Error rejecting claim:', error);
         }
       );
@@ -192,6 +198,7 @@ export class ApproveRejectPage implements OnInit {
           this.search();
         },
         (error) => {
+          this.isLoading = false;
           console.error('Error marking item as claimed:', error);
         }
       );
@@ -378,23 +385,28 @@ export class ApproveRejectPage implements OnInit {
         ? new Date(this.approveRejectForm.value.date).toISOString().split('T')[0]
         : '',
     };
+  
     console.log(reqbody);
     this.isLoading = true;
-    this.claimService.adminSearch(reqbody).subscribe((res: any) => {
+  
+    this.claimService.adminSearch(reqbody).pipe(
+      catchError((error) => {
+        this.isLoading = false;
+        console.error('Error fetching search results:', error);
+        this.noRecord = true; 
+        return of({ data: [] }); 
+      })
+    ).subscribe((res: any) => {
       this.isLoading = false;
       this.searchResults = res.data;
-      console.log(res.data.length,"res.lenght");
       
-      if (res.data.length == 0) {
-        this.noRecord = true;
-      }
-      else {
-        this.noRecord = false;
-      }
+      console.log(res.data.length, "res.length");
+  
+      this.noRecord = res.data.length === 0;
       console.log(this.searchResults);
-
     });
   }
+  
 
   getImage(base64String: string): string {
     return `data:image/jpeg;base64,${base64String}`;

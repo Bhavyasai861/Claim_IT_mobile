@@ -10,13 +10,14 @@ import { LoadingController } from '@ionic/angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ClaimitService } from '../../SharedServices/claimit.service';
 import { QRCodeComponent, QRCodeModule } from 'angularx-qrcode';
+import { LoaderComponent } from '../../admin/loader/loader.component';
 @Component({
   selector: 'app-user-home',
   templateUrl: './user-home.page.html',
   styleUrls: ['./user-home.page.scss'],
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, FormsModule, IonicModule, NgxDropzoneModule, ReactiveFormsModule, QRCodeModule]
+  imports: [CommonModule, FormsModule, IonicModule, NgxDropzoneModule, ReactiveFormsModule, QRCodeModule,LoaderComponent]
 })
 export class UserHomePage implements OnInit {
   @ViewChild('qrCode') qrCode!: QRCodeComponent;
@@ -76,17 +77,28 @@ export class UserHomePage implements OnInit {
         email: formValues.email,
         itemId: this.selectedItemId,
       };
-
-      this.claimService.createClaimRequest(REQBODY).subscribe((res: any) => {
-        if (res && res.success) { // Ensure success flag exists
-          this.claimedItems.add(this.selectedItemId);
-          this.showToast('Claim request successful');
-          this.fetchItems();
-          this.closeModal();
-        } else {
-          this.showToast('Claim request failed. Please try again.');
+      this.isLoading = true
+      this.claimService.createClaimRequest(REQBODY).subscribe(
+        (res: any) => {
+          if (res && res.success) { 
+            this.isLoading = false// Ensure success flag exists
+            this.claimedItems.add(this.selectedItemId);
+            this.showToast('Claim request successful');
+            this.fetchItems();
+            this.closeModal();
+          } else {
+            this.isLoading = false
+            console.warn('Claim request failed:', res);
+            this.showToast('Claim request failed. Please try again.');
+          }
+        },
+        (error) => {
+          this.isLoading = false
+          console.error('Error creating claim request:', error);
+          this.showToast('Error processing claim request. Please check your connection and try again.');
         }
-      });
+      );
+      
     }
   }
   async showToast(message: string) {
@@ -99,21 +111,31 @@ export class UserHomePage implements OnInit {
   }
 
   fetchItems(event?: any) {
-    this.isLoading = true;  
+    this.isLoading = true;
+    
     this.claimService?.listOfItems(this?.currentPage).subscribe(
       (res: any) => {
         this.isLoading = false;
-        if (res.data.length > 0) {
-          this.hasMoreItems = false; 
+        
+        if (res && res.data && res.data.length > 0) {
+          this.hasMoreItems = false;
           this.items = [...this.items, ...res.data];
           this.currentPage++; // Increase page count for next load
-        } else {          
-        }  
+        } else {
+          console.warn('No more items available.');
+        }
+        
         if (event) event.target.complete(); // Complete infinite scroll event
       },
-    
+      (error) => {
+        this.isLoading = false;
+        console.error('Error fetching items:', error);
+        
+        if (event) event.target.complete(); // Ensure event completes even on error
+      }
     );
   }
+  
   getImage(base64String: string): string {
     return `data:image/jpeg;base64,${base64String}`;
   }
@@ -294,14 +316,17 @@ export class UserHomePage implements OnInit {
     this.fetchItems();
   }
   fetchCategories(): void {
+    this.isLoading = true;
     this.claimService.getcategories().subscribe(
         (response) => {
+          this.isLoading = false;
           this.categories = response;
         
           this.categoryNames = this.categories.map(category => category.name);
           console.log(this.categoryNames);
         },
         (error) => {
+          this.isLoading = false;
           console.error('Error fetching categories:', error);
         }
       );
@@ -341,25 +366,30 @@ export class UserHomePage implements OnInit {
   }
   
   searchItems() {
+    this.isLoading = true
     if (this.searchQuery.trim() !== '') {      
       this.claimService.searchItems(this.searchQuery).subscribe(
-        (response) => {          
+        (response) => {      
+          this.isLoading = false    
           if (Array.isArray(response) && response.length > 0) {
             this.items = response;            
             this.itemsFound = true;
           } else {
+            this.isLoading = false   
             this.noRecord= false
             this.itemsFound = false;
             this.items = []; 
           }
         },
         (error) => {
+          this.isLoading = false   
           console.error(error);
           this.itemsFound = false;
           this.items = [];
         }
       );
     } else {
+      this.isLoading = false   
       this.itemsFound = true;
       this.items = [];
     }

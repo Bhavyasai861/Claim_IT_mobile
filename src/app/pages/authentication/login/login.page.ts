@@ -6,12 +6,13 @@ import { IonicModule, ToastController } from '@ionic/angular';
 import { ClaimitService } from 'src/app/pages/SharedServices/claimit.service';
 import { Geolocation } from '@capacitor/geolocation';
 import { Capacitor } from '@capacitor/core';
+import { LoaderComponent } from '../../admin/loader/loader.component';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
-  imports: [CommonModule, FormsModule, IonicModule,ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, IonicModule,ReactiveFormsModule,LoaderComponent],
   providers:[ClaimitService]
 })
 export class LoginPage implements OnInit {
@@ -19,7 +20,7 @@ export class LoginPage implements OnInit {
   loginForm!: FormGroup;
   errMsg: string | null = null;
   hidePassword = true;
-
+  isLoading: boolean = false;
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -60,10 +61,11 @@ export class LoginPage implements OnInit {
   async onSubmit() {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
-
+      this.isLoading = true;
       this.service.adminLogin(email, password).subscribe(
         async (response: any) => {
           if (response.isAdmin) {
+            this.isLoading = false;
             localStorage.setItem('isLogin', 'true');
             this.service.updateRole('admin');
             localStorage.setItem('role', 'admin');
@@ -72,14 +74,17 @@ export class LoginPage implements OnInit {
             this.router.navigate(['/claimIt/additem']);
             this.service.loginResponse.next(true);
           } else {
+            this.isLoading = false;
             this.showToast(response.message);
           }
         },
         (error: any) => {
+          this.isLoading = false;
           this.showToast(error.message || 'An unexpected error occurred.');
         }
       );
     } else {
+      this.isLoading = false;
       this.showToast('Please fill in all fields correctly.');
     }
   }

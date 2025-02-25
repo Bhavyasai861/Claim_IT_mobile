@@ -8,6 +8,7 @@ import { NgChartsModule } from 'ng2-charts';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import SwiperCore from 'swiper';
 import { IonicSlides } from '@ionic/angular';
+import { LoaderComponent } from '../loader/loader.component';
 
 
 
@@ -16,7 +17,7 @@ import { IonicSlides } from '@ionic/angular';
   templateUrl: './admin-home.page.html',
   styleUrls: ['./admin-home.page.scss'],
   standalone:true,
-  imports: [CommonModule, FormsModule, IonicModule,NgChartsModule],
+  imports: [CommonModule, FormsModule, IonicModule,NgChartsModule,LoaderComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],  // Add this line if needed
 
 })
@@ -24,6 +25,7 @@ export class AdminHomePage implements OnInit {
   isModalOpen = false;
   selectedDate: string = ''; 
   currentMonth: any = [];
+  isLoading: boolean = false;
   currentMonthData: any = {
     totalItems: 0,
     claimed: 0,
@@ -200,17 +202,26 @@ i: any;
     }
   }
   categoryItems(month: number, year: number): void {
-    console.log(month);
+    this.isLoading = true;
     const formattedMonth = month.toString().padStart(2, '0'); // Ensures two-digit format (MM)
-    console.log(formattedMonth);
-    
-    this.claimService.categoryItems(formattedMonth, year).subscribe((res: any) => {
-      const labels = res.map((item: any) => item.categoryName);
-      const dataPoints = res.map((item: any) => item.itemCount);
-      this.updatedPieChartData(labels, dataPoints);
-      this.updatedBarChartData(labels, dataPoints);
-    });
-  }
+    this.claimService.categoryItems(formattedMonth, year).subscribe(
+      (res: any) => {
+        if (res && res.length > 0) {
+          this.isLoading = false;
+          const labels = res.map((item: any) => item.categoryName);
+          const dataPoints = res.map((item: any) => item.itemCount);
+          this.updatedPieChartData(labels, dataPoints);
+          this.updatedBarChartData(labels, dataPoints);
+        } else {
+          this.isLoading = false;
+          console.warn('No category items found for the given month and year.');
+        }
+      },
+      (error) => {
+        this.isLoading = false;
+        console.error('Error fetching category items:', error);
+      }
+    )}
   onSlideChange(event: any) {
     console.log('Slide changed!', event);
   }

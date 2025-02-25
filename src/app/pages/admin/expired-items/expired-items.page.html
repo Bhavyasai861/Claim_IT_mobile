@@ -9,9 +9,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
-  <div *ngIf="isLoading" class="loading-container">
-    <ion-spinner name="crescent"></ion-spinner>
-  </div>
+ 
 
   <ion-row style="align-items: center; justify-content: space-between; padding: 10px;">  
     <ion-col size="9" style="display: flex; align-items: center;">
@@ -99,3 +97,4 @@
     </ion-row>
   </div>
 </ion-content>
+<app-loader *ngIf="isLoading"></app-loader>

@@ -113,9 +113,7 @@
     </ng-template>
   </ion-modal>
   
-  <div *ngIf="isLoading" class="loading-container">
-    <ion-spinner name="crescent"></ion-spinner>
-  </div>
+  
   <ion-grid class="custom-card" >
     <div *ngFor="let group of addItemSearchResults">
       <span style="font-size: 20px;font-weight: bold;">{{ group.date }}</span>
@@ -186,3 +184,4 @@
   </div>
   <app-footer></app-footer>
 </ion-content>
+<app-loader *ngIf="isLoading"></app-loader>

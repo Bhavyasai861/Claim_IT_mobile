@@ -10,9 +10,9 @@
 </ion-header>
 
 <ion-content >
-  <div *ngIf="isLoading" class="loading-container">
+  <!-- <div *ngIf="isLoading" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
-  </div>
+  </div> -->
   <ion-item-divider class="searchBarFixed">
     <ion-searchbar class="search-bar" placeholder="{{ currentFilterPlaceholder }}" [(ngModel)]="searchValue"  show-clear-button="always" 
       (ionClear)="clear($event)" (keyup.enter)="filterSearch($event)">
@@ -91,3 +91,4 @@
     </ion-row>
   </div>
 </ion-content>
+<app-loader *ngIf="isLoading"></app-loader>

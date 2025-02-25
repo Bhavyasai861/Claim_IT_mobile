@@ -5,11 +5,12 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { AlertController, IonicModule, ToastController } from '@ionic/angular';
 import { ClaimitService } from '../../SharedServices/claimit.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { LoaderComponent } from '../loader/loader.component';
 @Component({
   selector: 'app-category-management',
   templateUrl: './category-management.page.html',
   styleUrls: ['./category-management.page.scss'],
-  imports: [CommonModule, IonicModule, FormsModule, ReactiveFormsModule]
+  imports: [CommonModule, IonicModule, FormsModule, ReactiveFormsModule,LoaderComponent]
 })
 export class CategoryManagementPage implements OnInit {
   categoryForm: FormGroup;
@@ -45,6 +46,7 @@ export class CategoryManagementPage implements OnInit {
           }
         },
         (error) => {
+          this.isLoading = false;
           console.error('Error fetching categories:', error);
         }
       );
@@ -174,23 +176,27 @@ export class CategoryManagementPage implements OnInit {
       categoryName: categoryName,
       status: "A"
     };
-
+ this.isLoading = true
     const url = `https://qpatefm329.us-east-1.awsapprunner.com/api/admin/categories?id=${id}`;
 
     try {
       const response = await this.claimService.updateCategory(url, reqBody);
       if (response) {
+        this.isLoading = false
         console.log("Category updated successfully:", response);
         this.fetchCategories();
       } else {
+        this.isLoading = false
         console.warn("Category update failed:", response);
       }
     } catch (error) {
+      this.isLoading = false
       console.error("Error updating category:", error);
     }
   }
 
   async deleteCategory(id: any) {
+  
     const alert = await this.alertController.create({
       header: 'Confirm Deletion',
       message: 'Are you sure you want to delete this category?',
@@ -208,11 +214,14 @@ export class CategoryManagementPage implements OnInit {
             const reqBody = {
               id: id
             };
+            this.isLoading = true
             this.claimService.deleteCategory(reqBody).subscribe(
               (response: any) => {
+                this.isLoading = false
                 this.fetchCategories();
               },
               (error) => {
+                this.isLoading = false
                 console.error('Error deleting category:', error);
               }
             );

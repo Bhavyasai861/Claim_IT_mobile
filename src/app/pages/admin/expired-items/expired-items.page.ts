@@ -10,12 +10,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { DatePipe } from '@angular/common';
+import { LoaderComponent } from '../loader/loader.component';
 
 @Component({
   selector: 'app-expired-items',
   templateUrl: './expired-items.page.html',
   styleUrls: ['./expired-items.page.scss'],
-  imports: [CommonModule, IonicModule, FormsModule, MatFormFieldModule, MatDatepickerModule, MatNativeDateModule, MatInputModule],
+  imports: [CommonModule, IonicModule, FormsModule, MatFormFieldModule, MatDatepickerModule, MatNativeDateModule, MatInputModule,LoaderComponent],
   providers: [provideNativeDateAdapter(), DatePipe],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -59,31 +60,48 @@ export class ExpiredItemsPage implements OnInit {
   }
 
   getData(fromDate?: string, toDate?: string, orgId?: string) {
-    this.isLoading = true;
     let url = 'https://qpatefm329.us-east-1.awsapprunner.com/api/admin/archived';
     const params = [];
+  
     if (fromDate) params.push(`fromDate=${fromDate}`);
     if (toDate) params.push(`toDate=${toDate}`);
     if (orgId) params.push(`orgId=${orgId}`);
-    
+  
     if (params.length > 0) {
       url += `?${params.join('&')}`;
     }
   
+    this.isLoading = true;
+  
     this.claimService.getExpiredItems(url).subscribe(
       (res: any) => {
-        this.expiredItems = res;
-        this.noRecord = res.length === 0;
-        this.expiredItems.forEach(item => {
-          item.receivedDate = new Date(item.receivedDate).toISOString().split('T')[0];
-          item.expirationDate = new Date(item.expirationDate).toISOString().split('T')[0];
-        });
-        this.isLoading = false;        
-        this.cdr.detectChanges();
+        this.isLoading = false;
+  
+        if (res && Array.isArray(res)) {
+          this.expiredItems = res;
+          this.noRecord = res.length === 0;
+  
+          this.expiredItems.forEach(item => {
+            item.receivedDate = new Date(item.receivedDate).toISOString().split('T')[0];
+            item.expirationDate = new Date(item.expirationDate).toISOString().split('T')[0];
+          });
+  
+          this.cdr.detectChanges();
+        } else {
+          console.warn('Unexpected response format:', res);
+        }
       },
       (error) => {
         this.isLoading = false;
         console.error('Error fetching data:', error);
+  
+        if (error.status === 500) {
+          this.isLoading = false;
+        } else {
+        }
+      },
+      () => {
+        this.isLoading = false; // Ensures loader stops even if observable completes
       }
     );
   }
@@ -149,6 +167,7 @@ export class ExpiredItemsPage implements OnInit {
   }
   async onUpdate(): Promise<void> {
     this.isUpdateMode = true; 
+    this.isLoading = true
     const toDate = this.selectedTo || null
     const alert = await this.alertController.create({
       header: 'Update Date',
@@ -198,7 +217,7 @@ export class ExpiredItemsPage implements OnInit {
   updateDate(newExpireDate: any) {
     const fromDate = this.selectedFrom
     const toDate = this.selectedTo
-
+    this.isLoading = true
     const params = {
       fromDate: fromDate,
       toDate: toDate,
@@ -208,11 +227,13 @@ export class ExpiredItemsPage implements OnInit {
     this.claimService.updateDate(params).subscribe(
       (response: any) => {
         if (response.Success === true) {
+          this.isLoading = false
           this.getData();
           this.selectedFrom = null;
           this.selectedTo = null;
           this.isUpdateMode = false; 
         } else {
+          this.isLoading = false
           console.warn('Update was not successful:', response);
         }
       }

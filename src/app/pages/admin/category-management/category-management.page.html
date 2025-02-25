@@ -15,9 +15,9 @@
       Add Category
     </ion-button>
   </div> -->
-  <div *ngIf="isLoading" class="spinner-container">
+  <!-- <div *ngIf="isLoading" class="spinner-container">
     <ion-spinner name="crescent"></ion-spinner>
-  </div>
+  </div> -->
   <ion-modal [isOpen]="isModalOpen" (willDismiss)="onModalDismiss()"
     style="--width: 500px; --height: 400px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
     <ng-template>
@@ -155,3 +155,4 @@
     </ion-row>
   </div>
 </ion-content>
+<app-loader *ngIf="isLoading"></app-loader>

@@ -47,9 +47,9 @@
     </ion-grid>
 
   </ion-item-divider>
-  <div *ngIf="isLoading" class="loading-container">
+  <!-- <div *ngIf="isLoading" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
-  </div>
+  </div> -->
   <ion-grid class="custom-card" *ngIf="!noRecord">
     <ion-row *ngFor="let item of items"
       style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
@@ -161,3 +161,4 @@
     </ion-row>
   </div>
 </ion-content>
+<app-loader *ngIf="isLoading"></app-loader>

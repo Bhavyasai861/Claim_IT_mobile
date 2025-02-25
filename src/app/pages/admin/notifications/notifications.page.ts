@@ -3,13 +3,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { ClaimitService } from '../../SharedServices/claimit.service';
+import { LoaderComponent } from '../loader/loader.component';
 
 @Component({
   selector: 'app-notifications',
   templateUrl: './notifications.page.html',
   styleUrls: ['./notifications.page.scss'],
   standalone:true,
-  imports:[CommonModule,IonicModule,FormsModule]
+  imports:[CommonModule,IonicModule,FormsModule,LoaderComponent]
 })
 export class NotificationsPage implements OnInit {
 
@@ -52,10 +53,22 @@ export class NotificationsPage implements OnInit {
       id: notificationId,
       isRead: true,
     };
+  
+    this.isLoading = true;
+  
+    try {
       const response = await this.claimService.updateNotification(reqBody);
       if (response) {
         this.loadNotifications();
+      } else {
+        console.warn('Failed to mark notification as read:', response);
       }
-    } 
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+  
   
 }

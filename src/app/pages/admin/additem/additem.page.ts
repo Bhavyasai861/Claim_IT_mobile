@@ -12,13 +12,14 @@ import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
 import { ClaimitService } from '../../SharedServices/claimit.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { LoaderComponent } from '../loader/loader.component';
 @Component({
   selector: 'app-additem',
   templateUrl: './additem.page.html',
   styleUrls: ['./additem.page.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, HttpClientModule, QRCodeModule,],
+  imports: [CommonModule, FormsModule, IonicModule, HttpClientModule, QRCodeModule,LoaderComponent],
 })
 export class AdditemPage implements OnInit {
   @ViewChild('qrCode') qrCode!: QRCodeComponent;
@@ -72,25 +73,29 @@ export class AdditemPage implements OnInit {
   getData() {
     const query = this.searchQuery.trim();
     this.isLoading = true;
+  
     this.claimService.listOfItemsAddItem(query).subscribe(
       (res: any) => {
-        this.isLoading = false;
-        this.addItemSearchResults = Object.keys(res).map((key) => ({
-          date: key.split(":")[1],
-          items: res[key]
-        }));
-        if (res.length == 0) {
+        if (res && Object.keys(res).length > 0) {
+          this.addItemSearchResults = Object.keys(res).map((key) => ({
+            date: key.split(":")[1],
+            items: res[key],
+          }));
+          this.noRecord = false;
+        } else {
           this.noRecord = true;
         }
-        else {
-          this.noRecord = false;
-        }
+  
+        // Only setting `isLoading = false` after processing is complete
+        this.isLoading = false;
       },
       (error) => {
         console.error('Error fetching data:', error);
+        this.isLoading = false; // Ensure loading stops even if an error occurs
       }
     );
   }
+  
 
   getStatusColor(status: string): string {
     switch (status) {
@@ -215,13 +220,15 @@ export class AdditemPage implements OnInit {
     
   }
   fetchCategories(): void {
+    this.isLoading = true
     this.claimService.getcategories().subscribe(
         (response) => {
+          this.isLoading = false
           this.categories = response;
           this.categoryNames = this.categories.map(category => category.name);
-          console.log(this.categoryNames);
         },
         (error) => {
+          this.isLoading = false
           console.error('Error fetching categories:', error);
         }
       );

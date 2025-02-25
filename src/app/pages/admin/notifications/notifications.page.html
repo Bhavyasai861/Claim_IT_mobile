@@ -29,9 +29,9 @@
       </ion-col>
     </ion-row>
   </ion-grid> -->
-  <div *ngIf="isLoading" class="loading-container">
+  <!-- <div *ngIf="isLoading" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
-  </div>
+  </div> -->
   <ion-list style="padding: 8px">
     <ion-item *ngFor="let notification of notifications"
       [ngClass]="{'unread': !notification.read, 'read': notification.read}" (click)="markAsRead(notification.id)"
@@ -51,3 +51,4 @@
     </ion-row>
   </div>
 </ion-content>
+<app-loader *ngIf="isLoading"></app-loader>

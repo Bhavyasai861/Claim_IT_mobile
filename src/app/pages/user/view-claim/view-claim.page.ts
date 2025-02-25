@@ -3,13 +3,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { ClaimitService } from '../../SharedServices/claimit.service';
+import { LoaderComponent } from '../../admin/loader/loader.component';
 
 @Component({
   selector: 'app-view-claim',
   templateUrl: './view-claim.page.html',
   styleUrls: ['./view-claim.page.scss'],
   standalone:true,
-  imports:[CommonModule,IonicModule,FormsModule]
+  imports:[CommonModule,IonicModule,FormsModule,LoaderComponent]
 })
 export class ViewClaimPage implements OnInit {
   searchValue: any;

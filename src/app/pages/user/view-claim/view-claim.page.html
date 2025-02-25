@@ -11,9 +11,9 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div *ngIf="isLoading" class="loading-container">
+  <!-- <div *ngIf="isLoading" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
-  </div>
+  </div> -->
 
   <!-- No records found message with image -->
   <!-- <div *ngIf="!isLoading && items.length === 0" class="no-records-container">
@@ -67,3 +67,4 @@
   </ion-row>
 </div>
 </ion-content>
+<app-loader *ngIf="isLoading"></app-loader>
