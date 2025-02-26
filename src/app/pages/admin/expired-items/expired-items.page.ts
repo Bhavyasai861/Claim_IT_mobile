@@ -181,8 +181,10 @@ export class ExpiredItemsPage implements OnInit {
   }
   async onUpdate(): Promise<void> {
     this.isUpdateMode = true; 
-    this.isLoading = true
-    const toDate = this.selectedTo || null
+    this.isLoading = true; // Set loading before showing alert
+    
+    const toDate = this.selectedTo || null;
+    
     const alert = await this.alertController.create({
       header: 'Update Date',
       message: 'Do you want to update the expired date?',
@@ -191,7 +193,7 @@ export class ExpiredItemsPage implements OnInit {
           name: 'newToDate',
           type: 'date',
           placeholder: 'Select a new "To Date"',
-          value: toDate 
+          value: toDate
         }
       ],
       buttons: [
@@ -199,25 +201,32 @@ export class ExpiredItemsPage implements OnInit {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
+            // Ensure loading stops when cancelling
+            this.isLoading = false;
             this.isUpdateMode = false;  
             this.newExpiryDate = '';
-            console.log("this.newExpiryDate", this.newExpiryDate);
-
           }
         },
         {
           text: 'Yes',
           handler: (data) => {
-            this.newExpiryDate = data.newToDate;
-            console.log("this.newExpiryDate", this.newExpiryDate);
-
-            this.updateDate(this.newExpiryDate);  
+            if (data.newToDate) {
+              this.newExpiryDate = data.newToDate;
+              this.updateDate(this.newExpiryDate);
+            } else {
+              // Stop loading if no date is selected
+              this.isLoading = false;
+              this.isUpdateMode = false;
+            }
           }
         }
       ]
     });
+  
+    this.isLoading = false; // Ensure loading stops before displaying alert
     await alert.present();
   }
+  
   // Format date to a suitable string format
   formatDate(date: Date): string {
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;

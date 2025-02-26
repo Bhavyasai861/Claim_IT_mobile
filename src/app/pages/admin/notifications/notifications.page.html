@@ -8,7 +8,10 @@
     <ion-title style="color: white;">Notifications</ion-title>
   </ion-toolbar>
 </ion-header>
-
+<div *ngIf="errorImage" class="error-container">
+  <img [src]="errorImage" alt="Error" class="error-image">
+  <p>{{ errorMessage }}</p>
+</div>
 <ion-content>
   <!-- <ion-grid class="ion-no-padding">
     <ion-row>
