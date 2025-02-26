@@ -1,3 +1,11 @@
+
+<div *ngIf="errorImage && errorImage !== ''" class="error-container">
+  <img [src]="errorImage" alt="Error" class="error-image">
+  <p>{{ errorMessage }}</p>
+  <ion-button fill="clear" (click)="goBack()" style="color: #007aff; font-size: 16px;">
+     Go Back
+  </ion-button>
+</div>
 <ion-header [translucent]="true">
   <ion-toolbar style="--background: linear-gradient(45deg, #21233d, #71a2ce)">
     <ion-buttons slot="start">
@@ -9,14 +17,13 @@
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
- 
-
   <ion-row style="align-items: center; justify-content: space-between; padding: 10px;">  
     <ion-col size="9" style="display: flex; align-items: center;">
       <ion-icon name="calendar-outline" color="primary" 
         style="font-size: 22px; cursor: pointer; margin-right: 10px;" 
         (click)="openCalendar()">
       </ion-icon>      
+      
       <div *ngIf="selectedFrom && selectedTo" 
         style="display: flex; align-items: center; flex-grow: 1; border-bottom: 1px solid #ccc; padding: 5px 0;">
         <span style="font-size: 14px;"> 
@@ -24,28 +31,44 @@
         </span>
       </div>
     </ion-col>  
+  
     <ion-col size="3" style="display: flex; align-items: center; justify-content: flex-end; gap: 15px;">
       <ion-icon name="filter" style="cursor: pointer; font-size: 22px;" 
         (click)="openPopover($event)">
       </ion-icon>
-      <ion-popover  [isOpen]="popoverOpen"
-      (didDismiss)="popoverOpen = false"
-      [event]="popoverEvent"
-      [attr.inert]="!popoverOpen ? 'true' : null"
-      style="--width: 200px; --height: auto;" >
-        <ng-template >
+  
+      <ion-popover [isOpen]="popoverOpen"
+        (didDismiss)="popoverOpen = false"
+        [event]="popoverEvent"
+        [attr.inert]="!popoverOpen ? 'true' : null"
+        style="--width: 200px; --height: auto;">
+        <ng-template>
           <div class="custom-dropdown" *ngFor="let data of orgData" (click)="selectOrg(data.orgId)">
-            <ion-item > {{ data.orgId }}</ion-item>
+            <ion-item>{{ data.orgId }}</ion-item>
           </div>
         </ng-template>
       </ion-popover>   
-        <ion-icon name="create-outline" style="font-size: 22px; cursor: pointer; color: #000000de;" 
+  
+      <ion-icon name="create-outline" style="font-size: 22px; cursor: pointer; color: #000000de;" 
         (click)="onUpdate()">
       </ion-icon>
-      <ion-icon *ngIf="selectedOrgId || (selectedFrom && selectedTo ) " name="close-circle" (click)="clearSelectedDates()"
-            style="cursor: pointer; font-size: 22px;"></ion-icon>
+  
+      <ion-icon *ngIf="selectedOrgId || (selectedFrom && selectedTo )" 
+        name="close-circle" (click)="clearSelectedDates()"
+        style="cursor: pointer; font-size: 22px;">
+      </ion-icon>
     </ion-col>
   </ion-row>  
+ 
+  <!-- Toast Message for Validation -->
+  <ion-toast 
+    [isOpen]="showToast" 
+    message="Please select From and To dates from the calendar." 
+    duration="2000" 
+    position="top"
+    (didDismiss)="showToast = false">
+  </ion-toast>
+  
   
   <ion-modal [isOpen]="showCalendar" (ionModalDidDismiss)="closeModal()"
     style="--width: 500px; --height: 420px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
