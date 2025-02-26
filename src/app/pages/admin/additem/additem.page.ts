@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { HttpClientModule } from '@angular/common/http';
@@ -56,7 +56,7 @@ export class AdditemPage implements OnInit {
   isDescriptionInvalid: boolean = false;
   errorImage: string | null = null;
   errorMessage: string = '';
-  constructor(private http: HttpClient, private modalController: ModalController,private errorService: ErrorService, private router: Router, private menu: MenuController, private claimService: ClaimitService) { }
+  constructor(private http: HttpClient,private changeDetectorRef: ChangeDetectorRef, private modalController: ModalController,private errorService: ErrorService, private router: Router, private menu: MenuController, private claimService: ClaimitService) { }
 
   ngOnInit() {
     this.getData();
@@ -97,6 +97,7 @@ export class AdditemPage implements OnInit {
         this.isLoading = false;
       },
       (error) => {
+        this.changeDetectorRef.detectChanges();
         this.errorImage = this.errorService.getErrorImage(error.status);
         this.errorMessage = this.errorService.getErrorMessage(error.status);
         console.error('Error fetching data:', error);

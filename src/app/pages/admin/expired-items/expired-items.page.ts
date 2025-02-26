@@ -100,6 +100,9 @@ export class ExpiredItemsPage implements OnInit {
         }
       },
       (error) => {
+        this.changeDetectorRef.detectChanges();
+        this.errorImage = this.errorService.getErrorImage(error.status);
+        this.errorMessage = this.errorService.getErrorMessage(error.status);
         this.isLoading = false;
         console.error('Error fetching data:', error);
   
@@ -169,9 +172,11 @@ export class ExpiredItemsPage implements OnInit {
     this.claimService.getOrgId().subscribe(
       (response) => {
         this.orgData = response;
-        console.log(this.orgData);
       },
       (error) => {
+        this.changeDetectorRef.detectChanges();
+        this.errorImage = this.errorService.getErrorImage(error.status);
+        this.errorMessage = this.errorService.getErrorMessage(error.status);
         console.error('Error fetching categories:', error);
       }
     );
