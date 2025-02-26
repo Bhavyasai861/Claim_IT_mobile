@@ -8,6 +8,10 @@
     <ion-title style="color: white;">Add Item</ion-title>
   </ion-toolbar>
 </ion-header>
+<div *ngIf="errorImage">
+  <img [src]="errorImage" alt="Error" class="error-image">
+  <p>{{ errorMessage }}</p>
+</div>
 <ion-content class="container">
   <ion-modal [isOpen]="isModalOpen" (willDismiss)="onModalDismiss()"
     style="--width: 500px; --height: 400px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
@@ -50,41 +54,51 @@
               <ion-spinner name="crescent"></ion-spinner>
             </div>
             <div *ngIf="!isLoading && formattedData.length > 0">
-                <div *ngFor="let item of formattedData">
-                  <ion-label>
-                    <span *ngIf="item.key === 'description'">
-                      <ng-container *ngIf="!isEditingDescription">
-                        {{ isTruncated ? (item.value | slice: 0:100) + '...' : item.value }}
-                        <a href="javascript:void(0)" (click)="toggleTruncate()">
-                          {{ isTruncated ? 'Read More' : 'Show Less' }}
-                        </a>
-                        <ion-icon name="create" (click)="editDescription(item)"></ion-icon>
-                      </ng-container>
-                      <ng-container *ngIf="isEditingDescription">
-                        <textarea 
-                          [(ngModel)]="editableDescription"
-                          placeholder="Edit description" 
-                          rows="4" 
-                          class="styled-textarea">
-                        </textarea>
-                      </ng-container>                      
-                    </span>
-                  </ion-label>
-                </div>
-                <ion-item>
-                  <ion-label>Category</ion-label>
-                  <ion-select [(ngModel)]="selectedCategory" (ionChange)="isCategoryInvalid = false" interface="popover"
-                              [class.invalid]="isCategoryInvalid">
-                    <ion-select-option *ngFor="let category of categoryNames" [value]="category">
-                      {{ category }}
-                    </ion-select-option>
-                  </ion-select>
-                </ion-item>
-                <p *ngIf="isCategoryInvalid" class="error-text">Please select a category.</p>                
-              <ion-button (click)="submitItem()" [disabled]="isLoading" class="additem">
+              <div *ngFor="let item of formattedData">
+                <ion-label>
+                  <span *ngIf="item.key === 'description'">
+                    <ng-container *ngIf="!isEditingDescription">
+                      {{ isTruncated ? (item.value | slice: 0:100) + '...' : item.value }}
+                      <a href="javascript:void(0)" (click)="toggleTruncate()">
+                        {{ isTruncated ? 'Read More' : 'Show Less' }}
+                      </a>
+                      <ion-icon name="create" (click)="editDescription(item)"></ion-icon>
+                    </ng-container>
+                    <ng-container *ngIf="isEditingDescription">
+                      <textarea 
+                        [(ngModel)]="editableDescription"
+                        placeholder="Edit description" 
+                        rows="4" 
+                        class="styled-textarea"
+                        (ngModelChange)="validateDescription()">
+                      </textarea>
+                    </ng-container>                      
+                  </span>
+                </ion-label>
+              </div>
+              
+              <p *ngIf="isDescriptionInvalid" class="error-text">
+                Description exceeds 200 characters. Please edit it.
+              </p>
+            
+              <ion-item>
+                <ion-label>Category</ion-label>
+                <ion-select [(ngModel)]="selectedCategory" (ionChange)="validateCategory()" interface="popover"
+                            [class.invalid]="isCategoryInvalid">
+                  <ion-select-option *ngFor="let category of categoryNames" [value]="category">
+                    {{ category }}
+                  </ion-select-option>
+                </ion-select>
+              </ion-item>
+            
+              <p *ngIf="isCategoryInvalid" class="error-text">Please select a category.</p>
+            
+              <ion-button (click)="submitItem()" 
+                          [disabled]="isLoading || isDescriptionInvalid || isCategoryInvalid" 
+                          class="additem">
                 Submit
               </ion-button>
-            </div>
+            </div>         
           </div>
         </div>
       </div>

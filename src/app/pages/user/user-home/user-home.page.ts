@@ -11,6 +11,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ClaimitService } from '../../SharedServices/claimit.service';
 import { QRCodeComponent, QRCodeModule } from 'angularx-qrcode';
 import { LoaderComponent } from '../../admin/loader/loader.component';
+import { ErrorService } from '../../SharedServices/error.service';
 @Component({
   selector: 'app-user-home',
   templateUrl: './user-home.page.html',
@@ -48,7 +49,9 @@ export class UserHomePage implements OnInit {
   qrItem: any = null;
   claimedItems = new Set();
   noRecord: boolean = false;
-  constructor(private fb: FormBuilder, private popoverController: PopoverController, private toastController: ToastController, private modalController: ModalController, private http: HttpClient, private loadingCtrl: LoadingController, private sanitizer: DomSanitizer, private claimService: ClaimitService) { }
+  errorImage: string | null = null;
+  errorMessage: string = '';
+  constructor(private fb: FormBuilder, private popoverController: PopoverController,private errorService: ErrorService, private toastController: ToastController, private modalController: ModalController, private http: HttpClient, private loadingCtrl: LoadingController, private sanitizer: DomSanitizer, private claimService: ClaimitService) { }
 
   ngOnInit() {
     this.fetchItems()
@@ -128,6 +131,8 @@ export class UserHomePage implements OnInit {
         if (event) event.target.complete(); // Complete infinite scroll event
       },
       (error) => {
+        this.errorImage = this.errorService.getErrorImage(error.status);
+        this.errorMessage = this.errorService.getErrorMessage(error.status);
         this.isLoading = false;
         console.error('Error fetching items:', error);
         
@@ -343,7 +348,6 @@ export class UserHomePage implements OnInit {
       .then((toast: { present: () => any; }) => toast.present());
   }
   search(search: any): void {
-    console.log('gggggggggggggg', search);
     const apiUrl = `https://qpatefm329.us-east-1.awsapprunner.com/api/users/search?query=${encodeURIComponent(search)}`;
     
     this.http.get<any[]>(apiUrl).subscribe(

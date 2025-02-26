@@ -8,6 +8,7 @@
     <ion-title style="color: white;">Search and Claim</ion-title>
   </ion-toolbar>
 </ion-header>
+
 <ion-content>
 
   <ion-item-divider class="searchBarFixed">
@@ -47,6 +48,10 @@
     </ion-grid>
 
   </ion-item-divider>
+  <div *ngIf="errorImage">
+    <img [src]="errorImage" alt="Error" class="error-image">
+    <p>{{ errorMessage }}</p>
+  </div>
   <!-- <div *ngIf="isLoading" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
   </div> -->

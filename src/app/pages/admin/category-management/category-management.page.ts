@@ -6,6 +6,7 @@ import { AlertController, IonicModule, ToastController } from '@ionic/angular';
 import { ClaimitService } from '../../SharedServices/claimit.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { LoaderComponent } from '../loader/loader.component';
+import { ErrorService } from '../../SharedServices/error.service';
 @Component({
   selector: 'app-category-management',
   templateUrl: './category-management.page.html',
@@ -20,7 +21,10 @@ export class CategoryManagementPage implements OnInit {
   formData!: any;
   isLoading: boolean = false;
   noRecord: boolean = false;
-  constructor(private toastController: ToastController, private http: HttpClient, private claimService: ClaimitService, private alertController: AlertController, private fb: FormBuilder) {
+  errorImage: string | null = null;
+  errorMessage: string = '';
+
+  constructor(private toastController: ToastController, private http: HttpClient, private errorService: ErrorService, private claimService: ClaimitService, private alertController: AlertController, private fb: FormBuilder) {
     this.categoryForm = this.fb.group({
       categoryName: ['', Validators.required],
       subcategories: ['']
@@ -47,7 +51,9 @@ export class CategoryManagementPage implements OnInit {
         },
         (error) => {
           this.isLoading = false;
-          console.error('Error fetching categories:', error);
+          this.errorImage = this.errorService.getErrorImage(error.status);
+          this.errorMessage = this.errorService.getErrorMessage(error.status);
+          console.error('Error fetching categories:', error.status);
         }
       );
   }

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { ClaimitService } from '../../SharedServices/claimit.service';
 import { LoaderComponent } from '../../admin/loader/loader.component';
+import { ErrorService } from '../../SharedServices/error.service';
 
 @Component({
   selector: 'app-view-claim',
@@ -20,7 +21,9 @@ export class ViewClaimPage implements OnInit {
   isImageModalOpen = false;
   isLoading: boolean = false;
   noRecord:boolean =false
-  constructor(private claimService:ClaimitService) { }
+  errorImage: string | null = null;
+  errorMessage: string = '';
+  constructor(private claimService:ClaimitService,private errorService: ErrorService) { }
 
   ngOnInit() {
     this.fetchItems()
@@ -50,6 +53,8 @@ export class ViewClaimPage implements OnInit {
         this.isLoading = false;  
       },
       (error) => {
+        this.errorImage = this.errorService.getErrorImage(error.status);
+        this.errorMessage = this.errorService.getErrorMessage(error.status);
         this.isLoading = false;  
       }
       );

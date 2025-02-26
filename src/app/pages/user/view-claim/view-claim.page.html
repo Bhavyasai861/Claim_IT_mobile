@@ -14,7 +14,10 @@
   <!-- <div *ngIf="isLoading" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
   </div> -->
-
+  <div *ngIf="errorImage">
+    <img [src]="errorImage" alt="Error" class="error-image">
+    <p>{{ errorMessage }}</p>
+  </div>
   <!-- No records found message with image -->
   <!-- <div *ngIf="!isLoading && items.length === 0" class="no-records-container">
     <img src="assets/no-records-found.png" alt="No Records" class="no-records-image" />

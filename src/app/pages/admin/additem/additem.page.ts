@@ -13,6 +13,7 @@ import { Share } from '@capacitor/share';
 import { ClaimitService } from '../../SharedServices/claimit.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { LoaderComponent } from '../loader/loader.component';
+import { ErrorService } from '../../SharedServices/error.service';
 @Component({
   selector: 'app-additem',
   templateUrl: './additem.page.html',
@@ -52,7 +53,10 @@ export class AdditemPage implements OnInit {
   categoryName: string = ''
   noRecord: boolean = false;
   isCategoryInvalid: boolean = false;
-  constructor(private http: HttpClient, private modalController: ModalController, private router: Router, private menu: MenuController, private claimService: ClaimitService) { }
+  isDescriptionInvalid: boolean = false;
+  errorImage: string | null = null;
+  errorMessage: string = '';
+  constructor(private http: HttpClient, private modalController: ModalController,private errorService: ErrorService, private router: Router, private menu: MenuController, private claimService: ClaimitService) { }
 
   ngOnInit() {
     this.getData();
@@ -69,7 +73,10 @@ export class AdditemPage implements OnInit {
     localStorage.clear();
     this.router.navigateByUrl('/login');
   }
-
+  validateDescription() {
+    this.isDescriptionInvalid = this.editableDescription.length > 200;
+  }
+  
   getData() {
     const query = this.searchQuery.trim();
     this.isLoading = true;
@@ -90,6 +97,8 @@ export class AdditemPage implements OnInit {
         this.isLoading = false;
       },
       (error) => {
+        this.errorImage = this.errorService.getErrorImage(error.status);
+        this.errorMessage = this.errorService.getErrorMessage(error.status);
         console.error('Error fetching data:', error);
         this.isLoading = false; // Ensure loading stops even if an error occurs
       }
@@ -269,37 +278,47 @@ export class AdditemPage implements OnInit {
     this.editableDescription = item.value;
     this.isEditingDescription = true;
   }
-
+  validateCategory() {
+    this.isCategoryInvalid = !this.selectedCategory;
+  }
   submitItem() {
-    // Check if selectedCategory is empty
+    this.validateCategory();
     if (!this.selectedCategory) {
-      this.isCategoryInvalid = true; // Flag for error UI
-      return; // Stop form submission
+      this.isCategoryInvalid = true; 
+      return; 
     }
-  
+    if (this.editableDescription.length > 200) {
+      this.isDescriptionInvalid = true;
+      return; 
+    }
     const updatedData = this.imageDataResponse;
     
     if (this.isEditingDescription) {
       updatedData.description = this.editableDescription;
     }
-  
     const updatedFormData = new FormData();
     updatedFormData.append('image', this.files[0].file);
     updatedFormData.append('orgId', this.selectedOrgId);
     updatedFormData.append('categoryName', this.selectedCategory);
     updatedFormData.append('editedLabels', updatedData.description);
-  
     this.isLoading = true;
-  
     this.http.post('https://qpatefm329.us-east-1.awsapprunner.com/api/admin/upload', updatedFormData)
-      .subscribe(response => {
-        this.isEditingDescription = false;
-        this.isModalOpen = false;
-        this.isLoading = false;
-        this.isCategoryInvalid = false; // Reset error state
-        this.getData();
-      });
+      .subscribe(
+        response => {
+          this.isEditingDescription = false;
+          this.isModalOpen = false;
+          this.isLoading = false;
+          this.isCategoryInvalid = false; 
+          this.isDescriptionInvalid = false; 
+          this.getData();
+        },
+        error => {
+          this.isLoading = false; 
+          console.error('Upload failed:', error);
+        }
+      );
   }
+  
   
 
   loadData() {
