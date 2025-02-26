@@ -76,7 +76,7 @@
       <ion-col size="2" style="text-align: center;">
         <ion-icon name="qr-code-outline" class="qrIcon" (click)="openQrModal(item)"
           *ngIf="item.status === 'PENDING_APPROVAL' || item.status === 'CLAIMED' || item.status === 'REJECTED'"></ion-icon>
-        <ion-button expand="block" size="small" (click)="onButtonClick(item.itemId)" *ngIf="item.status === 'UNCLAIMED' || item.status === 'PENDING_PICKUP'"
+        <ion-button expand="block" size="small" (click)="onButtonClick(item.itemId)" *ngIf="item.status === 'UNCLAIMED' "
           style="--background: linear-gradient(45deg, #21233d, #71a2ce); color: white;">
           Claim
         </ion-button>
@@ -86,10 +86,12 @@
       </ion-button>
       </ion-col>
     </ion-row>
-    <ion-infinite-scroll (ionInfinite)="fetchItems($event)" threshold="100px">
+    <ion-infinite-scroll *ngIf="!isLoading && items.length > 0" (ionInfinite)="fetchItems($event)">
       <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more items...">
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
+    
+    
     <ion-modal [isOpen]="isQrModalOpen" (ionModalDidDismiss)="closeQrModal()" canDismiss="true"
       style="--width: 300px; --height: 350px; --max-width: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
       <div *ngIf="qrData">

@@ -56,7 +56,7 @@ export class AdditemPage implements OnInit {
   isDescriptionInvalid: boolean = false;
   errorImage: string | null = null;
   errorMessage: string = '';
-  constructor(private http: HttpClient,private changeDetectorRef: ChangeDetectorRef, private modalController: ModalController,private errorService: ErrorService, private router: Router, private menu: MenuController, private claimService: ClaimitService) { }
+  constructor( private cdRef: ChangeDetectorRef,  private http: HttpClient, private modalController: ModalController,private errorService: ErrorService, private router: Router, private menu: MenuController, private claimService: ClaimitService) { }
 
   ngOnInit() {
     this.getData();
@@ -79,10 +79,15 @@ export class AdditemPage implements OnInit {
   
   getData() {
     const query = this.searchQuery.trim();
-    this.isLoading = true;
+    this.isLoading = true;  // Show loading indicator at the start
+    this.noRecord = false;
+    this.errorImage = null;
+    this.errorMessage = '';
   
     this.claimService.listOfItemsAddItem(query).subscribe(
       (res: any) => {
+        this.isLoading = false;  // Hide loading after API call finishes
+  
         if (res && Object.keys(res).length > 0) {
           this.addItemSearchResults = Object.keys(res).map((key) => ({
             date: key.split(":")[1],
@@ -92,19 +97,18 @@ export class AdditemPage implements OnInit {
         } else {
           this.noRecord = true;
         }
-  
-        // Only setting `isLoading = false` after processing is complete
-        this.isLoading = false;
+        this.cdRef.detectChanges()
       },
       (error) => {
-        this.changeDetectorRef.detectChanges();
+        this.isLoading = false; // Hide loading even if an error occurs
         this.errorImage = this.errorService.getErrorImage(error.status);
         this.errorMessage = this.errorService.getErrorMessage(error.status);
         console.error('Error fetching data:', error);
-        this.isLoading = false; // Ensure loading stops even if an error occurs
+        this.cdRef.detectChanges();
       }
     );
   }
+  
   
 
   getStatusColor(status: string): string {
