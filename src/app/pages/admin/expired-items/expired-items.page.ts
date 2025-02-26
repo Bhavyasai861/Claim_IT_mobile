@@ -11,6 +11,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { DatePipe } from '@angular/common';
 import { LoaderComponent } from '../loader/loader.component';
+import { ErrorService } from '../../SharedServices/error.service';
 
 @Component({
   selector: 'app-expired-items',
@@ -46,10 +47,13 @@ export class ExpiredItemsPage implements OnInit {
   noRecord: boolean = false;
   popoverEvent: any;
   popoverOpen = false;
+  showToast = false;
   orgData:any
+  errorImage: string | null = null;
+  errorMessage: string = '';
   selectedOrgId:any
   highlightedDates: { date: string, textColor: string, backgroundColor: string }[] = [];
-  constructor(private datePipe: DatePipe, private claimService: ClaimitService, private alertController: AlertController,private cdr: ChangeDetectorRef) { }
+  constructor(private datePipe: DatePipe,private changeDetectorRef: ChangeDetectorRef, private claimService: ClaimitService,private errorService: ErrorService, private alertController: AlertController,private cdr: ChangeDetectorRef) { }
 
   
   ngOnInit() {
@@ -61,6 +65,7 @@ export class ExpiredItemsPage implements OnInit {
   }
 
   getData(fromDate?: string, toDate?: string, orgId?: string) {
+    this.isLoading = true;
     let url = 'https://qpatefm329.us-east-1.awsapprunner.com/api/admin/archived';
     const params = [];
   
@@ -70,18 +75,20 @@ export class ExpiredItemsPage implements OnInit {
   
     if (params.length > 0) {
       url += `?${params.join('&')}`;
+     
     }
   
-    this.isLoading = true;
+  
   
     this.claimService.getExpiredItems(url).subscribe(
+      
       (res: any) => {
-        this.isLoading = false;
+       
   
         if (res && Array.isArray(res)) {
           this.expiredItems = res;
           this.noRecord = res.length === 0;
-  
+          this.isLoading = false;
           this.expiredItems.forEach(item => {
             item.receivedDate = new Date(item.receivedDate).toISOString().split('T')[0];
             item.expirationDate = new Date(item.expirationDate).toISOString().split('T')[0];
@@ -96,13 +103,13 @@ export class ExpiredItemsPage implements OnInit {
         this.isLoading = false;
         console.error('Error fetching data:', error);
   
-        if (error.status === 500) {
+        if (error.status == 500) {
           this.isLoading = false;
         } else {
         }
       },
       () => {
-        this.isLoading = false; // Ensures loader stops even if observable completes
+        this.isLoading = false; 
       }
     );
   }
@@ -179,12 +186,30 @@ export class ExpiredItemsPage implements OnInit {
   closeModal() {
     this.showCalendar = false;
   }
-  async onUpdate(): Promise<void> {
-    this.isUpdateMode = true; 
-    this.isLoading = true; // Set loading before showing alert
-    
+  formatDate(date: Date): string {
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+  }
+  goBack() {
+    this.errorImage = null;
+    this.getData()
+    this.getorgId()
+  }
+  clearSelectedDates() {
+    this.selectedFrom = null;
+    this.selectedTo = null;
+    this.noRecord = false;
+    this.errorImage = null
+    this.getData();
+  }
+  async onUpdate(): Promise<any> {
+    if (!this.selectedFrom || !this.selectedTo) {
+      this.showToast = true;
+      return;
+    }
+    this.isUpdateMode = true;
+    this.isLoading = false;
+
     const toDate = this.selectedTo || null;
-    
     const alert = await this.alertController.create({
       header: 'Update Date',
       message: 'Do you want to update the expired date?',
@@ -201,67 +226,64 @@ export class ExpiredItemsPage implements OnInit {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            // Ensure loading stops when cancelling
-            this.isLoading = false;
-            this.isUpdateMode = false;  
+            this.isUpdateMode = false;
             this.newExpiryDate = '';
+            this.isLoading = false;
           }
         },
         {
           text: 'Yes',
           handler: (data) => {
-            if (data.newToDate) {
-              this.newExpiryDate = data.newToDate;
-              this.updateDate(this.newExpiryDate);
-            } else {
-              // Stop loading if no date is selected
-              this.isLoading = false;
-              this.isUpdateMode = false;
-            }
+            this.newExpiryDate = data.newToDate;
+            this.updateDate(this.newExpiryDate);
           }
         }
       ]
     });
-  
-    this.isLoading = false; // Ensure loading stops before displaying alert
+
     await alert.present();
-  }
-  
-  // Format date to a suitable string format
-  formatDate(date: Date): string {
-    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-  }
-  clearSelectedDates() {
-    this.selectedFrom = null;
-    this.selectedTo = null;
-    this.noRecord = false;
-    this.getData();
-  }
-  updateDate(newExpireDate: any) {
-    const fromDate = this.selectedFrom
-    const toDate = this.selectedTo
-    this.isLoading = true
+    alert.onDidDismiss().then(() => {
+        if (!this.isUpdateMode) {
+            this.isLoading = false;
+        }
+    });
+}
+
+updateDate(newExpireDate: any) {
+    const fromDate = this.selectedFrom;
+    const toDate = this.selectedTo;
     const params = {
       fromDate: fromDate,
       toDate: toDate,
       expirationDate: newExpireDate,  
     };
-    // Call the service to update the date
-    this.claimService.updateDate(params).subscribe(
-      (response: any) => {
+    this.isLoading = false;
+    this.claimService.updateDate(params).subscribe({
+      next: (response: any) => {
         if (response.Success === true) {
-          this.isLoading = false
+          this.isLoading = false; 
           this.getData();
           this.selectedFrom = null;
           this.selectedTo = null;
-          this.isUpdateMode = false; 
+          this.isUpdateMode = false;
         } else {
-          this.isLoading = false
-          console.warn('Update was not successful:', response);
         }
+        this.isLoading = false; 
+      },
+      error: (error) => {
+        this.errorImage = this.errorService.getErrorImage(error.status);
+        this.errorMessage = this.errorService.getErrorMessage(error.status);
+        console.error("API Error:", error);
+        this.changeDetectorRef.detectChanges();
+        this.isLoading = false; 
+      },
+      complete: () => {
+        this.isLoading = false; 
       }
-    );
-  }
+    });
+}
+
+  
 
  
   openImageModal(image: string) {
@@ -269,10 +291,12 @@ export class ExpiredItemsPage implements OnInit {
     this.isImageModalOpen = true;
   }
   closeImageModal() {
+    this.isLoading = false
     this.isImageModalOpen = false;
   }
 
   onModalDismiss() {
+    this.isLoading = false
     setTimeout(() => {
       this.isModalOpen = false;
     }, 300);
