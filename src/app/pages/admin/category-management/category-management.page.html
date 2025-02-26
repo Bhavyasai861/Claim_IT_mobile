@@ -8,10 +8,11 @@
     <ion-title style="color: white;">Category Management</ion-title>
   </ion-toolbar>
 </ion-header>
-<div *ngIf="errorImage">
+<div *ngIf="errorImage" class="error-container">
   <img [src]="errorImage" alt="Error" class="error-image">
   <p>{{ errorMessage }}</p>
 </div>
+
 <ion-content [fullscreen]="true">
   <ion-modal [isOpen]="isModalOpen" (willDismiss)="onModalDismiss()"
     style="--width: 500px; --height: 400px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">

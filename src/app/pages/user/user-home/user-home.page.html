@@ -48,10 +48,11 @@
     </ion-grid>
 
   </ion-item-divider>
-  <div *ngIf="errorImage">
+  <div *ngIf="errorImage" class="error-container">
     <img [src]="errorImage" alt="Error" class="error-image">
     <p>{{ errorMessage }}</p>
   </div>
+  
   <!-- <div *ngIf="isLoading" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
   </div> -->

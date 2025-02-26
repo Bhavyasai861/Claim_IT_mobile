@@ -88,14 +88,22 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   max-width: 64%;
   text-align: center;
 }
+.error-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center; 
+  height: 100vh; 
+  text-align: center; 
+}
+
 .error-image {
   width: 198px;
   height: auto;
-  display: block;
-  margin: 153px auto;
 }
-p {
-  text-align: center;
-  font-size: 16px;
-  color: red;
-}
+
+// p {
+//   text-align: center;
+//   font-size: 16px;
+//   color: red;
+// }

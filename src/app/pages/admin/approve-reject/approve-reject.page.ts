@@ -5,6 +5,7 @@ import { IonicModule, IonLoading, ModalController } from '@ionic/angular';
 import { ClaimitService } from '../../SharedServices/claimit.service';
 import { LoaderComponent } from '../loader/loader.component';
 import { catchError, of } from 'rxjs';
+import { ErrorService } from '../../SharedServices/error.service';
 
 @Component({
   selector: 'app-approve-reject',
@@ -37,6 +38,8 @@ export class ApproveRejectPage implements OnInit {
   selectedImage: string = '';
   isLoading: boolean = false;
   noRecord: boolean = false;
+  errorImage: string | null = null;
+  errorMessage: string = '';
   public statusDropDown: any = [
     { label: 'REJECTED', value: 'REJECTED' },
     { label: 'PENDING_APPROVAL', value: 'PENDING APPROVAL' },
@@ -49,7 +52,8 @@ export class ApproveRejectPage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private claimService: ClaimitService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private errorService: ErrorService
   ) { }
 
   presentPopover(event: Event, item: any, index: number) {
@@ -385,25 +389,21 @@ export class ApproveRejectPage implements OnInit {
         ? new Date(this.approveRejectForm.value.date).toISOString().split('T')[0]
         : '',
     };
-  
-    console.log(reqbody);
-    this.isLoading = true;
+      this.isLoading = true;
   
     this.claimService.adminSearch(reqbody).pipe(
       catchError((error) => {
-        this.isLoading = false;
+        this.isLoading = false;      
+        this.errorImage = this.errorService.getErrorImage(error.status);      
+        this.errorMessage = this.errorService.getErrorMessage(error.status);
         console.error('Error fetching search results:', error);
         this.noRecord = true; 
         return of({ data: [] }); 
       })
     ).subscribe((res: any) => {
       this.isLoading = false;
-      this.searchResults = res.data;
-      
-      console.log(res.data.length, "res.length");
-  
+      this.searchResults = res.data;  
       this.noRecord = res.data.length === 0;
-      console.log(this.searchResults);
     });
   }
   
