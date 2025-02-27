@@ -94,24 +94,37 @@
       </ion-col>
     </ion-row> -->
     <ion-list class="category-list">
-      <ion-item *ngFor="let item of categories" class="category-item">
-        <ion-thumbnail slot="start">
-          <img [src]="getImage(item.image)" alt="Category Image" />
-        </ion-thumbnail>
-        <ion-label>
-          <h2>{{ item.name }}</h2>
-        </ion-label>    
-        <ion-icon name="create-outline" slot="end" 
-          class="edit-icon" 
-          (click)="updateCategory(item)">
-        </ion-icon>    
-        <ion-icon name="trash" slot="end"
-          class="delete-icon"
-          (click)="deleteCategory(item.id)">
-        </ion-icon>
-      </ion-item>
-    </ion-list>
-    
+      <ion-card *ngFor="let item of categories" class="category-card">
+        <ion-grid>
+          <ion-row class="category-row">
+            <ion-col size="3" class="image-column">
+              <img [src]="getImage(item.image)" alt="Category Image" class="category-image" (click)="openImageModal(item.image)"/>
+            </ion-col>
+            <ion-col size="6" class="name-column">
+              <ion-label>
+                <h2>{{ item.name }}</h2>
+              </ion-label>
+            </ion-col>
+            <ion-col size="3" class="icon-column">
+              <ion-icon name="create-outline" class="edit-icon" (click)="updateCategory(item)"></ion-icon>
+              <ion-icon name="trash" class="delete-icon" (click)="deleteCategory(item.id)"></ion-icon>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card>
+    </ion-list> 
+    <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"
+    style="--width: 300px; --height: 270px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+    <ng-template>
+        <div style="text-align: center; position: relative;">
+          <img [src]="selectedImage" alt="Selected Image" style="margin-top: 52px;text-align: center; position: relative;width: 90%; height: 150px; object-fit: contain;" />
+          <ion-button fill="clear" (click)="closeImageModal()"
+            style="position: absolute; top: 10px; right: 10px; --background: transparent; --box-shadow: none; outline: none;">
+            <ion-icon name="close" style="color: #21233d; outline: none;"></ion-icon>
+          </ion-button>
+        </div>
+    </ng-template>
+  </ion-modal>
     <ion-fab slot="fixed" vertical="bottom" horizontal="end">
       <ion-fab-button style="--background: linear-gradient(45deg, #21233d, #71a2ce)" (click)="addCategory()">
         <ion-icon name="add" style="color: white;"></ion-icon>
