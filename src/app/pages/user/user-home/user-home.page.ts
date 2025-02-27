@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit, ViewChild } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonicModule, ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { Observable } from 'rxjs';
@@ -45,13 +45,23 @@ export class UserHomePage implements OnInit {
   claimForm!: FormGroup;
   selectedItemId: any;
   isQrModalOpen: boolean = false;
+  isSubmitted: boolean = false;
+  isPopoverOpen: boolean = false;
   qrData: any;
   qrItem: any = null;
   claimedItems = new Set();
   noRecord: boolean = false;
   errorImage: string | null = null;
   errorMessage: string = '';
-  constructor(private fb: FormBuilder, private popoverController: PopoverController,private errorService: ErrorService, private toastController: ToastController, private modalController: ModalController, private http: HttpClient, private loadingCtrl: LoadingController, private sanitizer: DomSanitizer, private claimService: ClaimitService) { }
+  constructor(private fb: FormBuilder, private popoverController: PopoverController, private cdRef: ChangeDetectorRef,private errorService: ErrorService, private toastController: ToastController, private modalController: ModalController, private http: HttpClient, private loadingCtrl: LoadingController, private sanitizer: DomSanitizer, private claimService: ClaimitService) {
+    this.claimForm = this.fb.group({
+      name: ['', Validators.required],
+      email: ['', Validators.required],
+    });
+    this.claimForm.valueChanges.subscribe(() => {
+      this.isSubmitted = false;
+    });
+   }
 
   ngOnInit() {
     this.fetchItems()
@@ -71,9 +81,63 @@ export class UserHomePage implements OnInit {
   closeModal() {
     this.isModalOpen = false;
   }
+  async markClaimed(event: any) {
+    this.isPopoverOpen = false;
+    await new Promise(resolve => setTimeout(resolve, 200));
+    const confirmed = await this.presentConfirmationDialog(
+      'Mark as Claimed',
+      'Are you sure you want to mark this item as Claimed?'
+    );
+
+    if (confirmed === 'yes') {
+      const params = {
+        itemId: event.itemId,
+        claimStatus: 'CLAIMED',
+        userId: event.userId,
+      };
+
+      this.isLoading = true;
+      this.claimService.markASClaimed(params).subscribe(
+        async (res: any) => {
+          this.isLoading = false;
+          await this.presentConfirmationDialog('Success!!', 'Item Claimed Successfully', true); 
+          this.cdRef.detectChanges(); // Success dialog with only "OK" button
+          this.fetchItems();
+        },
+        (error) => {
+          this.isLoading = false;
+          console.error('Error marking item as claimed:', error);
+        }
+      );
+    }
+
+    setTimeout(() => {
+      this.isPopoverOpen = false;
+    }, 200);
+  }
+
+
+  async presentConfirmationDialog(title: string, message: string, isSuccess: boolean = false): Promise<string> {
+    return new Promise<string>((resolve) => {
+      const dialog = document.createElement('ion-alert');
+      dialog.header = title;
+      dialog.message = message;
+      if (isSuccess) {
+        dialog.buttons = [{ text: 'OK', role: 'confirm', handler: () => resolve('ok') }];
+      } else {
+        dialog.buttons = [
+          { text: 'Cancel', role: 'cancel', handler: () => resolve('no') },
+          { text: 'Yes', role: 'confirm', handler: () => resolve('yes') },
+        ];
+      }
+      document.body.appendChild(dialog);
+      dialog.present();
+    });
+  }
 
  async submitClaimForm() {
     if (this.claimForm.valid) {
+      this.isSubmitted = true;
       const formValues = this.claimForm.value;
       const REQBODY = {
         name: formValues.name,
@@ -276,6 +340,7 @@ export class UserHomePage implements OnInit {
     // Call the upload API
     this.uploadImage(file).subscribe(
       (response) => {
+this.isLoading = false
         if (response.success) {
          
           this.matchedItems = response.matchedItems
@@ -303,7 +368,6 @@ export class UserHomePage implements OnInit {
     const formData: FormData = new FormData();
     formData.append('image', file, file.name);
     const picUrl = 'http://52.45.222.211:8081/api/users/search-by-image';
-    this.isLoading = false
 
     return this.http.post(picUrl, formData, {
       headers: new HttpHeaders(),
