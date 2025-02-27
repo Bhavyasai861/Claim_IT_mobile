@@ -124,7 +124,6 @@ export class ApproveRejectPage implements OnInit {
       this.isPopoverOpen = false;
     }
   }
-
   async approveClaim(event: any) {
     const confirmed = await this.presentConfirmationDialog('Approve Claim', 'Are you sure you want to approve this claim?');
     if (confirmed === 'yes') {
@@ -132,24 +131,33 @@ export class ApproveRejectPage implements OnInit {
         itemId: event.itemId,
         status: 'PENDING_PICKUP',
       };
+      this.isPopoverOpen = false;
       this.isLoading = true;
+
       this.claimService.approveOrRejectClaim(params).subscribe(
         async (res: any) => {
           this.isLoading = false;
+          
+          // Close the popover immediately after approval
           this.isPopoverOpen = false;
-          await this.presentConfirmationDialog('Success!!', 'Claim Request Approved Successfully', true);  // Success dialog with only "OK" button
+  
+          await this.presentConfirmationDialog('Success!!', 'Claim Request Approved Successfully', true);
           this.search();
         },
         (error) => {
           this.isLoading = false;
           console.error('Error approving claim:', error);
+          
+          // Close popover even if there's an error
           this.isPopoverOpen = false;
         }
       );
     } else {
+      // Ensure popover is closed when the user cancels
       this.isPopoverOpen = false;
     }
   }
+  
 
 
   async rejectClaim(event: any) {
@@ -175,8 +183,9 @@ export class ApproveRejectPage implements OnInit {
         }
       );
     }
-
-    this.isPopoverOpen = false;
+    setTimeout(() => {
+      this.isPopoverOpen = false;
+    }, 200);
   }
 
   async markClaimed(event: any) {

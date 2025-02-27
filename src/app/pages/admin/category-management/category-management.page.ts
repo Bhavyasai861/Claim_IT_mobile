@@ -23,7 +23,8 @@ export class CategoryManagementPage implements OnInit {
   noRecord: boolean = false;
   errorImage: string | null = null;
   errorMessage: string = '';
-
+  isImageModalOpen = false;
+  selectedImage: string = '';
   constructor(private toastController: ToastController, private http: HttpClient, private errorService: ErrorService, private claimService: ClaimitService, private alertController: AlertController, private fb: FormBuilder) {
     this.categoryForm = this.fb.group({
       categoryName: ['', Validators.required],
@@ -34,7 +35,13 @@ export class CategoryManagementPage implements OnInit {
   ngOnInit() {
     this.fetchCategories(); 
   }
-
+  openImageModal(image: string) {
+    this.selectedImage = `data:image/jpeg;base64,${image}`;
+    this.isImageModalOpen = true;
+  }
+  closeImageModal() {
+    this.isImageModalOpen = false;
+  }
   // Fetch the categories from the API
   fetchCategories(): void {
     this.isLoading = true;
