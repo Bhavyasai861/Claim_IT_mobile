@@ -25,6 +25,8 @@ export class CategoryManagementPage implements OnInit {
   errorMessage: string = '';
   isImageModalOpen = false;
   selectedImage: string = '';
+  isSubmitting = false; // Add this flag
+
   constructor(private toastController: ToastController, private http: HttpClient, private errorService: ErrorService, private claimService: ClaimitService, private alertController: AlertController, private fb: FormBuilder) {
     this.categoryForm = this.fb.group({
       categoryName: ['', Validators.required],
@@ -167,6 +169,7 @@ export class CategoryManagementPage implements OnInit {
       console.error("Form is not initialized.");
       return;
     }
+    this.isSubmitting = true;
     const categoryName = this.categoryForm.get('categoryName')?.value || '';
     const subcategoryInput = this.categoryForm.get('subcategories')?.value || '';
     const subcategoriesArray = subcategoryInput
@@ -188,9 +191,11 @@ export class CategoryManagementPage implements OnInit {
         this.isModalOpen = false;
         this.presentToast('Category Posted Successfully!');
         this.fetchCategories();
+        this.isSubmitting = false;
       },
       (error) => {
         console.error("Error Posting Category:", error);
+        this.isSubmitting = false;
       }
     );
   }

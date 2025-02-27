@@ -63,9 +63,11 @@
             </div>
             <ion-row>
               <ion-col class="ion-text-center">
-                <ion-button  (click)="postCategory()" [disabled]="!categoryForm.valid || files.length === 0">
-                  Submit
-                </ion-button>                
+                <ion-button (click)="postCategory()" [disabled]="!categoryForm.valid || files.length === 0 || isSubmitting">
+                  <ion-spinner *ngIf="isSubmitting" name="dots"></ion-spinner>
+                  <span *ngIf="!isSubmitting">Submit</span>
+                </ion-button>
+                              
               </ion-col>
             </ion-row>
           </ion-grid>
