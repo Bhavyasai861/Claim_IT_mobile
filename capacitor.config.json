@@ -3,17 +3,24 @@
   "appName": "ionic-claim-it",
   "webDir": "www",
   "bundledWebRuntime": false,
+
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  },
+
   "plugins": {
     "Keyboard": {
-      "resize": "body", 
-      "style": "light",  
-      "hideFormAccessoryBar": true 
+      "resize": "body",
+      "style": "light",
+      "hideFormAccessoryBar": true
     },
     "StatusBar": {
-      "style": "LIGHT", 
-      "backgroundColor": "#ffffff", 
-      "overlaysWebView": false 
+      "style": "LIGHT",
+      "backgroundColor": "#ffffff",
+      "overlaysWebView": false
     }
   },
+  
   "cordova": {}
 }

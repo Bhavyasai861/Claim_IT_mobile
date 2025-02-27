@@ -302,7 +302,7 @@ export class UserHomePage implements OnInit {
     this.isLoading = true
     const formData: FormData = new FormData();
     formData.append('image', file, file.name);
-    const picUrl = 'https://qpatefm329.us-east-1.awsapprunner.com/api/users/search-by-image';
+    const picUrl = 'http://52.45.222.211:8081/api/users/search-by-image';
     this.isLoading = false
 
     return this.http.post(picUrl, formData, {
@@ -348,7 +348,7 @@ export class UserHomePage implements OnInit {
       .then((toast: { present: () => any; }) => toast.present());
   }
   search(search: any): void {
-    const apiUrl = `https://qpatefm329.us-east-1.awsapprunner.com/api/users/search?query=${encodeURIComponent(search)}`;
+    const apiUrl = `http://52.45.222.211:8081/api/users/search?query=${encodeURIComponent(search)}`;
     
     this.http.get<any[]>(apiUrl).subscribe(
       (data: any) => {

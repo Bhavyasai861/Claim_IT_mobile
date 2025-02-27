@@ -202,7 +202,7 @@ export class CategoryManagementPage implements OnInit {
       status: "A"
     };
  this.isLoading = true
-    const url = `https://qpatefm329.us-east-1.awsapprunner.com/api/admin/categories?id=${id}`;
+    const url = `http://52.45.222.211:8081/api/admin/categories?id=${id}`;
 
     try {
       const response = await this.claimService.updateCategory(url, reqBody);

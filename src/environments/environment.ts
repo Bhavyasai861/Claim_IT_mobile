@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-   apiUrl: 'https://qpatefm329.us-east-1.awsapprunner.com'
+   apiUrl: 'http://52.45.222.211:8081'
 };
 
 /*

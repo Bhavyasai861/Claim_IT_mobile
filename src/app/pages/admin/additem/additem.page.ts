@@ -257,7 +257,7 @@ export class AdditemPage implements OnInit {
       this.formData.append('providedCategoryName', this.selectedCategory|| 'default')
       console.log(this.formData);
       
-      this.http.post('https://qpatefm329.us-east-1.awsapprunner.com/api/admin/image', this.formData).subscribe(
+      this.http.post('http://52.45.222.211:8081/api/admin/image', this.formData).subscribe(
         (response) => {
           this.imageDataResponse = response;
           this.formatResponse(response);
@@ -307,7 +307,7 @@ export class AdditemPage implements OnInit {
     updatedFormData.append('categoryName', this.selectedCategory);
     updatedFormData.append('editedLabels', updatedData.description);
     this.isLoading = true;
-    this.http.post('https://qpatefm329.us-east-1.awsapprunner.com/api/admin/upload', updatedFormData)
+    this.http.post('http://52.45.222.211:8081/api/admin/upload', updatedFormData)
       .subscribe(
         response => {
           this.isEditingDescription = false;
