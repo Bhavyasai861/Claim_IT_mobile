@@ -14,6 +14,7 @@ import { ClaimitService } from '../../SharedServices/claimit.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { LoaderComponent } from '../loader/loader.component';
 import { ErrorService } from '../../SharedServices/error.service';
+import { ActionSheetController } from '@ionic/angular';
 @Component({
   selector: 'app-additem',
   templateUrl: './additem.page.html',
@@ -56,7 +57,29 @@ export class AdditemPage implements OnInit {
   isDescriptionInvalid: boolean = false;
   errorImage: string | null = null;
   errorMessage: string = '';
-  constructor( private cdRef: ChangeDetectorRef,  private http: HttpClient, private modalController: ModalController,private errorService: ErrorService, private router: Router, private menu: MenuController, private claimService: ClaimitService) { }
+  isActionSheetOpen = false;
+  actionSheetButtons = [
+    {
+      text: 'Upload File',
+      icon: 'folder',
+      handler: () => {
+        document.getElementById('fileInput')?.click();
+      }
+    },
+    {
+      text: 'Open Camera',
+      icon: 'camera',
+      handler: () => {
+        this.openCamera();
+      }
+    },
+    {
+      text: 'Cancel',
+      icon: 'close',
+      role: 'cancel'
+    }
+  ];
+  constructor( private actionSheetCtrl: ActionSheetController,private cdRef: ChangeDetectorRef,  private http: HttpClient, private modalController: ModalController,private errorService: ErrorService, private router: Router, private menu: MenuController, private claimService: ClaimitService) { }
 
   ngOnInit() {
     this.getData();
@@ -191,6 +214,34 @@ export class AdditemPage implements OnInit {
   removeFile(file: any) {
     this.files = this.files.filter(f => f !== file);
   }
+  async presentActionSheet() {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Select Image Source',
+      buttons: [
+        {
+          text: 'Upload File',
+          icon: 'folder',
+          handler: () => {
+            document.getElementById('fileInput')?.click();
+          }
+        },
+        {
+          text: 'Open Camera',
+          icon: 'camera',
+          handler: () => {
+            this.openCamera();
+          }
+        },
+        {
+          text: 'Cancel',
+          icon: 'close',
+          role: 'cancel'
+        }
+      ]
+    });
+    await actionSheet.present();
+  }
+
   nextSlide() {
     const swiper = this.swiperRef.swiper;
     if (swiper) {
@@ -353,6 +404,7 @@ export class AdditemPage implements OnInit {
     this.isTruncated = !this.isTruncated;
   }
   onModalDismiss() {
+    this.isModalOpen = false;
     this.files = [];
   }
   generateQrCodeData(element: any): string {

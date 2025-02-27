@@ -29,6 +29,35 @@
           <div *ngIf="currentStep === 1">
             <div class="upload-box">
               <div *ngIf="files.length === 0" style="display: flex; align-items: center; gap: 10px;">
+                <input id="fileInput" type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInputRef />
+                <ion-button (click)="presentActionSheet()">
+                  <ion-icon name="camera" style="font-size: 24px; color: white;"></ion-icon>
+                </ion-button>          
+                <ion-action-sheet 
+                [isOpen]="isActionSheetOpen" 
+                (didDismiss)="isActionSheetOpen = false"
+                header="Select Image Source"
+                [buttons]="actionSheetButtons"
+                class="my-custom-class">
+              </ion-action-sheet>
+              
+              </div>
+              <div *ngIf="files.length > 0">
+                <div *ngFor="let file of files" class="image-container">
+                  <img [src]="file.preview" alt="Preview" class="image">
+                  <ion-icon name="close-circle" class="close-icon" (click)="removeFile(file)"></ion-icon>
+                </div>
+              </div>
+            </div>          
+            <ion-button (click)="goToNextStep(); submitImageReponse()" [disabled]="!files.length" class="next">
+              Next
+            </ion-button>
+          </div>       
+          
+          
+          <!-- <div *ngIf="currentStep === 1">
+            <div class="upload-box">
+              <div *ngIf="files.length === 0" style="display: flex; align-items: center; gap: 10px;">
                 <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInput />                
                 <ion-button (click)="fileInput.click()">
                   <ion-icon name="cloud-upload" slot="start" style="color: white;"></ion-icon>
@@ -47,7 +76,7 @@
             </div>
           
             <ion-button (click)="goToNextStep(); submitImageReponse()" [disabled]="!files.length" class="next">Next</ion-button>
-          </div>
+          </div> -->
           <div *ngIf="currentStep === 2">
             <h3>Preview</h3>
             <div *ngIf="isLoading" class="spinner-container">
