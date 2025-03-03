@@ -77,7 +77,7 @@
   padding: 10px;  
 }
 .ion-text-center{
-  margin-top: 45px;
+  margin-top: 30px;
 }
 
 .edit-icon, .delete-icon {
@@ -125,24 +125,18 @@
     border-radius: 50%;
   }
   
+ 
+  
   .upload-box {
+    width: 50%;
+    height: 150px;
+    border: 2px dashed #21233d;
+    border-radius: 10px; 
     display: flex;
-    flex-wrap: wrap;
+    align-items: center;
     justify-content: center;
-    border: 2px dashed #aaa;
-    text-align: center;
-    border-radius: 10px;
-    padding: 2px;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s ease;
-  
-    &:hover {
-      border-color: #21233d;
-    }
-  }
-  
-  .upload-box ion-button {
-    font-size: 16px;
-    padding: 10px 20px;
+    flex-wrap: wrap;
+    overflow: hidden;
+    margin: auto; 
   }
   

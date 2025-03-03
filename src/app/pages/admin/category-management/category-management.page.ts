@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AlertController, IonicModule, ToastController } from '@ionic/angular';
+import { ActionSheetController, AlertController, IonicModule, ToastController } from '@ionic/angular';
 import { ClaimitService } from '../../SharedServices/claimit.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { LoaderComponent } from '../loader/loader.component';
@@ -26,8 +26,29 @@ export class CategoryManagementPage implements OnInit {
   isImageModalOpen = false;
   selectedImage: string = '';
   isSubmitting = false; // Add this flag
-
-  constructor(private toastController: ToastController, private http: HttpClient, private errorService: ErrorService, private claimService: ClaimitService, private alertController: AlertController, private fb: FormBuilder) {
+  isActionSheetOpen = false;
+  actionSheetButtons = [
+    {
+      text: 'Upload File',
+      icon: 'folder',
+      handler: () => {
+        document.getElementById('fileInput')?.click();
+      }
+    },
+    {
+      text: 'Open Camera',
+      icon: 'camera',
+      handler: () => {
+        this.openCamera();
+      }
+    },
+    {
+      text: 'Cancel',
+      icon: 'close',
+      role: 'cancel'
+    }
+  ];
+  constructor(private actionSheetCtrl: ActionSheetController,private toastController: ToastController, private http: HttpClient, private errorService: ErrorService, private claimService: ClaimitService, private alertController: AlertController, private fb: FormBuilder) {
     this.categoryForm = this.fb.group({
       categoryName: ['', Validators.required],
       subcategories: ['']
@@ -104,6 +125,33 @@ export class CategoryManagementPage implements OnInit {
     });
 
     await alert.present();
+  }
+  async presentActionSheet() {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Select Image Source',
+      buttons: [
+        {
+          text: 'Upload File',
+          icon: 'folder',
+          handler: () => {
+            document.getElementById('fileInput')?.click();
+          }
+        },
+        {
+          text: 'Open Camera',
+          icon: 'camera',
+          handler: () => {
+            this.openCamera();
+          }
+        },
+        {
+          text: 'Cancel',
+          icon: 'close',
+          role: 'cancel'
+        }
+      ]
+    });
+    await actionSheet.present();
   }
   dataURLtoBlob(dataUrl: string): Blob {
     const byteString = atob(dataUrl.split(',')[1]);

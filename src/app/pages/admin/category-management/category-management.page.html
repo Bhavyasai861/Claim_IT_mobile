@@ -22,10 +22,9 @@
           <h2 style="
           background: linear-gradient(45deg, #21233d, #71a2ce);
           -webkit-background-clip: text;">
-          Add Category
-        </h2>
-          <ion-icon name="close-circle" style="color: white; font-size: x-large;"
-            (click)="closeModal()"></ion-icon>
+            Add Category
+          </h2>
+          <ion-icon name="close-circle" style="color: white; font-size: x-large;" (click)="closeModal()"></ion-icon>
         </div>
         <form [formGroup]="categoryForm">
           <ion-grid>
@@ -38,36 +37,38 @@
                 <ion-input label="Sub-Category Name" label-placement="floating" fill="outline"
                   placeholder="Enter Sub-Category Name" formControlName="subcategories"></ion-input>
               </ion-col>
-            </ion-row><br>            
+            </ion-row><br>
             <div class="upload-box">
-            <ion-row class="file-upload-row">
-              <ion-col size="12" class="file-upload">
-                <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInput />
-                <div *ngIf="files.length === 0">
-                  <ion-button (click)="fileInput.click()">
-                    <ion-icon name="cloud-upload" slot="start" style="font-size: 20px;color: white;"></ion-icon>
-                    Upload Image
-                  </ion-button>              
-                  <ion-button (click)="openCamera()">
-                    <ion-icon name="camera" style="font-size: 20px; color: white;"></ion-icon>
-                  </ion-button>
-                </div>
-                <div *ngIf="files.length > 0" class="images-wrapper">
-                  <div *ngFor="let file of files" class="image-container">
-                    <img [src]="file.preview" alt="Preview" class="image">
-                    <ion-icon name="close-circle" class="close-icon" (click)="removeFile(file)"></ion-icon>
+              <ion-row class="file-upload-row">
+                <ion-col size="12" class="file-upload">
+                  <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden #fileInput />
+                  <div *ngIf="files.length === 0" style="display: flex; align-items: center; gap: 10px;">
+                    <input id="fileInput" type="file" accept="image/*" (change)="onFileSelect($event)" hidden
+                      #fileInputRef />
+                    <ion-button (click)="presentActionSheet()">
+                      <ion-icon name="camera" style="font-size: 24px; color: white;"></ion-icon>
+                    </ion-button>
+                    <ion-action-sheet [isOpen]="isActionSheetOpen" (didDismiss)="isActionSheetOpen = false"
+                      header="Select Image Source" [buttons]="actionSheetButtons" class="my-custom-class">
+                    </ion-action-sheet>
+
                   </div>
-                </div>                
-              </ion-col>
-            </ion-row>
+                  <div *ngIf="files.length > 0" class="images-wrapper">
+                    <div *ngFor="let file of files" class="image-container">
+                      <img [src]="file.preview" alt="Preview" class="image">
+                      <ion-icon name="close-circle" class="close-icon" (click)="removeFile(file)"></ion-icon>
+                    </div>
+                  </div>
+                </ion-col>
+              </ion-row>
             </div>
             <ion-row>
               <ion-col class="ion-text-center">
-                <ion-button (click)="postCategory()" [disabled]="!categoryForm.valid || files.length === 0 || isSubmitting">
+                <ion-button (click)="postCategory()"
+                  [disabled]="!categoryForm.valid || files.length === 0 || isSubmitting">
                   <ion-spinner *ngIf="isSubmitting" name="dots"></ion-spinner>
                   <span *ngIf="!isSubmitting">Submit</span>
                 </ion-button>
-                              
               </ion-col>
             </ion-row>
           </ion-grid>
@@ -75,7 +76,7 @@
       </div>
     </ng-template>
   </ion-modal>
-    <!-- <ion-row>
+  <!-- <ion-row>
       <ion-col size="6" *ngFor="let item of categories">
         <ion-card style="height: 180px;border-radius: 14px;padding: 4px;">
           <ion-icon name="trash" 
@@ -95,43 +96,45 @@
         </ion-card>       
       </ion-col>
     </ion-row> -->
-    <ion-list class="category-list">
-      <ion-card *ngFor="let item of categories" class="category-card">
-        <ion-grid>
-          <ion-row class="category-row">
-            <ion-col size="3" class="image-column">
-              <img [src]="getImage(item.image)" alt="Category Image" class="category-image" (click)="openImageModal(item.image)"/>
-            </ion-col>
-            <ion-col size="6" class="name-column">
-              <ion-label>
-                <h2>{{ item.name }}</h2>
-              </ion-label>
-            </ion-col>
-            <ion-col size="3" class="icon-column">
-              <ion-icon name="create-outline" class="edit-icon" (click)="updateCategory(item)"></ion-icon>
-              <ion-icon name="trash" class="delete-icon" (click)="deleteCategory(item.id)"></ion-icon>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-card>
-    </ion-list> 
-    <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"
+  <ion-list class="category-list">
+    <ion-card *ngFor="let item of categories" class="category-card">
+      <ion-grid>
+        <ion-row class="category-row">
+          <ion-col size="3" class="image-column">
+            <img [src]="getImage(item.image)" alt="Category Image" class="category-image"
+              (click)="openImageModal(item.image)" />
+          </ion-col>
+          <ion-col size="6" class="name-column">
+            <ion-label>
+              <h2>{{ item.name }}</h2>
+            </ion-label>
+          </ion-col>
+          <ion-col size="3" class="icon-column">
+            <ion-icon name="create-outline" class="edit-icon" (click)="updateCategory(item)"></ion-icon>
+            <ion-icon name="trash" class="delete-icon" (click)="deleteCategory(item.id)"></ion-icon>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card>
+  </ion-list>
+  <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"
     style="--width: 300px; --height: 270px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
     <ng-template>
-        <div style="text-align: center; position: relative;">
-          <img [src]="selectedImage" alt="Selected Image" style="margin-top: 52px;text-align: center; position: relative;width: 90%; height: 150px; object-fit: contain;" />
-          <ion-button fill="clear" (click)="closeImageModal()"
-            style="position: absolute; top: 10px; right: 10px; --background: transparent; --box-shadow: none; outline: none;">
-            <ion-icon name="close" style="color: #21233d; outline: none;"></ion-icon>
-          </ion-button>
-        </div>
+      <div style="text-align: center; position: relative;">
+        <img [src]="selectedImage" alt="Selected Image"
+          style="margin-top: 52px;text-align: center; position: relative;width: 90%; height: 150px; object-fit: contain;" />
+        <ion-button fill="clear" (click)="closeImageModal()"
+          style="position: absolute; top: 10px; right: 10px; --background: transparent; --box-shadow: none; outline: none;">
+          <ion-icon name="close" style="color: #21233d; outline: none;"></ion-icon>
+        </ion-button>
+      </div>
     </ng-template>
   </ion-modal>
-    <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-      <ion-fab-button style="--background: linear-gradient(45deg, #21233d, #71a2ce)" (click)="addCategory()">
-        <ion-icon name="add" style="color: white;"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button style="--background: linear-gradient(45deg, #21233d, #71a2ce)" (click)="addCategory()">
+      <ion-icon name="add" style="color: white;"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
   <!-- <ion-grid>
     <ion-row>
       <ion-col size="6" *ngFor="let item of categories">
