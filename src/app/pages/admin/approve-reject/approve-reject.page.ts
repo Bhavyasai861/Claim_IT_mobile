@@ -6,6 +6,7 @@ import { ClaimitService } from '../../SharedServices/claimit.service';
 import { LoaderComponent } from '../loader/loader.component';
 import { catchError, of } from 'rxjs';
 import { ErrorService } from '../../SharedServices/error.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-approve-reject',
@@ -40,6 +41,12 @@ export class ApproveRejectPage implements OnInit {
   noRecord: boolean = false;
   errorImage: string | null = null;
   errorMessage: string = '';
+  selectedOrgId:any
+  selectedOrg: any = null;
+  orgId:any
+  orgName:any
+  userRole: string | null = '';
+  organizations: any[] = [];
   public statusDropDown: any = [
     { label: 'REJECTED', value: 'REJECTED' },
     { label: 'PENDING_APPROVAL', value: 'PENDING APPROVAL' },
@@ -53,7 +60,8 @@ export class ApproveRejectPage implements OnInit {
     private fb: FormBuilder,
     private claimService: ClaimitService,
     private modalController: ModalController,
-    private errorService: ErrorService
+    private errorService: ErrorService,
+    private http:HttpClient
   ) { }
 
   presentPopover(event: Event, item: any, index: number) {
@@ -73,9 +81,49 @@ export class ApproveRejectPage implements OnInit {
       status: [''],
       name: [''],
     });
-    this.search();
+    this.loadSelectedOrganization()
+    this.search(this.orgId);
   }
-
+  fetchOrganizations() {
+    this.http.get<any[]>('http://52.45.222.211:8081/api/users/organisation').subscribe(
+      (response) => {
+        this.organizations = response;
+  
+        // Ensure selectedOrgId is set after organizations are loaded
+        const storedOrgId = localStorage.getItem('organizationId');
+        if (storedOrgId) {
+          const matchedOrg = this.organizations.find(org => org.orgId == storedOrgId);
+          if (matchedOrg) {
+            this.selectedOrgId = matchedOrg.orgId;
+          }
+        }
+      },
+      (error) => {
+        console.error('Error fetching organizations:', error);
+      }
+    );
+  }
+  
+  loadSelectedOrganization() {
+    this.orgId = localStorage.getItem('organizationId');
+    this.orgName = localStorage.getItem('organizationName');
+    this.userRole = localStorage.getItem('role');
+    
+    this.selectedOrgId = this.orgId ? this.orgId : ''; // Set initially selected orgId
+    this.fetchOrganizations();
+  }
+  
+  onOrganizationChange(event: any) {
+    const selectedOrg = this.organizations.find(org => org.orgId == event.detail.value);
+    if (selectedOrg) {
+      localStorage.setItem('organizationId', selectedOrg.orgId);
+      localStorage.setItem('organizationName', selectedOrg.orgName);
+    }
+     this.orgId = localStorage.getItem('organizationId');
+     console.log(this.orgId);
+     this.search(this.orgId);
+  }
+  
   toggleFilterPopover(event: Event) {
     this.isFilterPopoverOpen = true;
     this.popoverEvent = event;
@@ -102,7 +150,7 @@ export class ApproveRejectPage implements OnInit {
     return differenceInDays > 30 ? 'EXPIRED' : currentStatus;
   }
   async confirmRemove(event: any) {
-    const confirmed = await this.presentConfirmationDialog('Item Expired', 'This item has expired. Do you want to remove it?');
+    const confirmed = await this.presentConfirmationDialog('Item Expired', 'Do you want to expire the item?');
     if (confirmed === 'yes') {
       const itemId = event.itemId;
       this.isLoading = true;
@@ -110,8 +158,8 @@ export class ApproveRejectPage implements OnInit {
         async (res: any) => {
           this.isLoading = false;
           this.isPopoverOpen = false;
-          await this.presentConfirmationDialog('Removal Successful', 'The expired item has been removed.', true);
-          this.search();
+          await this.presentConfirmationDialog('Expired Successful', 'The item has been expired.', true);
+          this.search(this.orgId);
         },
         (error) => {
           this.isPopoverOpen = false;
@@ -142,7 +190,7 @@ export class ApproveRejectPage implements OnInit {
           this.isPopoverOpen = false;
   
           await this.presentConfirmationDialog('Success!!', 'Claim Request Approved Successfully', true);
-          this.search();
+          this.search(this.orgId);
         },
         (error) => {
           this.isLoading = false;
@@ -174,7 +222,7 @@ export class ApproveRejectPage implements OnInit {
       this.claimService.approveOrRejectClaim(params).subscribe(
         async (res: any) => {
           await this.presentConfirmationDialog('Success!!', 'Claim Request Rejected Successfully');
-          this.search();
+          this.search(this.orgId);
           this.isLoading = false;
         },
         (error) => {
@@ -208,7 +256,7 @@ export class ApproveRejectPage implements OnInit {
         async (res: any) => {
           this.isLoading = false;
           await this.presentConfirmationDialog('Success!!', 'Item Claimed Successfully', true);  // Success dialog with only "OK" button
-          this.search();
+          this.search(this.orgId);
         },
         (error) => {
           this.isLoading = false;
@@ -288,7 +336,7 @@ export class ApproveRejectPage implements OnInit {
   }
   clear(event: any) {
     this.searchValue = '';
-    this.search()
+    this.search(this.orgId)
     if (event.target.value == '') {
       this.clearSearchData();
     }
@@ -389,7 +437,7 @@ export class ApproveRejectPage implements OnInit {
 
 
   // Main search function
-  search() {
+  search(orgId:any) {
     const reqbody = {
       mail: this.approveRejectForm.value.email || '',
       status: this.approveRejectForm.value.status,
@@ -397,6 +445,7 @@ export class ApproveRejectPage implements OnInit {
       date: this.approveRejectForm.value.date
         ? new Date(this.approveRejectForm.value.date).toISOString().split('T')[0]
         : '',
+        organizationId: orgId
     };
       this.isLoading = true;
   

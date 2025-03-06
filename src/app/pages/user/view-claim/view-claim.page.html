@@ -7,6 +7,9 @@
       </ion-menu-button>
     </ion-buttons>
     <ion-title style="color: white;">View / Claim </ion-title>
+    <ion-buttons slot="end" style="color: white;">
+      <span>{{orgName}}</span> 
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -36,7 +39,7 @@
       class="card-row">
       <ion-col size="4">
         <img [src]="getImage(item.image)" alt="Item Image"
-        style="width: 60%; max-height: 100px; margin: auto; display: block;" (click)="openImageModal(item.image)" />
+        style="width: 60%; max-height: 100px; margin: auto; display: block;mix-blend-mode: multiply; background: transparent;border-radius: 20px;" (click)="openImageModal(item.image)" />
       </ion-col>
       <ion-col size="8" style="font-size: 14px; color: #666;">
         <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.userName }}</p>

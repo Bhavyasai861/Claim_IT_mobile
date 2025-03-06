@@ -38,6 +38,8 @@
   width: 70px;
   height: 70px;
   border-radius: 8px;
+  mix-blend-mode: multiply; 
+  background: transparent;
 }
 
 .name-column {
@@ -46,8 +48,8 @@
   align-items: center;
 }
 
-.name-column ion-label h2 {
-  font-size: 20px;
+.name-column ion-label h3 {
+  font-size: 18px;
   font-weight: bold;
   color: #333;
 }

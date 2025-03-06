@@ -53,6 +53,8 @@ export class UserHomePage implements OnInit {
   noRecord: boolean = false;
   errorImage: string | null = null;
   errorMessage: string = '';
+  orgName:any
+  orgId:any
   constructor(private fb: FormBuilder, private popoverController: PopoverController, private cdRef: ChangeDetectorRef, private errorService: ErrorService, private toastController: ToastController, private modalController: ModalController, private http: HttpClient, private loadingCtrl: LoadingController, private sanitizer: DomSanitizer, private claimService: ClaimitService) {
     this.claimForm = this.fb.group({
       name: ['', Validators.required],
@@ -64,6 +66,7 @@ export class UserHomePage implements OnInit {
   }
 
   ngOnInit() {
+    this.orgName = localStorage.getItem('organizationName');   
     this.fetchItems()
     this.triggerFileInput()
     this.fetchCategories()
@@ -156,11 +159,11 @@ export class UserHomePage implements OnInit {
       this.claimService.createClaimRequest(REQBODY).subscribe(
         (res: any) => {
           if (res && res.success) {
+            this.isModalOpen = false;
             this.isLoading = false// Ensure success flag exists
             this.claimedItems.add(this.selectedItemId);
             this.showToast('Claim request successful');
             this.fetchItems();
-            this.closeModal();
           } else {
             this.isLoading = false
             this.isModalOpen = false;
@@ -183,12 +186,12 @@ export class UserHomePage implements OnInit {
       duration: 3000,
       position: 'top',
     });
-    await toast.present();
+    await toast.present(); 
   }
 
   fetchItems(event?: any) {
+    this.orgId = localStorage.getItem('organizationId');
     this.isLoading = true;
-
     this.claimService?.listOfItems(this?.currentPage).subscribe(
       (res: any) => {
         this.isLoading = false;
@@ -401,9 +404,7 @@ export class UserHomePage implements OnInit {
       (response) => {
         this.isLoading = false;
         this.categories = response;
-
         this.categoryNames = this.categories.map(category => category.name);
-        console.log(this.categoryNames);
       },
       (error) => {
         this.isLoading = false;
@@ -413,7 +414,6 @@ export class UserHomePage implements OnInit {
   }
 
   showSuccessMessage(message: string): void {
-    // You can use a toast, alert, or other notification method
     this.toastController
       .create({
         message,

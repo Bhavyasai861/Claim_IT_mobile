@@ -58,6 +58,11 @@ export class AdditemPage implements OnInit {
   errorImage: string | null = null;
   errorMessage: string = '';
   isActionSheetOpen = false;
+  selectedOrg: any = null;
+  orgId:any
+  orgName:any
+  userRole: string | null = '';
+  organizations: any[] = [];
   actionSheetButtons = [
     {
       text: 'Upload File',
@@ -84,7 +89,57 @@ export class AdditemPage implements OnInit {
   ngOnInit() {
     this.getData();
     this.fetchCategories()
+    this.loadSelectedOrganization()
   }
+  fetchOrganizations() {
+    this.http.get<any[]>('http://52.45.222.211:8081/api/users/organisation').subscribe(
+      (response) => {
+        this.organizations = response;
+  
+        // Ensure selectedOrgId is set after organizations are loaded
+        const storedOrgId = localStorage.getItem('organizationId');
+        if (storedOrgId) {
+          const matchedOrg = this.organizations.find(org => org.orgId == storedOrgId);
+          if (matchedOrg) {
+            this.selectedOrgId = matchedOrg.orgId;
+          }
+        }
+      },
+      (error) => {
+        console.error('Error fetching organizations:', error);
+      }
+    );
+  }
+  
+  loadSelectedOrganization() {
+    this.orgId = localStorage.getItem('organizationId');
+    this.orgName = localStorage.getItem('organizationName');
+    this.userRole = localStorage.getItem('role');
+    
+    this.selectedOrgId = this.orgId ? this.orgId : ''; // Set initially selected orgId
+    this.fetchOrganizations();
+  }
+  
+  onOrganizationChange(event: any) {
+    const selectedOrg = this.organizations.find(org => org.orgId == event.detail.value);
+    if (selectedOrg) {
+      localStorage.setItem('organizationId', selectedOrg.orgId);
+      localStorage.setItem('organizationName', selectedOrg.orgName);
+    }
+  }
+  
+// Fetch updated organization details
+fetchOrganizationData(orgId: string) {
+  this.http.get(`http://52.45.222.211:8081/api/users/organisation?orgId=${orgId}`).subscribe(
+    (data: any) => {
+      localStorage.setItem('organizationData', JSON.stringify(data));
+      console.log('Updated Organization Data:', data);
+    },
+    (error) => {
+      console.error('Error fetching organization data:', error);
+    }
+  );
+}
   closeModal() {
     this.isModalOpen = false;
   }

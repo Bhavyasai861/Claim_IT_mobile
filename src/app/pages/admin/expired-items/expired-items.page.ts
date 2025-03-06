@@ -12,7 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { DatePipe } from '@angular/common';
 import { LoaderComponent } from '../loader/loader.component';
 import { ErrorService } from '../../SharedServices/error.service';
-
+import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-expired-items',
   templateUrl: './expired-items.page.html',
@@ -53,47 +53,90 @@ export class ExpiredItemsPage implements OnInit {
   errorMessage: string = '';
   selectedOrgId:any
   highlightedDates: { date: string, textColor: string, backgroundColor: string }[] = [];
-  constructor(private datePipe: DatePipe,private changeDetectorRef: ChangeDetectorRef, private claimService: ClaimitService,private errorService: ErrorService, private alertController: AlertController,private cdr: ChangeDetectorRef) { }
+  selectedOrg: any = null;
+  orgId:any
+  orgName:any
+  userRole: string | null = '';
+  organizations: any[] = [];
+
+  constructor(private http: HttpClient,private datePipe: DatePipe,private changeDetectorRef: ChangeDetectorRef, private claimService: ClaimitService,private errorService: ErrorService, private alertController: AlertController,private cdr: ChangeDetectorRef) { }
 
   
   ngOnInit() {
+    this.loadSelectedOrganization()
     this.getData()
     this.getorgId()
   }
+  fetchOrganizations() {
+    this.http.get<any[]>('http://52.45.222.211:8081/api/users/organisation').subscribe(
+      (response) => {
+        this.organizations = response;
+  
+        // Ensure selectedOrgId is set after organizations are loaded
+        const storedOrgId = localStorage.getItem('organizationId');
+        if (storedOrgId) {
+          const matchedOrg = this.organizations.find(org => org.orgId == storedOrgId);
+          if (matchedOrg) {
+            this.selectedOrgId = matchedOrg.orgId;
+          }
+        }
+      },
+      (error: any) => {
+        console.error('Error fetching organizations:', error);
+      }
+    );
+  }
+  
+  loadSelectedOrganization() {
+    this.orgId = localStorage.getItem('organizationId');
+    this.orgName = localStorage.getItem('organizationName');
+    this.userRole = localStorage.getItem('role');
+    
+    this.selectedOrgId = this.orgId ? this.orgId : ''; // Set initially selected orgId
+    this.fetchOrganizations();
+  }
+  
+  onOrganizationChange(event: any) {
+    const selectedOrg = this.organizations.find(org => org.orgId == event.detail.value);
+    if (selectedOrg) {
+      localStorage.setItem('organizationId', selectedOrg.orgId);
+      localStorage.setItem('organizationName', selectedOrg.orgName);
+    }
+     this.orgId = localStorage.getItem('organizationId');
+     console.log(this.orgId);
+     this.getData()
+  }
+
   getImage(base64String: string): string {
     return `data:image/jpeg;base64,${base64String}`;
   }
 
   getData(fromDate?: string, toDate?: string, orgId?: string) {
+     
+    this.orgId = orgId || localStorage.getItem('organizationId');
     this.isLoading = true;
     let url = 'http://52.45.222.211:8081/api/admin/archived';
-    const params = [];
-  
+    const params = [];  
     if (fromDate) params.push(`fromDate=${fromDate}`);
     if (toDate) params.push(`toDate=${toDate}`);
-    if (orgId) params.push(`orgId=${orgId}`);
-  
+    if (this.orgId) params.push(`orgId=${this.orgId}`); 
+
     if (params.length > 0) {
       url += `?${params.join('&')}`;
-     
     }
-  
-  
-  
-    this.claimService.getExpiredItems(url).subscribe(
-      
+
+    this.claimService.getExpiredItems(url).subscribe(      
       (res: any) => {
-       
-  
         if (res && Array.isArray(res)) {
           this.expiredItems = res;
           this.noRecord = res.length === 0;
           this.isLoading = false;
+
           this.expiredItems.forEach(item => {
             item.receivedDate = new Date(item.receivedDate).toISOString().split('T')[0];
             item.expirationDate = new Date(item.expirationDate).toISOString().split('T')[0];
           });
-  
+
           this.cdr.detectChanges();
         } else {
           console.warn('Unexpected response format:', res);
@@ -105,32 +148,27 @@ export class ExpiredItemsPage implements OnInit {
         this.errorMessage = this.errorService.getErrorMessage(error.status);
         this.isLoading = false;
         console.error('Error fetching data:', error);
-  
-        if (error.status == 500) {
-          this.isLoading = false;
-        } else {
-        }
       },
       () => {
         this.isLoading = false; 
       }
     );
-  }
-  
+}
 
-  async onDateChange(): Promise<void> {
-    const fromDate = this.selectedFrom || null;
-    const toDate = this.selectedTo || null;
-    const selectedOrgId = this.selectedOrgId || null;  
+  async onDateChange(event: any): Promise<void> {
+    const selectedDate = event.detail.value.split('T')[0];
+    const fromDate = this.selectedFrom ;
+    const toDate = this.selectedTo ;    
+    const selectedOrgId = this.selectedOrgId || localStorage.getItem('organizationId');  
     if (fromDate && toDate) {
       this.getData(fromDate, toDate, selectedOrgId);
     }
   }
-  selectOrg(orgId: string) {
-    this.selectedOrgId = orgId;
-    this.popoverOpen = false;
-    this.getData(this.selectedFrom, this.selectedTo, this.selectedOrgId);
-  }
+  // selectOrg(orgId: string) {
+  //   this.selectedOrgId = orgId;
+  //   this.popoverOpen = false;
+  //   this.getData(this.selectedFrom, this.selectedTo, this.selectedOrgId);
+  // }
   
   changeDate(dateString: string | null): string {
     if (!dateString) return '';
@@ -138,7 +176,7 @@ export class ExpiredItemsPage implements OnInit {
   }
   updateDateRange(event: any) {
     const selectedDate = event.detail.value.split('T')[0];
-
+    const selectedOrgId = this.selectedOrgId || localStorage.getItem('organizationId'); 
     if (!this.selectedFrom) {
       this.selectedFrom = selectedDate;
       this.selectedTo = null;
@@ -155,7 +193,7 @@ export class ExpiredItemsPage implements OnInit {
       this.selectedTo = null;
       this.dateError = false;
     }
-
+    this.getData(this.selectedFrom,this.selectedTo,selectedOrgId)
     this.updateHighlightedDates();
   }
 
@@ -177,7 +215,6 @@ export class ExpiredItemsPage implements OnInit {
         this.changeDetectorRef.detectChanges();
         this.errorImage = this.errorService.getErrorImage(error.status);
         this.errorMessage = this.errorService.getErrorMessage(error.status);
-        console.error('Error fetching categories:', error);
       }
     );
   }

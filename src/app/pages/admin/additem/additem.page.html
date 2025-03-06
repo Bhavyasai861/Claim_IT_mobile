@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<!-- <ion-header [translucent]="true">
   <ion-toolbar style="--background: linear-gradient(45deg, #21233d, #71a2ce)">
     <ion-buttons slot="start">
       <ion-menu-button auto-hide="false">
@@ -7,7 +7,30 @@
     </ion-buttons>
     <ion-title style="color: white;">Add Item</ion-title>
   </ion-toolbar>
+</ion-header> -->
+<ion-header [translucent]="true">
+  <ion-toolbar style="--background: linear-gradient(45deg, #21233d, #71a2ce)">
+    <ion-buttons slot="start">
+      <ion-menu-button auto-hide="false">
+        <ion-icon name="menu-outline" style="color: white; font-size: 24px;"></ion-icon>
+      </ion-menu-button>
+    </ion-buttons>
+    <ion-title style="color: white;">Add Item</ion-title>
+    <!-- Organization Dropdown -->
+    <ion-buttons slot="end" style="color: white;">
+      <ion-avatar style="color: white;">
+        <img *ngIf="selectedOrg?.logoUrl" [src]="selectedOrg.logoUrl" alt="Org Logo" 
+             style="width: 40px; height: 40px; cursor: pointer;">
+      </ion-avatar>
+      <ion-select [(ngModel)]="selectedOrgId" (ionChange)="onOrganizationChange($event)" interface="popover">
+        <ion-select-option *ngFor="let org of organizations" [value]="org.orgId">
+          {{ org.orgName }}
+        </ion-select-option>
+      </ion-select>      
+    </ion-buttons>
+  </ion-toolbar>
 </ion-header>
+
 <div *ngIf="errorImage" class="error-container">
   <img [src]="errorImage" alt="Error" class="error-image">
   <p>{{ errorMessage }}</p>
@@ -141,7 +164,7 @@
         style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
         <ion-col size="4">
           <img [src]="getImage(item.image)" alt="Item Image"
-            style="width: 60%; max-height: 100px; margin: auto; display: block;" (click)="openImageModal(item.image)" />
+            style="width: 60%; max-height: 100px; margin: auto; display: block;border-radius: 20px; mix-blend-mode: multiply; background: transparent;" (click)="openImageModal(item.image)" />
         </ion-col>
         <ion-col size="6" style="font-size: 14px; color: #666;">
           <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.categoryName }}</p>

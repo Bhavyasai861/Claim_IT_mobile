@@ -23,9 +23,11 @@ export class ViewClaimPage implements OnInit {
   noRecord:boolean =false
   errorImage: string | null = null;
   errorMessage: string = '';
+  orgName:any
   constructor(private claimService:ClaimitService,private errorService: ErrorService) { }
 
   ngOnInit() {
+    this.orgName = localStorage.getItem('organizationName');   
     this.fetchItems()
   }
   fetchItems() {

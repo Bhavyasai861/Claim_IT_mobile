@@ -15,5 +15,6 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,HttpClientModule,FormsModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, provideAnimationsAsync()],
   bootstrap: [AppComponent],
+  exports:[]
 })
 export class AppModule {}

@@ -27,6 +27,8 @@ export class ClaimitService {
   // Observable for components to subscribe to
   pendingClaimsCount$ = this.pendingClaimsSubject.asObservable();
   loginResponse_Triggered = this.loginResponse.asObservable();
+
+
   constructor(private http: HttpClient) { }
   public adminLogin(email: string, password: string) {
     const loginData = { email, password };
@@ -81,7 +83,8 @@ export class ClaimitService {
       username:params.name,
       mail: params.mail,
       status: params.status,
-      date: params.date
+      date: params.date,
+      orgId:params.organizationId
     });
   
     return this.http.get(`${environment.adminSearch}?${queryParams.toString()}`);
