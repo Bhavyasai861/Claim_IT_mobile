@@ -55,7 +55,8 @@ export class ClaimitService {
     return this.http.get(url);
   }
   public listOfItemsAddItem(query: any) {
-    return this.http.get(environment.listOfItemsAddItem);
+    const url = `${environment.listOfItemsAddItem}?orgId=${query}`;
+    return this.http.get(url);
   }
   public getExpiredItems(url: any) {
     return this.http.get(url);

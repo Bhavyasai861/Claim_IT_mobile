@@ -87,9 +87,9 @@ export class AdditemPage implements OnInit {
   constructor( private actionSheetCtrl: ActionSheetController,private cdRef: ChangeDetectorRef,  private http: HttpClient, private modalController: ModalController,private errorService: ErrorService, private router: Router, private menu: MenuController, private claimService: ClaimitService) { }
 
   ngOnInit() {
-    this.getData();
-    this.fetchCategories()
     this.loadSelectedOrganization()
+    this.getData(this.orgId);
+    this.fetchCategories()
   }
   fetchOrganizations() {
     this.http.get<any[]>('http://52.45.222.211:8081/api/users/organisation').subscribe(
@@ -126,6 +126,8 @@ export class AdditemPage implements OnInit {
       localStorage.setItem('organizationId', selectedOrg.orgId);
       localStorage.setItem('organizationName', selectedOrg.orgName);
     }
+    this.orgId = localStorage.getItem('organizationId');
+    this.getData(this.orgId)
   }
   
 // Fetch updated organization details
@@ -155,14 +157,13 @@ fetchOrganizationData(orgId: string) {
     this.isDescriptionInvalid = this.editableDescription.length > 200;
   }
   
-  getData() {
-    const query = this.searchQuery.trim();
+  getData(orgId:any) {
     this.isLoading = true;  // Show loading indicator at the start
     this.noRecord = false;
     this.errorImage = null;
     this.errorMessage = '';
   
-    this.claimService.listOfItemsAddItem(query).subscribe(
+    this.claimService.listOfItemsAddItem(orgId).subscribe(
       (res: any) => {
         this.isLoading = false;  // Hide loading after API call finishes
   
@@ -421,7 +422,7 @@ fetchOrganizationData(orgId: string) {
           this.isLoading = false;
           this.isCategoryInvalid = false; 
           this.isDescriptionInvalid = false; 
-          this.getData();
+          this.getData(this.orgId);
         },
         error => {
           this.isLoading = false; 

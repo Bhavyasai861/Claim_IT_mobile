@@ -73,10 +73,10 @@ export class LoginPage implements OnInit {
             localStorage.setItem('role', 'admin');
             await this.showToast('Login successful');
             await this.requestLocationPermission();
-
+  
             // Show organization selection popup
             this.showOrganizationSelection();
-
+  
             this.service.loginResponse.next(true);
           } else {
             this.showToast(response.message);
@@ -84,7 +84,13 @@ export class LoginPage implements OnInit {
         },
         (error: any) => {
           this.isLoading = false;
-          this.showToast(error.message || 'An unexpected error occurred.');
+          let errorMessage = 'An unexpected error occurred.';
+          if (error.status === 500) {
+            errorMessage = 'Server error. Please try again later.';
+          } else if (error.error && error.error.message) {
+            errorMessage = error.error.message;
+          }
+          this.showToast(errorMessage);
         }
       );
     } else {
@@ -92,6 +98,7 @@ export class LoginPage implements OnInit {
       this.showToast('Please fill in all fields correctly.');
     }
   }
+  
   async showOrganizationSelection() {
     this.http.get<any[]>('http://52.45.222.211:8081/api/users/organisation').subscribe(async (organizations) => {
       if (organizations.length === 0) {
