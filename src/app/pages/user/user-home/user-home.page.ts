@@ -156,7 +156,7 @@ export class UserHomePage implements OnInit {
         itemId: this.selectedItemId,
       };
       this.isLoading = true
-      this.claimService.createClaimRequest(REQBODY).subscribe(
+      this.claimService.createRequest(REQBODY).subscribe(
         (res: any) => {
           if (res && res.success) {
             this.isModalOpen = false;

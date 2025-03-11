@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/enivonment.dev';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -75,8 +75,11 @@ export class ClaimitService {
     return this.http.get(environment.getAllItems + 
       `?email=${query.email}&userName=${query.userName}`);
   }
-  
-  public createClaimRequest(REQBODY: any) {
+  public createClaimRequest(REQBODY: any, isAdmin: boolean) {
+    const params = new HttpParams().set('isAdmin', isAdmin.toString());
+    return this.http.post(environment.createClaimRequest, REQBODY, { params });
+}
+  public createRequest(REQBODY: any) {
     return this.http.post(environment.createClaimRequest, REQBODY)
   }
   public adminSearch(params: any) {

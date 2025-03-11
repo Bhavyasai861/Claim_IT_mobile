@@ -79,6 +79,7 @@
               <ion-item button *ngIf="item.status === 'PENDING_APPROVAL'" (click)="approveClaim(item)">Approve</ion-item>
               <ion-item button *ngIf="item.status === 'ARCHIVED' || item.status === 'PENDING_APPROVAL'" 
              (click)="rejectClaim(item)">Reject</ion-item>
+             <ion-item button *ngIf="item.status === 'UNCLAIMED'" (click)="onButtonClick(item.itemId)">Claim</ion-item>
               <ion-item button *ngIf="item.status === 'REJECTED' || item.status === 'UNCLAIMED'|| item.status === 'PENDING_APPROVAL'|| item.status === 'PENDING_PICKUP'" (click)="confirmRemove(item)">Expired</ion-item>
               <ion-item button  *ngIf="item.status === 'PENDING_PICKUP'"  detail="false" (click)="markClaimed(item)">Claimed</ion-item>
             </div>
@@ -87,7 +88,44 @@
       </ion-col>  
     </ion-row>
   </ion-grid>
-  
+  <ion-modal [isOpen]="isModalOpen"
+      style="--width: 300px; --height: 300px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+      <ng-template>
+        <div style="text-align: right; padding: 10px;">
+          <ion-icon name="close-circle" style="color: red; font-size: x-large;" (click)="closeModal()"></ion-icon>
+        </div>
+        <form [formGroup]="claimForm"  style="padding: 10px;">
+          <ion-grid>
+            <ion-row>
+              <ion-col size="12">
+                  <ion-input label="Name" label-placement="floating" formControlName="name" fill="outline"
+                    placeholder="Enter name" required></ion-input>
+                <ion-text color="danger" *ngIf="claimForm.get('name')?.invalid && claimForm.get('name')?.touched">
+                  Name is required
+                </ion-text>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12">
+                  <ion-input label="Email" label-placement="floating" formControlName="email" fill="outline"
+                    placeholder="Enter email" type="email" required></ion-input>
+                <ion-text color="danger" *ngIf="claimForm.get('email')?.invalid && claimForm.get('email')?.touched">
+                  Enter a valid email
+                </ion-text>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" class="button-container" style="text-align: center;">
+                <ion-button type="submit" [disabled]="claimForm.invalid || isSubmitted" (click)="submitClaimForm()"
+                  style="--background: linear-gradient(45deg, #21233d, #71a2ce); color: white;">
+                  Submit
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </form>        
+      </ng-template>
+    </ion-modal>
   <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"
     style="--width: 300px; --height: 270px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
     <ng-template>

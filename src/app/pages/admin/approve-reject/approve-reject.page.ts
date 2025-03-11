@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IonicModule, IonLoading, ModalController } from '@ionic/angular';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { IonicModule, IonLoading, ModalController, ToastController } from '@ionic/angular';
 import { ClaimitService } from '../../SharedServices/claimit.service';
 import { LoaderComponent } from '../loader/loader.component';
 import { catchError, of } from 'rxjs';
@@ -47,6 +47,9 @@ export class ApproveRejectPage implements OnInit {
   orgName:any
   userRole: string | null = '';
   organizations: any[] = [];
+  claimForm!: FormGroup;
+  isSubmitted: boolean = false;
+  selectedItemId: any;
   public statusDropDown: any = [
     { label: 'REJECTED', value: 'REJECTED' },
     { label: 'PENDING_APPROVAL', value: 'PENDING APPROVAL' },
@@ -61,8 +64,17 @@ export class ApproveRejectPage implements OnInit {
     private claimService: ClaimitService,
     private modalController: ModalController,
     private errorService: ErrorService,
-    private http:HttpClient
-  ) { }
+    private http:HttpClient,
+    private toastController: ToastController
+  ) { 
+    this.claimForm = this.fb.group({
+      name: ['', Validators.required],
+      email: ['', Validators.required],
+    });
+    this.claimForm.valueChanges.subscribe(() => {
+      this.isSubmitted = false;
+    });
+  }
 
   presentPopover(event: Event, item: any, index: number) {
     this.popoverEvent = event;
@@ -75,6 +87,10 @@ export class ApproveRejectPage implements OnInit {
     }
   }
   ngOnInit() {
+    this.claimForm = this.fb.group({
+      name: ['', Validators.required],
+      email: ['', Validators.required],
+    });
     this.approveRejectForm = this.fb.group({
       email: [''],
       date: [''],
@@ -205,7 +221,57 @@ export class ApproveRejectPage implements OnInit {
       this.isPopoverOpen = false;
     }
   }
-  
+  onButtonClick(itemId: number) {
+    this.selectedItemId = itemId;
+    this.isModalOpen = true;
+  }
+  async showToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      position: 'top',
+    });
+    await toast.present(); 
+  }
+
+  async submitClaimForm() {
+    const storedOrgId = localStorage.getItem('organizationId');
+    const role = localStorage.getItem('role');
+    if (this.claimForm.valid) {
+      this.isSubmitted = true;
+      const formValues = this.claimForm.value;
+      const REQBODY = {
+        name: formValues.name,
+        email: formValues.email,
+        itemId: this.selectedItemId,
+        orgId:storedOrgId
+      };
+      const isAdmin = role === 'admin';
+      this.isLoading = true
+      this.claimService.createClaimRequest(REQBODY,isAdmin).subscribe(
+        (res: any) => {
+          if (res && res.success) {
+            this.isModalOpen = false;
+            this.isLoading = false// Ensure success flag exists
+            this.isPopoverOpen = false;
+            this.showToast('Claim request successful');
+            this.search(this.orgId);
+          } else {
+            this.isLoading = false
+            this.isModalOpen = false;
+            this.isPopoverOpen = false;
+            console.warn('Claim request failed:', res);
+            this.showToast('Claim request failed. Please try again.');
+          }
+        },
+        (error) => {
+          this.isLoading = false
+          console.error('Error creating claim request:', error);
+          this.showToast('Error processing claim request. Please check your connection and try again.');
+        }
+      );
+    }
+  }
 
 
   async rejectClaim(event: any) {
@@ -377,6 +443,7 @@ export class ApproveRejectPage implements OnInit {
   }
 
   closeModal() {
+    this.isModalOpen = false;
     this.modalController.dismiss();
   }
 
