@@ -25,22 +25,31 @@ export class AppComponent {
     if (role === 'admin') {
       return [
         { title: 'Dashboard', url: '/claimIt/admin-home', icon: 'home-outline' },
-        { title: 'Additem', url: '/claimIt/additem', icon: 'add-circle-outline' },
-        { title: 'Approve / Reject', url: '/claimIt/approve-reject', icon: 'checkmark-circle-outline' },
+        { title: 'Item Management', url: '/claimIt/additem', icon: 'add-circle-outline' },
         { title: 'Expired Items', url: '/claimIt/expired-items', icon: 'pricetag-outline' },
         { title: 'Category Management', url: '/claimIt/category-management', icon: 'pricetag-outline' },
         { title: 'Notifications', url: '/claimIt/notifications', icon: 'notifications-outline' },
         { title: 'Logout', icon: 'log-out-outline', action: 'logout' }, 
       ];
-    } else if (role === 'user') {
+    } 
+    else if (role === 'superadmin') {
+      return [
+        { title: 'Dashboard', url: '/claimIt/admin-home', icon: 'home-outline' },
+        { title: 'Item Management', url: '/claimIt/additem', icon: 'add-circle-outline' },
+        { title: 'Expired Items', url: '/claimIt/expired-items', icon: 'pricetag-outline' },
+        { title: 'Category Management', url: '/claimIt/category-management', icon: 'pricetag-outline' },
+        { title: 'Admin Management', url: '/claimIt/admin-management', icon: 'pricetag-outline' },
+        { title: 'Notifications', url: '/claimIt/notifications', icon: 'notifications-outline' },
+        { title: 'Logout', icon: 'log-out-outline', action: 'logout' }, 
+      ];
+    }
+    else{
       return [
         { title: 'Dashboard', url: '/claimIt/dashboard', icon: 'home-outline' },
         { title: 'Search & Claim', url: '/claimIt/user-home', icon: 'search-outline' },
         { title: 'View items', url: '/claimIt/view-claim', icon: 'eye-outline' },
         { title: 'Logout', icon: 'log-out-outline', action: 'logout' }, 
       ];
-    }else{
-      return []
     }
   }
 

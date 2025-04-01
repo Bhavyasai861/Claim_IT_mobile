@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { IonicModule, ModalController, ToastController } from '@ionic/angular';
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { QRCodeComponent, QRCodeModule } from 'angularx-qrcode';
@@ -15,19 +15,21 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { LoaderComponent } from '../loader/loader.component';
 import { ErrorService } from '../../SharedServices/error.service';
 import { ActionSheetController } from '@ionic/angular';
+import { catchError, of } from 'rxjs';
 @Component({
   selector: 'app-additem',
   templateUrl: './additem.page.html',
   styleUrls: ['./additem.page.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, HttpClientModule, QRCodeModule,LoaderComponent],
+  imports: [CommonModule, FormsModule, IonicModule, HttpClientModule, QRCodeModule, LoaderComponent, ReactiveFormsModule],
 })
 export class AdditemPage implements OnInit {
   @ViewChild('qrCode') qrCode!: QRCodeComponent;
   items: any[] = [];
   files: any[] = [];
   isModalOpen = false;
+  isItemModalOpen = false
   swiperRef: any;
   currentStep = 1;
   isQrModalOpen: boolean = false;
@@ -59,10 +61,24 @@ export class AdditemPage implements OnInit {
   errorMessage: string = '';
   isActionSheetOpen = false;
   selectedOrg: any = null;
-  orgId:any
-  orgName:any
+  orgId: any
+  orgName: any
   userRole: string | null = '';
   organizations: any[] = [];
+  currentFilter: string = 'name';
+  searchResults: any = [];
+  searchValue: string = '';
+  claimForm!: FormGroup;
+  approveRejectForm!: FormGroup;
+  PopoverOpen = false;
+  popoverOpen = false;
+  popoverEvent: any;
+  isPopoverOpen: boolean = false;
+  selectedItemIndex: number | null = null;
+  selectedItemId: any;
+  isFilterPopoverOpen = false;
+  currentFilterPlaceholder: string = 'Search by name';
+  isSubmitted: boolean = false;
   actionSheetButtons = [
     {
       text: 'Upload File',
@@ -84,18 +100,38 @@ export class AdditemPage implements OnInit {
       role: 'cancel'
     }
   ];
-  constructor( private actionSheetCtrl: ActionSheetController,private cdRef: ChangeDetectorRef,  private http: HttpClient, private modalController: ModalController,private errorService: ErrorService, private router: Router, private menu: MenuController, private claimService: ClaimitService) { }
+  constructor(private toastController: ToastController, private fb: FormBuilder, private actionSheetCtrl: ActionSheetController, private cdRef: ChangeDetectorRef, private http: HttpClient, private modalController: ModalController, private errorService: ErrorService, private router: Router, private menu: MenuController, private claimService: ClaimitService) { }
 
+  presentPopover(event: Event, item: any, index: number) {
+    this.popoverEvent = event;
+    if (this.selectedItemIndex === index) {
+      this.isPopoverOpen = false;
+      this.selectedItemIndex = null;
+    } else {
+      this.isPopoverOpen = true;
+      this.selectedItemIndex = index;
+    }
+  }
   ngOnInit() {
+    this.claimForm = this.fb.group({
+      name: ['', Validators.required],
+      email: ['', Validators.required],
+    });
+    this.approveRejectForm = this.fb.group({
+      email: [''],
+      date: [''],
+      status: [''],
+      name: [''],
+    });
     this.loadSelectedOrganization()
-    this.getData(this.orgId);
+    this.search(this.orgId);
     this.fetchCategories()
   }
   fetchOrganizations() {
-    this.http.get<any[]>('http://52.45.222.211:8081/api/users/organisation').subscribe(
+    this.http.get<any[]>('http://172.17.12.101:8081/api/users/organisation').subscribe(
       (response) => {
         this.organizations = response;
-  
+
         // Ensure selectedOrgId is set after organizations are loaded
         const storedOrgId = localStorage.getItem('organizationId');
         if (storedOrgId) {
@@ -110,16 +146,16 @@ export class AdditemPage implements OnInit {
       }
     );
   }
-  
+
   loadSelectedOrganization() {
     this.orgId = localStorage.getItem('organizationId');
     this.orgName = localStorage.getItem('organizationName');
     this.userRole = localStorage.getItem('role');
-    
+
     this.selectedOrgId = this.orgId ? this.orgId : ''; // Set initially selected orgId
     this.fetchOrganizations();
   }
-  
+
   onOrganizationChange(event: any) {
     const selectedOrg = this.organizations.find(org => org.orgId == event.detail.value);
     if (selectedOrg) {
@@ -127,23 +163,25 @@ export class AdditemPage implements OnInit {
       localStorage.setItem('organizationName', selectedOrg.orgName);
     }
     this.orgId = localStorage.getItem('organizationId');
-    this.getData(this.orgId)
+    this.search(this.orgId)
   }
-  
-// Fetch updated organization details
-fetchOrganizationData(orgId: string) {
-  this.http.get(`http://52.45.222.211:8081/api/users/organisation?orgId=${orgId}`).subscribe(
-    (data: any) => {
-      localStorage.setItem('organizationData', JSON.stringify(data));
-      console.log('Updated Organization Data:', data);
-    },
-    (error) => {
-      console.error('Error fetching organization data:', error);
-    }
-  );
-}
+
+  // Fetch updated organization details
+  fetchOrganizationData(orgId: string) {
+    this.http.get(`http://172.17.12.101:8081/api/users/organisation?orgId=${orgId}`).subscribe(
+      (data: any) => {
+        localStorage.setItem('organizationData', JSON.stringify(data));
+        console.log('Updated Organization Data:', data);
+      },
+      (error) => {
+        console.error('Error fetching organization data:', error);
+      }
+    );
+  }
   closeModal() {
-    this.isModalOpen = false;
+    this.isModalOpen = false
+    this.isItemModalOpen = false;
+    this.isPopoverOpen = false;
   }
   viewProfile(): void {
     this.router.navigateByUrl('/profile');
@@ -156,57 +194,146 @@ fetchOrganizationData(orgId: string) {
   validateDescription() {
     this.isDescriptionInvalid = this.editableDescription.length > 200;
   }
-  
-  getData(orgId:any) {
-    this.isLoading = true;  // Show loading indicator at the start
-    this.noRecord = false;
-    this.errorImage = null;
-    this.errorMessage = '';
-  
-    this.claimService.listOfItemsAddItem(orgId).subscribe(
-      (res: any) => {
-        this.isLoading = false;  // Hide loading after API call finishes
-  
-        if (res && Object.keys(res).length > 0) {
-          this.addItemSearchResults = Object.keys(res).map((key) => ({
-            date: key.split(":")[1],
-            items: res[key],
-          }));
-          this.noRecord = false;
-        } else {
-          this.noRecord = true;
-        }
-        this.cdRef.detectChanges()
-      },
-      (error) => {
-        this.isLoading = false; // Hide loading even if an error occurs
+
+
+  // Main search function
+  search(orgId: any) {
+    const reqbody = {
+      mail: this.approveRejectForm.value.email || '',
+      status: this.approveRejectForm.value.status,
+      name: this.approveRejectForm.value.name,
+      date: this.approveRejectForm.value.date
+        ? new Date(this.approveRejectForm.value.date).toISOString().split('T')[0]
+        : '',
+      organizationId: orgId
+    };
+    this.isLoading = true;
+    this.claimService.adminSearch(reqbody).pipe(
+      catchError((error) => {
+        this.isLoading = false;
         this.errorImage = this.errorService.getErrorImage(error.status);
         this.errorMessage = this.errorService.getErrorMessage(error.status);
-        console.error('Error fetching data:', error);
-        this.cdRef.detectChanges();
-      }
-    );
+        console.error('Error fetching search results:', error);
+        this.noRecord = true;
+        return of({ data: [] });
+      })
+    ).subscribe((res: any) => {
+      this.isLoading = false;
+      this.searchResults = res.data;
+      this.noRecord = res.data.length === 0;
+    });
   }
-  
-  
 
+  clear(event: any) {
+    this.searchValue = '';
+    this.search(this.orgId)
+    if (event.target.value == '') {
+      this.clearSearchData();
+    }
+  }
+
+  clearSearch() {
+    this.searchValue = '';
+    this.clearSearchData();
+  }
+  clearSearchData() {
+    this.searchValue = '';
+    this.clearSearchData();
+
+  }
+  toggleFilterPopover(event: Event) {
+    this.isFilterPopoverOpen = true;
+    this.popoverEvent = event;
+  }
+
+  toggleFilterPopoverApprove(event: Event) {
+    this.PopoverOpen = true;
+    this.popoverEvent = event
+  }
+  selectFilter(filter: string) {
+    this.currentFilter = filter;
+    this.isFilterPopoverOpen = false;
+    switch (filter) {
+      case 'name':
+        this.currentFilterPlaceholder = 'Search by name';
+        break;
+      case 'email':
+        this.currentFilterPlaceholder = 'Search by email';
+        break;
+      case 'date':
+        this.currentFilterPlaceholder = 'Search by YYYY/MM/DD';
+        break;
+
+      case 'status':
+        this.currentFilterPlaceholder = 'Search by status';
+        break;
+    }
+  }
+  filterSearch(event: any) {
+    const searchValue = event.target?.value.trim().toLowerCase();
+    const reqbody: any = {
+      mail: '',
+      status: '',
+      name: '',
+      date: '',
+      organizationId: this.orgId
+    };
+
+    switch (this.currentFilter) {
+      case 'name':
+        reqbody.name = searchValue;
+        break;
+      case 'email':
+        reqbody.mail = searchValue;
+        break;
+      case 'date':
+        const dateObj = new Date(searchValue);
+        if (!isNaN(dateObj.getTime())) {
+          const year = dateObj.getFullYear();
+          const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+          const day = String(dateObj.getDate()).padStart(2, '0');
+          reqbody.date = `${year}-${month}-${day}`; // Use hyphens to avoid encoding
+        } else {
+          console.error("Invalid date format:", searchValue);
+        }
+        break;
+      case 'status':
+        reqbody.status = searchValue;
+        break;
+      default:
+        return;
+    }
+    this.isLoading = true;
+    this.claimService.adminSearch(reqbody).subscribe((res: any) => {
+      this.isLoading = false;
+      this.searchResults = res.data;
+      if (res.data.length == 0) {
+        this.noRecord = true;
+      }
+      else {
+        this.noRecord = false;
+      }
+      console.log("API Search Results:", this.searchResults);
+    });
+  }
   getStatusColor(status: string): string {
     switch (status) {
       case 'CLAIMED':
-        return '#e0ffe0';
-      case 'PENDING_APPROVAL':
-        return 'rgb(254, 226, 226)';
+        return 'rgb(182, 235, 180)'; // Light green
       case 'PENDING_PICKUP':
         return 'rgb(254, 226, 226)';
+      case 'PENDING_APPROVAL':
+        return 'rgb(181, 231, 231)';
       case 'UNCLAIMED':
-        return 'rgb(248, 113, 113)';
+        return 'rgb(248, 113, 113)'; // Red
       case 'REJECTED':
-        return '#ec9d9d';
+        return '#ec9d9d'; // Darker red
+      case 'EXPIRED':
+        return 'rgb(243, 177, 124)'
       default:
         return '#ffffff';
     }
   }
-
   getTextColor(status: string): string {
     if (status === 'UNCLAIMED' || status === 'REJECTED') {
       return '#fff';
@@ -214,7 +341,7 @@ fetchOrganizationData(orgId: string) {
     return '#333';
   }
   getImage(base64String: string): string {
-    return `data:image/jpeg;base64,${base64String}`;
+    return `${base64String}`;
   }
   goToStep(stepNumber: number) {
     this.currentStep = stepNumber;
@@ -224,14 +351,14 @@ fetchOrganizationData(orgId: string) {
     const mimeString = dataUrl.split(',')[0].split(':')[1].split(';')[0];
     const arrayBuffer = new ArrayBuffer(byteString.length);
     const intArray = new Uint8Array(arrayBuffer);
-  
+
     for (let i = 0; i < byteString.length; i++) {
       intArray[i] = byteString.charCodeAt(i);
     }
-  
+
     return new Blob([arrayBuffer], { type: mimeString });
   }
-  
+
   async openCamera() {
     try {
       const image = await Camera.getPhoto({
@@ -240,23 +367,23 @@ fetchOrganizationData(orgId: string) {
         resultType: CameraResultType.DataUrl,
         source: CameraSource.Camera
       });
-  
+
       if (image.dataUrl) {
         const blob = this.dataURLtoBlob(image.dataUrl);
         const file = new File([blob], `photo_${Date.now()}.jpg`, { type: "image/jpeg" });
-  
+
         this.files.push({
           file: file, // Store file for upload
           preview: image.dataUrl // Store preview
         });
-  
+
         console.log("Captured image file:", file);
       }
     } catch (error) {
       console.error('Camera error:', error);
     }
   }
-  
+
   onFileSelect(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -311,9 +438,176 @@ fetchOrganizationData(orgId: string) {
   closeImageModal() {
     this.isImageModalOpen = false;
   }
+  async presentConfirmationDialog(title: string, message: string, isSuccess: boolean = false): Promise<string> {
+    return new Promise<string>((resolve) => {
+      const dialog = document.createElement('ion-alert');
+      dialog.header = title;
+      dialog.message = message;
+      if (isSuccess) {
+        dialog.buttons = [{ text: 'OK', role: 'confirm', handler: () => resolve('ok') }];
+      } else {
+        dialog.buttons = [
+          { text: 'Cancel', role: 'cancel', handler: () => resolve('no') },
+          { text: 'Yes', role: 'confirm', handler: () => resolve('yes') },
+        ];
+      }
+      document.body.appendChild(dialog);
+      dialog.present();
+    });
+  }
+
+
+  async presentRejectClaimDialog(title: string, message: string): Promise<string | null> {
+    return new Promise<string | null>((resolve) => {
+      const dialog = document.createElement('ion-alert');
+      dialog.header = title;
+      dialog.message = message;
+      dialog.inputs = [
+        {
+          name: 'reason',
+          type: 'text',
+          placeholder: 'Reason for rejection',
+        },
+      ];
+      dialog.buttons = [
+        { text: 'Cancel', role: 'cancel', handler: () => resolve(null) },
+        { text: 'Submit', role: 'confirm', handler: (data) => resolve(data.reason) },
+      ];
+      document.body.appendChild(dialog);
+      dialog.present();
+    });
+  }
+  getStatus(receivedDate: string, currentStatus: string): string {
+    const received = new Date(receivedDate);
+    const currentDate = new Date();
+    const differenceInTime = currentDate.getTime() - received.getTime();
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+    return differenceInDays > 30 ? 'EXPIRED' : currentStatus;
+  }
+  async rejectClaim(event: any) {
+    this.isPopoverOpen = false;
+    const reason = await this.presentRejectClaimDialog('Reject Claim', 'Are you sure you want to reject this claim?');
+    if (reason) {
+      const params = {
+        itemId: event.itemId,
+        status: 'REJECTED',
+        reasonForReject: reason,
+      };
+
+      this.isLoading = true;
+      this.claimService.approveOrRejectClaim(params).subscribe(
+        async (res: any) => {
+          await this.presentConfirmationDialog('Success!!', 'Claim Request Rejected Successfully');
+          this.search(this.orgId);
+          this.isLoading = false;
+        },
+        (error) => {
+          this.isLoading = false;
+          console.error('Error rejecting claim:', error);
+        }
+      );
+    }
+    setTimeout(() => {
+      this.isPopoverOpen = false;
+    }, 200);
+  }
+  async confirmRemove(event: any) {
+    const confirmed = await this.presentConfirmationDialog('Item Expired', 'Do you want to expire the item?');
+    if (confirmed === 'yes') {
+      const itemId = event.itemId;
+      this.isLoading = true;
+      this.claimService.adminRemoveItem(itemId).subscribe(
+        async (res: any) => {
+          this.isLoading = false;
+          this.isPopoverOpen = false;
+          await this.presentConfirmationDialog('Expired Successful', 'The item has been expired.', true);
+          this.search(this.orgId);
+        },
+        (error) => {
+          this.isPopoverOpen = false;
+          this.isLoading = false;
+          console.error('Error removing item:', error);
+        }
+      );
+    } else {
+      this.isLoading = false;
+      this.isPopoverOpen = false;
+    }
+  }
+  async markClaimed(event: any) {
+    this.isPopoverOpen = false;
+    await new Promise(resolve => setTimeout(resolve, 200));
+    const confirmed = await this.presentConfirmationDialog(
+      'Mark as Claimed',
+      'Are you sure you want to mark this item as Claimed?'
+    );
+
+    if (confirmed === 'yes') {
+      const params = {
+        itemId: event.itemId,
+        claimStatus: 'CLAIMED',
+        userId: event.userId,
+      };
+
+      this.isLoading = true;
+      this.claimService.markASClaimed(params).subscribe(
+        async (res: any) => {
+          this.isLoading = false;
+          await this.presentConfirmationDialog('Success!!', 'Item Claimed Successfully', true);  // Success dialog with only "OK" button
+          this.search(this.orgId);
+        },
+        (error) => {
+          this.isLoading = false;
+          console.error('Error marking item as claimed:', error);
+        }
+      );
+    }
+
+    setTimeout(() => {
+      this.isPopoverOpen = false;
+    }, 200);
+  }
+  onButtonClick(itemId: number) {
+    this.selectedItemId = itemId;
+    this.isModalOpen = true;
+  }
+  async approveClaim(event: any) {
+    const confirmed = await this.presentConfirmationDialog('Approve Claim', 'Are you sure you want to approve this claim?');
+    if (confirmed === 'yes') {
+      const params = {
+        itemId: event.itemId,
+        status: 'PENDING_PICKUP',
+      };
+      this.isPopoverOpen = false;
+      this.isLoading = true;
+
+      this.claimService.approveOrRejectClaim(params).subscribe(
+        async (res: any) => {
+          this.isLoading = false;
+
+          // Close the popover immediately after approval
+          this.isPopoverOpen = false;
+
+          await this.presentConfirmationDialog('Success!!', 'Claim Request Approved Successfully', true);
+          this.search(this.orgId);
+        },
+        (error) => {
+          this.isLoading = false;
+          console.error('Error approving claim:', error);
+
+          // Close popover even if there's an error
+          this.isPopoverOpen = false;
+        }
+      );
+    } else {
+      // Ensure popover is closed when the user cancels
+      this.isPopoverOpen = false;
+    }
+  }
+
   addItem() {
     this.resetForm();
-    this.isModalOpen = true;
+    this.isItemModalOpen = true;
     this.addItemData = [];
     if (Array.isArray(this.addItemData)) {
       this.addItemData.forEach(item => {
@@ -334,26 +628,42 @@ fetchOrganizationData(orgId: string) {
       this.currentStep--;
     }
   }
-  
+
   onCategoryChange(event: any): void {
     this.selectedCategory = event.detail.value;
-    console.log( this.selectedCategory );
-    
+    console.log(this.selectedCategory);
+
   }
   fetchCategories(): void {
-    this.isLoading = true
-    this.claimService.getcategories().subscribe(
-        (response) => {
-          this.isLoading = false
-          this.categories = response;
-          this.categoryNames = this.categories.map(category => category.name);
+    this.orgId = localStorage.getItem('organizationId') || ''; // Ensure orgId is not null
+    this.isLoading = true;
+
+    if (!this.orgId) {
+      console.error('Organization ID not found in localStorage.');
+      this.isLoading = false;
+      return;
+    }
+
+    this.http.get<any[]>(`http://172.17.12.101:8081/lookup/categories?orgId=${this.orgId}`)
+      .subscribe(
+        (response: any[]) => {
+          this.isLoading = false;
+          if (Array.isArray(response)) {
+            this.categories = response;
+            this.categoryNames = this.categories.map(category => category.name);
+          } else {
+            console.error('Unexpected response format:', response);
+            this.categories = [];
+            this.categoryNames = [];
+          }
         },
         (error) => {
-          this.isLoading = false
+          this.isLoading = false;
           console.error('Error fetching categories:', error);
         }
       );
   }
+
   submitImageReponse() {
     if (this.files.length > 0) {
       this.isLoading = true; // Start loading
@@ -361,10 +671,10 @@ fetchOrganizationData(orgId: string) {
       this.formData = new FormData();
       this.formData.append('image', this.files[0].file);
       this.formData.append('orgId', this.selectedOrgId);
-      this.formData.append('providedCategoryName', this.selectedCategory|| 'default')
+      this.formData.append('providedCategoryName', this.selectedCategory || 'default')
       console.log(this.formData);
-      
-      this.http.post('http://52.45.222.211:8081/api/admin/image', this.formData).subscribe(
+
+      this.http.post('http://172.17.12.101:8081/api/admin/image', this.formData).subscribe(
         (response) => {
           this.imageDataResponse = response;
           this.formatResponse(response);
@@ -386,7 +696,7 @@ fetchOrganizationData(orgId: string) {
 
 
   editDescription(item: any) {
-    console.log(item);    
+    console.log(item);
     this.editableDescription = item.value;
     this.isEditingDescription = true;
   }
@@ -396,15 +706,15 @@ fetchOrganizationData(orgId: string) {
   submitItem() {
     this.validateCategory();
     if (!this.selectedCategory) {
-      this.isCategoryInvalid = true; 
-      return; 
+      this.isCategoryInvalid = true;
+      return;
     }
     if (this.editableDescription.length > 200) {
       this.isDescriptionInvalid = true;
-      return; 
+      return;
     }
     const updatedData = this.imageDataResponse;
-    
+
     if (this.isEditingDescription) {
       updatedData.description = this.editableDescription;
     }
@@ -414,24 +724,23 @@ fetchOrganizationData(orgId: string) {
     updatedFormData.append('categoryName', this.selectedCategory);
     updatedFormData.append('editedLabels', updatedData.description);
     this.isLoading = true;
-    this.http.post('http://52.45.222.211:8081/api/admin/upload', updatedFormData)
+    this.http.post('http://172.17.12.101:8081/api/admin/upload', updatedFormData)
       .subscribe(
         response => {
           this.isEditingDescription = false;
-          this.isModalOpen = false;
+          this.isItemModalOpen = false;
           this.isLoading = false;
-          this.isCategoryInvalid = false; 
-          this.isDescriptionInvalid = false; 
-          this.getData(this.orgId);
+          this.isCategoryInvalid = false;
+          this.isDescriptionInvalid = false;
+          this.search(this.orgId);
         },
         error => {
-          this.isLoading = false; 
+          this.isLoading = false;
           console.error('Upload failed:', error);
         }
       );
   }
-  
-  
+
 
   loadData() {
     // Simulate new data loading
@@ -460,8 +769,54 @@ fetchOrganizationData(orgId: string) {
     this.isTruncated = !this.isTruncated;
   }
   onModalDismiss() {
-    this.isModalOpen = false;
+    this.isItemModalOpen = false;
     this.files = [];
+  }
+  async showToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      position: 'top',
+    });
+    await toast.present();
+  }
+  async submitClaimForm() {
+    const storedOrgId = localStorage.getItem('organizationId');
+    const role = localStorage.getItem('role');
+    if (this.claimForm.valid) {
+      this.isSubmitted = true;
+      const formValues = this.claimForm.value;
+      const REQBODY = {
+        name: formValues.name,
+        email: formValues.email,
+        itemId: this.selectedItemId,
+        orgId: storedOrgId
+      };
+      const isAdmin = role === 'admin';
+      this.isLoading = true
+      this.claimService.createClaimRequest(REQBODY, isAdmin).subscribe(
+        (res: any) => {
+          if (res && res.success) {
+            this.isModalOpen = false;
+            this.isLoading = false// Ensure success flag exists
+            this.isPopoverOpen = false;
+            this.showToast('Claim request successful');
+            this.search(this.orgId);
+          } else {
+            this.isLoading = false
+            this.isModalOpen = false;
+            this.isPopoverOpen = false;
+            console.warn('Claim request failed:', res);
+            this.showToast('Claim request failed. Please try again.');
+          }
+        },
+        (error) => {
+          this.isLoading = false
+          console.error('Error creating claim request:', error);
+          this.showToast('Error processing claim request. Please check your connection and try again.');
+        }
+      );
+    }
   }
   generateQrCodeData(element: any): string {
     return JSON.stringify({
@@ -508,7 +863,7 @@ fetchOrganizationData(orgId: string) {
         imageWindow.document.write('<img src="' + combinedImage + '" style="width:100%"/>');
         imageWindow.document.close();
         setTimeout(() => {
-          imageWindow.location.href = combinedImage; 
+          imageWindow.location.href = combinedImage;
         }, 500);
       }
     } else {

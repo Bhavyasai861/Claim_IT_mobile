@@ -72,13 +72,20 @@ export class LoginPage implements OnInit {
             this.service.updateRole('admin');
             localStorage.setItem('role', 'admin');
             await this.showToast('Login successful');
+            localStorage.setItem('organizations', JSON.stringify(response.organizations));
             await this.requestLocationPermission();
   
-            // Show organization selection popup
             this.showOrganizationSelection();
   
             this.service.loginResponse.next(true);
-          } else {
+          } else if(response.isSuperAdmin){
+            localStorage.setItem('isLogin', 'true');
+            this.service.updateRole('superadmin');
+            localStorage.setItem('role', 'superadmin');
+            await this.showToast('Login successful');
+            this.showOrganizationSelection();
+          }
+            else {
             this.showToast(response.message);
           }
         },
@@ -100,17 +107,25 @@ export class LoginPage implements OnInit {
   }
   
   async showOrganizationSelection() {
-    this.http.get<any[]>('http://52.45.222.211:8081/api/users/organisation').subscribe(async (organizations) => {
-      if (organizations.length === 0) {
+    const role = localStorage.getItem('role');   
+    if (role === 'admin') {
+      const storedOrganizations = localStorage.getItem('organizations');
+  
+      if (!storedOrganizations) {
+        this.showToast('No organizations available.');
+        return;
+      }
+      const organizations = JSON.parse(storedOrganizations);  
+      if (!Array.isArray(organizations) || organizations.length === 0) {
         this.showToast('No organizations available.');
         return;
       }
       const alert = await this.alertController.create({
         header: 'Select Organization',
-        inputs: organizations.map(org => ({
+        inputs: organizations.map((org: { orgName: string; orgId: string }) => ({
           type: 'radio',
-          label: org.orgName,  // Assuming the response has a 'name' field
-          value: { id: org.orgId, name: org.orgName } // Assuming each organization has a unique 'id'
+          label: org.orgName,
+          value: { id: org.orgId, name: org.orgName }
         })),
         buttons: [
           {
@@ -131,12 +146,50 @@ export class LoginPage implements OnInit {
           }
         ]
       });
-
+  
       await alert.present();
-    }, (error) => {
-      this.showToast('Failed to load organizations.');
-    });
+  
+    } else if (role === 'superadmin') {
+      this.http.get<any[]>('http://172.17.12.101:8081/api/users/organisation').subscribe(async (organizations) => {
+        if (!organizations || organizations.length === 0) {
+          this.showToast('No organizations available.');
+          return;
+        }
+  
+        const alert = await this.alertController.create({
+          header: 'Select Organization',
+          inputs: organizations.map(org => ({
+            type: 'radio',
+            label: org.orgName,
+            value: { id: org.orgId, name: org.orgName }
+          })),
+          buttons: [
+            {
+              text: 'Cancel',
+              role: 'cancel'
+            },
+            {
+              text: 'Confirm',
+              handler: (selectedOrg) => {
+                if (selectedOrg) {
+                  localStorage.setItem('organizationId', selectedOrg.id);
+                  localStorage.setItem('organizationName', selectedOrg.name);
+                  this.router.navigate(['/claimIt/additem']);
+                } else {
+                  this.showToast('Please select an organization.');
+                }
+              }
+            }
+          ]
+        });
+  
+        await alert.present();
+      }, (error) => {
+        this.showToast('Failed to load organizations.');
+      });
+    }
   }
+  
   // async onSubmit() {
   //   if (this.loginForm.valid) {
   //     const { email, password } = this.loginForm.value;
@@ -189,7 +242,7 @@ export class LoginPage implements OnInit {
     }
   }
   userNavigate() {
-    this.http.get<any[]>('http://52.45.222.211:8081/api/users/organisation').subscribe(async (organizations) => {
+    this.http.get<any[]>('http://172.17.12.101:8081/api/users/organisation').subscribe(async (organizations) => {
       if (organizations.length === 0) {
         this.showToast('No organizations available.');
         return;

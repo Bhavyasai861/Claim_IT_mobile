@@ -123,8 +123,7 @@ export class ApproveRejectPage implements OnInit {
   loadSelectedOrganization() {
     this.orgId = localStorage.getItem('organizationId');
     this.orgName = localStorage.getItem('organizationName');
-    this.userRole = localStorage.getItem('role');
-    
+    this.userRole = localStorage.getItem('role');    
     this.selectedOrgId = this.orgId ? this.orgId : ''; // Set initially selected orgId
     this.fetchOrganizations();
   }
@@ -210,8 +209,7 @@ export class ApproveRejectPage implements OnInit {
         },
         (error) => {
           this.isLoading = false;
-          console.error('Error approving claim:', error);
-          
+          console.error('Error approving claim:', error);          
           // Close popover even if there's an error
           this.isPopoverOpen = false;
         }

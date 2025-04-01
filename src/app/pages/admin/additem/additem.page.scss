@@ -30,16 +30,7 @@
   margin-top: 50px;
 }
 
-.modal {
-  margin-top: 200px;
-  width: 100%;
-  max-width: 400px;
-  height: 50%;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  background-color: #ffffff;
-}
+
 
 .stepper-header {
   display: flex;
@@ -133,7 +124,6 @@ ion-list {
 }
 
 ion-item {
-  padding: 8px 0;
   border-bottom: 1px solid #e0e0e0;
 }
 
@@ -310,16 +300,7 @@ ion-label {
   object-fit: cover;
 }
 
-.close-icon {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  font-size: 20px;
-  color: red;
-  cursor: pointer;
-  background: white;
-  border-radius: 50%;
-}
+
 .invalid {
   border: 2px solid red !important;
   border-radius: 5px;
@@ -329,4 +310,113 @@ ion-label {
   color: red;
   font-size: 14px;
   margin-top: 5px;
+}
+
+.custom-button {
+  --border-width: 0px;
+  --background: transparent;
+  --box-shadow: none;
+}
+
+
+.filter-popover {
+  position: absolute;
+  top: 10%;
+  left: 20%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  background-color: white;
+  border-radius: 10px;
+  padding: 15px;
+  width: 280px;
+  max-width: 90%;
+}
+
+
+ion-list {
+  padding: 0;
+}
+
+ion-item {
+  font-size: 14px;
+  color: #333;
+}
+
+.filter-popover .close-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #555;
+}
+
+
+.popover-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 999;
+}
+
+ion-popover {
+  --width: 200px;
+  --height: auto;
+  --border-radius: 0.2px black;
+  --box-shadow: none;
+ --background: linear-gradient(45deg, #21233d, #71a2ce);
+}
+.fieldBox {
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  padding: 1px;
+  margin-top: 8px;
+}
+
+//Input field heading style
+.fieldHeading {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #000000b9;
+  font-family: "Roboto";
+}
+
+ion-list {
+  padding: 0;
+}
+
+
+
+
+/* Fade-in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+.custom-dropdown {
+  padding: 5px;
+}
+
+.custom-button {
+  --border-width: 0px;
+  --background: transparent;
+  --box-shadow: none;
+}
+
+:host-context(.dark) .custom-button {
+  --color: #000;
+}
+
+:host-context(.light) .custom-button {
+  --color: #000;
 }

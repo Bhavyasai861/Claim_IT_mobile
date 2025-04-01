@@ -102,6 +102,9 @@ export class ClaimitService {
   public getNotifications(): Observable<any> {
     return this.http.get(environment.getNotifications)
   }
+  public adminManagement(params: any) {
+    return this.http.get(environment.adminManagement + '?orgId=' + params.orgId + '&status=' + params.status + '&email=' + params.email)
+  }
   pendingClaims: any[] = [];
 
   addClaim(claim: any) {

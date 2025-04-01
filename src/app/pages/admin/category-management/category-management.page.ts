@@ -88,7 +88,7 @@ export class CategoryManagementPage implements OnInit {
       );
   }
   getImage(base64String: string): string {
-    return `data:image/jpeg;base64,${base64String}`;
+    return `${base64String}`;
   }
 
   async updateCategory(item: any) {
@@ -262,7 +262,7 @@ export class CategoryManagementPage implements OnInit {
       status: "A"
     };
  this.isLoading = true
-    const url = `http://52.45.222.211:8081/api/admin/categories?id=${id}`;
+    const url = `http://172.17.12.101:8081/api/admin/categories?id=${id}`;
 
     try {
       const response = await this.claimService.updateCategory(url, reqBody);

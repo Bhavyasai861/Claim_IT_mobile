@@ -11,12 +11,28 @@
         <img *ngIf="selectedOrg?.logoUrl" [src]="selectedOrg.logoUrl" alt="Org Logo" 
              style="width: 40px; height: 40px; cursor: pointer;">
       </ion-avatar>
+      <ng-container *ngIf="userRole === 'admin'; else editableSelect">
+        <span>{{ orgName}}</span>
+      </ng-container>
+      <ng-template #editableSelect>
+        <ion-select [(ngModel)]="selectedOrgId" (ionChange)="onOrganizationChange($event)" interface="popover">
+          <ion-select-option *ngFor="let org of organizations" [value]="org.orgId">
+            {{ org.orgName }}
+          </ion-select-option>
+        </ion-select>
+      </ng-template>
+    </ion-buttons>
+    <!-- <ion-buttons slot="end" style="color: white;">
+      <ion-avatar style="color: white;">
+        <img *ngIf="selectedOrg?.logoUrl" [src]="selectedOrg.logoUrl" alt="Org Logo" 
+             style="width: 40px; height: 40px; cursor: pointer;">
+      </ion-avatar>
       <ion-select [(ngModel)]="selectedOrgId" (ionChange)="onOrganizationChange($event)" interface="popover">
         <ion-select-option *ngFor="let org of organizations" [value]="org.orgId">
           {{ org.orgName }}
         </ion-select-option>
       </ion-select>      
-    </ion-buttons>
+    </ion-buttons> -->
   </ion-toolbar>
 </ion-header>
 <div *ngIf="errorImage" class="error-container">
@@ -51,8 +67,7 @@
         <img [src]="getImage(item.image)" alt="Item Image"
         style="width: 60%; max-height: 100px; margin: auto; display: block; border-radius: 20px;
                mix-blend-mode: multiply; background: transparent;"
-        (click)="openImageModal(item.image)" />
-      
+        (click)="openImageModal(item.image)" />      
       </ion-col>
       <ion-col size="6" style="font-size: 14px; color: #666;">
         <p style="font-size: 14px; font-weight: bold; color: #333;">{{ item.name }}</p>

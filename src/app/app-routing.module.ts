@@ -50,7 +50,11 @@ const routes: Routes = [
       {
         path: 'category-management',
         loadChildren: () => import('./pages/admin/category-management/category-management.module').then( m => m.CategoryManagementPageModule)
-      }
+      },
+      {
+        path: 'admin-management',
+        loadChildren: () => import('./pages/superadmin/admin-management/admin-management.module').then( m => m.AdminManagementPageModule)
+      },
     ]
   },
   {
@@ -66,6 +70,8 @@ const routes: Routes = [
     path: 'contact',
     loadChildren: () => import('./pages/contact/contact.module').then( m => m.ContactPageModule)
   },
+  
+
 
 
 ];

@@ -19,12 +19,28 @@
         <img *ngIf="selectedOrg?.logoUrl" [src]="selectedOrg.logoUrl" alt="Org Logo" 
              style="width: 40px; height: 40px; cursor: pointer;">
       </ion-avatar>
+      <ng-container *ngIf="userRole === 'admin'; else editableSelect">
+        <span>{{ orgName}}</span>
+      </ng-container>
+      <ng-template #editableSelect>
+        <ion-select [(ngModel)]="selectedOrgId" (ionChange)="onOrganizationChange($event)" interface="popover">
+          <ion-select-option *ngFor="let org of organizations" [value]="org.orgId">
+            {{ org.orgName }}
+          </ion-select-option>
+        </ion-select>
+      </ng-template>
+    </ion-buttons>
+    <!-- <ion-buttons slot="end" style="color: white;">
+      <ion-avatar style="color: white;">
+        <img *ngIf="selectedOrg?.logoUrl" [src]="selectedOrg.logoUrl" alt="Org Logo" 
+             style="width: 40px; height: 40px; cursor: pointer;">
+      </ion-avatar>
       <ion-select [(ngModel)]="selectedOrgId" (ionChange)="onOrganizationChange($event)" interface="popover">
         <ion-select-option *ngFor="let org of organizations" [value]="org.orgId">
           {{ org.orgName }}
         </ion-select-option>
       </ion-select>      
-    </ion-buttons>
+    </ion-buttons> -->
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
