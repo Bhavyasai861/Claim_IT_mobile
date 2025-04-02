@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { IonicModule ,ToastController} from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule, Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ClaimitService } from '../../SharedServices/claimit.service';
 import { LoaderComponent } from '../../admin/loader/loader.component';
@@ -10,7 +10,7 @@ import { LoaderComponent } from '../../admin/loader/loader.component';
   selector: 'app-admin-management',
   templateUrl: './admin-management.page.html',
   styleUrls: ['./admin-management.page.scss'],
-  imports: [CommonModule, IonicModule, ReactiveFormsModule, FormsModule,LoaderComponent]
+  imports: [CommonModule, IonicModule, ReactiveFormsModule, FormsModule, LoaderComponent]
 })
 export class AdminManagementPage implements OnInit {
   organizations: any[] = [];
@@ -26,13 +26,17 @@ export class AdminManagementPage implements OnInit {
   statusList: string[] = ['active', 'inactive', 'pending'];
   isLoading: boolean = false;
   noRecord: boolean = false;
-  constructor(private http: HttpClient, private fb: FormBuilder, private service: ClaimitService,private toastController: ToastController) {
+  showNewOrgInput = false;
+  isAddingNewOrg = false;
+  selectedOrgIds: string[] = [];
+  constructor(private http: HttpClient, private fb: FormBuilder, private service: ClaimitService, private toastController: ToastController) {
     this.userForm = this.fb.group({
       username: ['', [Validators.required]],
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      organization: ['', Validators.required] 
+      organization: [[], Validators.required],
+      newOrganization: [''] 
     });
   }
 
@@ -40,7 +44,7 @@ export class AdminManagementPage implements OnInit {
     this.initializeAdminForm();
     this.loadSelectedOrganization()
     this.orgId = localStorage.getItem('organizationId');
-    this.adminManagement()
+    this.adminManagement(this.orgId)
   }
   initializeAdminForm() {
     this.adminSearch = this.fb.group({
@@ -57,69 +61,109 @@ export class AdminManagementPage implements OnInit {
   }
 
   fetchOrganizations() {
-    this.http.get<any[]>('http://172.17.12.101:8081/api/users/organisation').subscribe(
+    this.http.get<any[]>('http://52.45.222.211:8081/api/users/organisation').subscribe(
       (response) => {
         this.organizations = response;
-        const storedOrgId = localStorage.getItem('organizationId');
-        if (storedOrgId) {
-          const matchedOrg = this.organizations.find(org => org.orgId == storedOrgId);
-          if (matchedOrg) {
-            this.selectedOrgId = matchedOrg.orgId;
-          }
-        }
       },
-      (error) => {
-        console.error('Error fetching organizations:', error);
-      }
+      (error) => console.error('Error fetching organizations:', error)
     );
   }
-  onOrganizationChange(event: any) {
-    const selectedOrg = this.organizations.find(org => org.orgId == event.detail.value);
-    if (selectedOrg) {
-      localStorage.setItem('organizationId', selectedOrg.orgId);
-      localStorage.setItem('organizationName', selectedOrg.orgName);
+  onOrganizationChanging(event: any) {
+    const selectedValues = event.detail.value.filter((id: string) => id !== 'addNew');
+    
+    if (event.detail.value.includes('addNew')) {
+      this.showNewOrgInput = true;
+    } else {
+      this.showNewOrgInput = false;
     }
-    this.orgId = localStorage.getItem('organizationId');
-
+  
+    this.userForm.patchValue({ organization: selectedValues });
+    this.selectedOrgIds = selectedValues;
   }
-
+  
+  onOrganizationChange(event: any) {
+    const selectedOrgId = event.detail.value;  
+    if (selectedOrgId === 'addNew') {
+      this.showNewOrgInput = true;
+      this.userForm.patchValue({ organization: '' }); 
+      this.adminManagement(''); 
+    } else {
+      this.showNewOrgInput = false;
+      this.selectedOrgId = selectedOrgId;
+      this.userForm.patchValue({ organization: selectedOrgId });
+      this.adminManagement(selectedOrgId);
+    }
+  }
+  
+  addNewOrganization() {
+    const newOrgName = this.userForm.get('newOrganization')?.value?.trim();  
+    if (newOrgName) {
+      const reqBody = [{ orgName: newOrgName }];  
+      this.service.adminManagementOrg(reqBody).subscribe({
+        next: (response: any) => {
+          const newOrg = { id: response.id || `org_${Date.now()}`, orgName: response.orgName };
+          this.fetchOrganizations()
+          this.organizations.push(newOrg);
+          this.selectedOrgIds.push(newOrg.id);
+          this.userForm.patchValue({ organization: this.selectedOrgIds });  
+          this.userForm.patchValue({ newOrganization: '' });
+          this.showNewOrgInput = false;
+        },
+        error: (err) => {
+          console.error('Error adding organization:', err);
+        }
+      });
+    }
+  }
+  
+  cancelNewOrganization() {
+    this.showNewOrgInput = false;
+    this.userForm.patchValue({ newOrganization: '' });
+  }
+  
+  
   clearSearch() {
     this.orgId = localStorage.getItem('organizationId');
     this.searchQuery = '';
-    this.adminManagement();
+    this.adminManagement(this.orgId);
   }
-  adminManagement() {
-    this.isLoading = true; 
-    this.noRecord = false;   
-    this.orgId = localStorage.getItem('organizationId');
+  adminManagement(orgId:any) {
+    this.isLoading = true;
+    this.noRecord = false;
     let email = '';
     let status = '';
-  
-    if (this.searchQuery.includes('@')) {
+    if (this.searchQuery.trim().includes('@')) {
       email = this.searchQuery.trim();
     } else if (this.statusList.includes(this.searchQuery.trim())) {
       status = this.searchQuery.trim();
     }
-  
     const reqBody = {
       email: email,
       status: status,
-      orgId: this.orgId,
+      orgId: orgId,
     };
-  
+
     this.service.adminManagement(reqBody).subscribe(
       (res: any) => {
-        this.isLoading = false; // Hide loader
-        this.adminResults = res;
-        this.noRecord = this.adminResults.length === 0 && this.searchQuery.trim().length > 0;
+        this.isLoading = false;
+
+        if (Array.isArray(res) && res.length === 0) {
+          this.noRecord = true;
+          this.adminResults = [];
+        } else {
+          this.adminResults = res;
+          this.noRecord = this.adminResults.length === 0;
+        }
       },
       (error: any) => {
-        this.isLoading = false; // Hide loader even if request fails
+        this.isLoading = false;
         console.error('Search failed:', error);
+        this.noRecord = true;
       }
     );
   }
-  
+
+
 
   getStatusColor(status: string): { backgroundColor: string; textColor: string } {
     switch (status) {
@@ -151,28 +195,36 @@ export class AdminManagementPage implements OnInit {
       duration: 3000,
       position: 'top',
     });
-    await toast.present(); 
+    await toast.present();
   }
-
   onSubmit() {
-    this.isLoading = true; 
+    this.isLoading = true;
     if (this.userForm.valid) {
-      const requestBody = { ...this.userForm.value };
-      const apiUrl = 'http://172.17.12.101:8081/auth/register';
-      console.log('Submitting request:', requestBody);
+      const requestBody = {
+        userName: this.userForm.value.username,
+        firstName: this.userForm.value.firstName,
+        lastName: this.userForm.value.lastName,
+        orgName: this.userForm.value.organization.map((orgId:any) => 
+          this.organizations.find(org => org.id === orgId)?.orgName || orgId
+        ),
+        password: this.userForm.value.password
+      };
   
+      const apiUrl = 'http://52.45.222.211:8081/auth/register';
       this.http.post(apiUrl, requestBody).subscribe(
-        (res: any) => { 
+        (res: any) => {
+          this.isLoading = false;
           if (res && res.success) {
             this.showToast('Admin successfully created');
-            this.isLoading = false;  
-            this.isItemModalOpen = false; 
-            this.adminManagement(); 
+            this.isItemModalOpen = false;
+            this.adminManagement('');
           } else {
-            this.showToast(res.message || 'Failed to create admin'); 
+            this.isItemModalOpen = false;
+            this.showToast(res.message || 'Failed to create admin');
           }
         },
         (error) => {
+          this.isLoading = false;
           console.error('Error adding user:', error);
           this.showToast('Error adding user. Please try again.');
         }
@@ -182,4 +234,11 @@ export class AdminManagementPage implements OnInit {
     }
   }
   
+
+  getOrganizationName(orgId: string): string {
+    const org = this.organizations.find(o => o.id === orgId);
+    return org ? org.orgName : orgId;
+  }
+
+
 }

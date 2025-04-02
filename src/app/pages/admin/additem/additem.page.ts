@@ -100,7 +100,7 @@ export class AdditemPage implements OnInit {
       role: 'cancel'
     }
   ];
-  constructor(private toastController: ToastController, private fb: FormBuilder, private actionSheetCtrl: ActionSheetController, private cdRef: ChangeDetectorRef, private http: HttpClient, private modalController: ModalController, private errorService: ErrorService, private router: Router, private menu: MenuController, private claimService: ClaimitService) { }
+  constructor(private cdr: ChangeDetectorRef,private toastController: ToastController, private fb: FormBuilder, private actionSheetCtrl: ActionSheetController, private cdRef: ChangeDetectorRef, private http: HttpClient, private modalController: ModalController, private errorService: ErrorService, private router: Router, private menu: MenuController, private claimService: ClaimitService) { }
 
   presentPopover(event: Event, item: any, index: number) {
     this.popoverEvent = event;
@@ -128,7 +128,7 @@ export class AdditemPage implements OnInit {
     this.fetchCategories()
   }
   fetchOrganizations() {
-    this.http.get<any[]>('http://172.17.12.101:8081/api/users/organisation').subscribe(
+    this.http.get<any[]>('http://52.45.222.211:8081/api/users/organisation').subscribe(
       (response) => {
         this.organizations = response;
 
@@ -168,7 +168,7 @@ export class AdditemPage implements OnInit {
 
   // Fetch updated organization details
   fetchOrganizationData(orgId: string) {
-    this.http.get(`http://172.17.12.101:8081/api/users/organisation?orgId=${orgId}`).subscribe(
+    this.http.get(`http://52.45.222.211:8081/api/users/organisation?orgId=${orgId}`).subscribe(
       (data: any) => {
         localStorage.setItem('organizationData', JSON.stringify(data));
         console.log('Updated Organization Data:', data);
@@ -215,13 +215,20 @@ export class AdditemPage implements OnInit {
         this.errorMessage = this.errorService.getErrorMessage(error.status);
         console.error('Error fetching search results:', error);
         this.noRecord = true;
-        return of({ data: [] });
+        return of({ data: [] }); 
       })
     ).subscribe((res: any) => {
       this.isLoading = false;
-      this.searchResults = res.data;
-      this.noRecord = res.data.length === 0;
+    
+      if (!res.success && res.message === "No records found.") {
+        this.noRecord = true;
+        this.searchResults = [];
+      } else {
+        this.searchResults = res.data || [];
+        this.noRecord = this.searchResults.length === 0;
+      }
     });
+    
   }
 
   clear(event: any) {
@@ -278,7 +285,7 @@ export class AdditemPage implements OnInit {
       date: '',
       organizationId: this.orgId
     };
-
+  
     switch (this.currentFilter) {
       case 'name':
         reqbody.name = searchValue;
@@ -303,19 +310,27 @@ export class AdditemPage implements OnInit {
       default:
         return;
     }
+  
     this.isLoading = true;
     this.claimService.adminSearch(reqbody).subscribe((res: any) => {
       this.isLoading = false;
-      this.searchResults = res.data;
-      if (res.data.length == 0) {
+  
+      if (!res.success && res.message === "No records found.") {
         this.noRecord = true;
+        this.searchResults = []; // Ensure results are empty
+      } else {
+        this.searchResults = res.data || [];
+        this.noRecord = this.searchResults.length === 0;
       }
-      else {
-        this.noRecord = false;
-      }
+  
       console.log("API Search Results:", this.searchResults);
+    }, (error) => {
+      this.isLoading = false;
+      this.noRecord = true; // Ensure noRecord is true if API call fails
+      console.error("API Error:", error);
     });
   }
+  
   getStatusColor(status: string): string {
     switch (status) {
       case 'CLAIMED':
@@ -432,7 +447,7 @@ export class AdditemPage implements OnInit {
     }
   }
   openImageModal(image: string) {
-    this.selectedImage = `data:image/jpeg;base64,${image}`;
+    this.selectedImage = `${image}`;
     this.isImageModalOpen = true;
   }
   closeImageModal() {
@@ -584,8 +599,6 @@ export class AdditemPage implements OnInit {
       this.claimService.approveOrRejectClaim(params).subscribe(
         async (res: any) => {
           this.isLoading = false;
-
-          // Close the popover immediately after approval
           this.isPopoverOpen = false;
 
           await this.presentConfirmationDialog('Success!!', 'Claim Request Approved Successfully', true);
@@ -594,8 +607,6 @@ export class AdditemPage implements OnInit {
         (error) => {
           this.isLoading = false;
           console.error('Error approving claim:', error);
-
-          // Close popover even if there's an error
           this.isPopoverOpen = false;
         }
       );
@@ -644,7 +655,7 @@ export class AdditemPage implements OnInit {
       return;
     }
 
-    this.http.get<any[]>(`http://172.17.12.101:8081/lookup/categories?orgId=${this.orgId}`)
+    this.http.get<any[]>(`http://52.45.222.211:8081/lookup/categories?orgId=${this.orgId}`)
       .subscribe(
         (response: any[]) => {
           this.isLoading = false;
@@ -674,7 +685,7 @@ export class AdditemPage implements OnInit {
       this.formData.append('providedCategoryName', this.selectedCategory || 'default')
       console.log(this.formData);
 
-      this.http.post('http://172.17.12.101:8081/api/admin/image', this.formData).subscribe(
+      this.http.post('http://52.45.222.211:8081/api/admin/image', this.formData).subscribe(
         (response) => {
           this.imageDataResponse = response;
           this.formatResponse(response);
@@ -724,7 +735,7 @@ export class AdditemPage implements OnInit {
     updatedFormData.append('categoryName', this.selectedCategory);
     updatedFormData.append('editedLabels', updatedData.description);
     this.isLoading = true;
-    this.http.post('http://172.17.12.101:8081/api/admin/upload', updatedFormData)
+    this.http.post('http://52.45.222.211:8081/api/admin/upload', updatedFormData)
       .subscribe(
         response => {
           this.isEditingDescription = false;
@@ -759,7 +770,9 @@ export class AdditemPage implements OnInit {
     this.editableDescription = '';
   }
   formatResponse(response: any): void {
-    this.categoryName = response.categoryName; // Set the initial category
+    console.log(response.categoryName);
+    this.selectedCategory = response.categoryName; 
+    this.categoryName = response.categoryName;
     const allowedKeys = ['description', 'title'];
     this.formattedData = Object.entries(response)
       .filter(([key]) => allowedKeys.includes(key))
@@ -780,44 +793,51 @@ export class AdditemPage implements OnInit {
     });
     await toast.present();
   }
+  
   async submitClaimForm() {
+    this.isModalOpen = false;
+    this.isPopoverOpen = false;
     const storedOrgId = localStorage.getItem('organizationId');
-    const role = localStorage.getItem('role');
+    const role = localStorage.getItem('role') || '';  
     if (this.claimForm.valid) {
       this.isSubmitted = true;
+      this.isLoading = true;
+      
       const formValues = this.claimForm.value;
       const REQBODY = {
         name: formValues.name,
         email: formValues.email,
         itemId: this.selectedItemId,
-        orgId: storedOrgId
+        orgId: storedOrgId,
+        role: role
       };
-      const isAdmin = role === 'admin';
-      this.isLoading = true
-      this.claimService.createClaimRequest(REQBODY, isAdmin).subscribe(
+  
+      this.claimService.createClaimRequest(REQBODY, role).subscribe(
         (res: any) => {
-          if (res && res.success) {
-            this.isModalOpen = false;
-            this.isLoading = false// Ensure success flag exists
-            this.isPopoverOpen = false;
+          this.isLoading = false; 
+          this.isModalOpen = false;  
+          this.isPopoverOpen = false; 
+          this.cdr.detectChanges();
+          if (res && res.success) { 
             this.showToast('Claim request successful');
             this.search(this.orgId);
           } else {
-            this.isLoading = false
-            this.isModalOpen = false;
-            this.isPopoverOpen = false;
             console.warn('Claim request failed:', res);
             this.showToast('Claim request failed. Please try again.');
           }
         },
         (error) => {
-          this.isLoading = false
+          this.isLoading = false; 
+          this.isModalOpen = false; 
+          this.isPopoverOpen = false;  
           console.error('Error creating claim request:', error);
           this.showToast('Error processing claim request. Please check your connection and try again.');
         }
       );
     }
   }
+  
+  
   generateQrCodeData(element: any): string {
     return JSON.stringify({
       id: element.uniqueId,

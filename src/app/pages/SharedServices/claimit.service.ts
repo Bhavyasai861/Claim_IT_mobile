@@ -63,22 +63,23 @@ export class ClaimitService {
   }
   
   public updateDate(reqbody:any){
-    return this.http.put(environment.updateDate+'?fromDate='+reqbody.fromDate+'&toDate='+reqbody.toDate+'&expirationDate='+reqbody.expirationDate,'')
+    return this.http.put(environment.updateDate+'?fromDate='+reqbody.fromDate+'&toDate='+reqbody.toDate+'&expirationDate='+reqbody.expirationDate+'&orgId='+reqbody.orgId,'')
   }
 
   //List of itetems
-  public listOfItems(page: number) {
-    const url = `${environment.listOfItems}?offset=0&size=${page}`;
+  public listOfItems(page: number, orgId: string) {
+    const url = `${environment.listOfItems}?offset=0&size=${page}&orgId=${orgId}`;
     return this.http.get(url);
   }
+  
   public getAllItems(query: any) {
     return this.http.get(environment.getAllItems + 
       `?email=${query.email}&userName=${query.userName}`);
   }
-  public createClaimRequest(REQBODY: any, isAdmin: boolean) {
-    const params = new HttpParams().set('isAdmin', isAdmin.toString());
+  public createClaimRequest(REQBODY: any, role: string) {
+    const params = new HttpParams().set('role', role);
     return this.http.post(environment.createClaimRequest, REQBODY, { params });
-}
+  }
   public createRequest(REQBODY: any) {
     return this.http.post(environment.createClaimRequest, REQBODY)
   }
@@ -101,6 +102,9 @@ export class ClaimitService {
   }
   public getNotifications(): Observable<any> {
     return this.http.get(environment.getNotifications)
+  }
+  public adminManagementOrg(reqbody: any) {
+    return this.http.post(environment.adminManagementOrg ,reqbody)
   }
   public adminManagement(params: any) {
     return this.http.get(environment.adminManagement + '?orgId=' + params.orgId + '&status=' + params.status + '&email=' + params.email)

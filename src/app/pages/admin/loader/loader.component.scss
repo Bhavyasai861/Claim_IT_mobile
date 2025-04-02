@@ -13,19 +13,60 @@
   
   .loader {
     border: 6px solid #f3f3f3;
-    border-top: 6px solid #050505;
+    // border-top: 6px solid #050505;
     border-radius: 50%;
     width: 50px;
     height: 50px;
-    animation: spin 1s linear infinite;
+    animation:l4 1s infinite steps(10);
+    background: conic-gradient(#71a2ce 10%, #21233d) content-box;
+    -webkit-mask:
+        repeating-conic-gradient(#0000 0deg,#000 1deg 20deg,#0000 21deg 36deg),
+        radial-gradient(farthest-side,#0000 calc(100% - var(--b) - 1px),#000 calc(100% - var(--b)));
+      -webkit-mask-composite: destination-in;
+              mask-composite: intersect;
   }
   
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-  
+  @keyframes l4 {to{transform: rotate(1turn)}}
+
+/* HTML: <div class="loader"></div> */
+// .loader {
+
+//     width: 100%;
+//     height: 100%;
+//   --b: 8px; 
+//   aspect-ratio: 1;
+//   border-radius: 50%;
+//   box-sizing: border-box;
+//   padding: 10px;
+//   background: conic-gradient(#0000 10%,#f03355) content-box;
+//   -webkit-mask:
+//     repeating-conic-gradient(#0000 0deg,#000 1deg 20deg,#0000 21deg 36deg),
+//     radial-gradient(farthest-side,#0000 calc(100% - var(--b) - 1px),#000 calc(100% - var(--b)));
+//   -webkit-mask-composite: destination-in;
+//           mask-composite: intersect;
+//   animation:l4 1s infinite steps(10);
+// }
+// @keyframes l4 {to{transform: rotate(1turn)}}
+
+
+  /* HTML: <div class="loader"></div> */
+// .loader {
+//   height: 80px;
+//   aspect-ratio: 1;
+//   padding: 10px;
+//   border-radius: 50%;
+//   box-sizing: border-box;
+//   position: relative;
+//   mask: conic-gradient(#000 0 0) content-box exclude,conic-gradient(#000 0 0);
+//   filter: blur(12px);
+// }
+// .loader:before {
+//   content: "";
+//   position: absolute;
+//   inset: 0;
+//   background: repeating-conic-gradient(#0000 0 5%,#C02942,#0000 20% 50%);
+//   animation: l2 1.5s linear infinite;
+// }
+// @keyframes l2 {
+//   to {rotate: 1turn}
+// }

@@ -42,25 +42,23 @@ export class ViewClaimPage implements OnInit {
     } else {
       searchParams.userName = query;
     }
+  
     this.isLoading = true;
     this.claimService.getAllItems(searchParams).subscribe(
       (res: any) => {
-        this.items = res.claimHistory;
-        if (res.length !== 0) {
-          this.noRecord = false;
-        }
-        else {
-          this.noRecord = true;
-        }
+        this.items = res.claimHistory || []; 
+        this.noRecord = this.items.length === 0; 
         this.isLoading = false;  
       },
       (error) => {
         this.errorImage = this.errorService.getErrorImage(error.status);
         this.errorMessage = this.errorService.getErrorMessage(error.status);
         this.isLoading = false;  
+        this.noRecord = true; 
       }
-      );
+    );
   }
+  
   clearAll(){
     this.searchQuery=''
     this.fetchItems()

@@ -7,17 +7,6 @@
       </ion-menu-button>
     </ion-buttons>
     <ion-title style="color: white;">Add Item</ion-title>
-    <!-- <ion-buttons slot="end" style="color: white;">
-      <ion-avatar style="color: white;">
-        <img *ngIf="selectedOrg?.logoUrl" [src]="selectedOrg.logoUrl" alt="Org Logo" 
-             style="width: 40px; height: 40px; cursor: pointer;">
-      </ion-avatar>
-      <ion-select [(ngModel)]="selectedOrgId" (ionChange)="onOrganizationChange($event)" interface="popover" >
-        <ion-select-option *ngFor="let org of organizations" [value]="org.orgId">
-          {{ org.orgName }}
-        </ion-select-option>
-      </ion-select>      
-    </ion-buttons> -->
     <ion-buttons slot="end" style="color: white;">
       <ion-avatar style="color: white;">
         <img *ngIf="selectedOrg?.logoUrl" [src]="selectedOrg.logoUrl" alt="Org Logo" 
@@ -201,10 +190,10 @@
   <ion-modal [isOpen]="isModalOpen"
       style="--width: 300px; --height: 300px; --max-width: 90%;  --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
       <ng-template>
+        <form [formGroup]="claimForm" >
         <div style="text-align: right; padding: 10px;">
           <ion-icon name="close-circle" style="color: red; font-size: x-large;" (click)="closeModal()"></ion-icon>
         </div>
-        <form [formGroup]="claimForm" >
           <ion-grid>
             <ion-row>
               <ion-col size="12">

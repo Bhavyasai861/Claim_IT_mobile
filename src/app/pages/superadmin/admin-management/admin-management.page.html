@@ -19,11 +19,10 @@
 <ion-content [fullscreen]="true">
   <ion-item-divider class="searchBarFixed">
     <ion-searchbar class="search-bar" show-clear-button="always" [(ngModel)]="searchQuery"
-      placeholder="Search by Email or Status" (ionClear)="clearSearch()" (keyup.enter)="adminManagement()">
+      placeholder="Search by Email or Status" (ionClear)="clearSearch()" (keyup.enter)="adminManagement($event)">
     </ion-searchbar>
   </ion-item-divider>
   <app-loader *ngIf="isLoading"></app-loader>
-
   <div *ngIf="noRecord">
     <ion-row>
       <img class="noRecord" src="../../../../assets/images/Animation - 1737116880117.gif" />
@@ -49,74 +48,71 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-modal 
-  [isOpen]="isItemModalOpen" 
-  (willDismiss)="isItemModalOpen = false"
-  style="--width: 500px; --height: 500px; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);"
->
-<ng-template>
-  <div style="padding: 10px;">
-    <ion-item lines="none" style="display: flex; justify-content: space-between; align-items: center; 
-      --padding-start: 0; --padding-end: 0; margin-bottom: 0;">
-      <h2 style="color: #21233d; margin: 0;">Add Admin</h2>
-      <ion-icon 
-        name="close-circle" 
-        style="color: #21233d; font-size: x-large; cursor: pointer;" 
-        (click)="isItemModalOpen = false">
-      </ion-icon>
-    </ion-item>
-  </div>
-  <div style="overflow-y: auto; padding: 0 10px;">
-    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-      <ion-list style="border-radius: 8px; background-color: #f9f9f9; padding: 10px; margin-top: 0;">
-        <ion-item fill="outline">
-          <ion-label position="floating">Username</ion-label>
-          <ion-input formControlName="username" type="text" placeholder="Enter Username"></ion-input>
-        </ion-item>
-        <ion-item fill="outline">
-          <ion-label position="floating">First Name</ion-label>
-          <ion-input formControlName="firstName" type="text" placeholder="Enter First Name"></ion-input>
-        </ion-item>
-        <ion-item fill="outline">
-          <ion-label position="floating">Last Name</ion-label>
-          <ion-input formControlName="lastName" type="text" placeholder="Enter Last Name"></ion-input>
-        </ion-item>
-        <ion-item fill="outline">
-          <ion-label position="floating">Password</ion-label>
-          <ion-input formControlName="password" type="password" placeholder="Enter Password"></ion-input>
-        </ion-item>
-        <ion-item fill="outline">
-          <ion-label position="floating">Organization</ion-label>
-          <ion-select formControlName="organization" interface="popover">
-            <ion-select-option *ngFor="let org of organizations" [value]="org.id">
-              {{ org.orgName }}
-            </ion-select-option>
-          </ion-select>
-        </ion-item>
-      </ion-list>
+  <ion-modal [isOpen]="isItemModalOpen" (willDismiss)="isItemModalOpen = false"
+    style="--width: 80%; --height: 63%; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); --padding: 15px;">
+   
+    <ng-template>
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <ion-item fill="outline" style="display: flex; flex-direction: row;">
+          <h2 style="color: #21233d;">Add Admin</h2>
+          <ion-icon name="close-circle" style="color: #21233d; font-size: x-large; cursor: pointer;margin-left: 158px;margin-top: 10px"
+            (click)="isItemModalOpen = false">
+          </ion-icon>
+        </ion-item> 
+            <ion-item fill="outline">
+              <ion-label position="floating">Username</ion-label>
+              <ion-input formControlName="username" type="text" placeholder="Enter Username"></ion-input>
+            </ion-item>
+            <ion-item fill="outline">
+              <ion-label position="floating">First Name</ion-label>
+              <ion-input formControlName="firstName" type="text" placeholder="Enter First Name"></ion-input>
+            </ion-item>
+            <ion-item fill="outline">
+              <ion-label position="floating">Last Name</ion-label>
+              <ion-input formControlName="lastName" type="text" placeholder="Enter Last Name"></ion-input>
+            </ion-item>
+            <ion-item fill="outline">
+              <ion-label position="floating">Password</ion-label>
+              <ion-input formControlName="password" type="password" placeholder="Enter Password"></ion-input>
+            </ion-item>
+          
+            <ion-item fill="outline" *ngIf="!showNewOrgInput">
+              <ion-label position="floating">Organization</ion-label>
+              <ion-select formControlName="organization" interface="popover" multiple="true"
+                [value]="selectedOrgIds" (ionChange)="onOrganizationChanging($event)"
+                labelPlacement="floating">
+                <ion-select-option *ngFor="let org of organizations" [value]="org.id">
+                  {{ org.orgName }}
+                </ion-select-option>
+                <ion-select-option value="addNew">+ Add Organization</ion-select-option>
+              </ion-select>
+            </ion-item>
+            
+            <ion-item *ngIf="showNewOrgInput">
+              <ion-input formControlName="newOrganization" placeholder="Enter new organization name"></ion-input>
+              <ion-button fill="clear" (click)="addNewOrganization()" style="--background: linear-gradient(45deg, #21233d, #71a2ce)">Add</ion-button>
+              <ion-button fill="clear" (click)="cancelNewOrganization()" style="--background: linear-gradient(45deg, #21233d, #71a2ce)">
+                <ion-icon name="close-circle"  style="color: white; "></ion-icon>
+              </ion-button>
+            </ion-item>            
+            <div style="display: flex; justify-content: center; margin-top: 10px;">
+              <ion-button type="submit" style="--background: linear-gradient(45deg, #21233d, #71a2ce)">
+                Submit
+              </ion-button>
+            </div>            
+        </form>
 
-      <!-- Submit Button -->
-      <ion-button expand="full" type="submit" style="margin-top: 10px;">
-        Submit
-      </ion-button>
-    </form>
-  </div>
-</ng-template>
-
-</ion-modal>
-
+    </ng-template>
+  </ion-modal>
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button style="--background: linear-gradient(45deg, #21233d, #71a2ce)" (click)="addAdmin()">
       <ion-icon name="add" style="color: white;"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button style="--background: linear-gradient(45deg, #21233d, #71a2ce)" (click)="addAdmin()">
       <ion-icon name="add" style="color: white;"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-
-  <app-loader *ngIf="isLoading"></app-loader>
 </ion-content>
 <app-loader *ngIf="isLoading"></app-loader>

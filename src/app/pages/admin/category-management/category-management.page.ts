@@ -92,7 +92,7 @@ export class CategoryManagementPage implements OnInit {
   }
 
   async updateCategory(item: any) {
-    const categoryName = item.name ;    
+    const categoryName = item.name;
     const alert = await this.alertController.create({
       header: 'Edit Category',
       inputs: [
@@ -115,7 +115,9 @@ export class CategoryManagementPage implements OnInit {
           text: 'Update',
           handler: async (data) => {
             if (data.categoryName.trim()) {
-              await this.submitCategoryUpdate(item.id, data.categoryName);
+              this.isLoading = true;  
+              await alert.dismiss(); 
+              this.submitCategoryUpdate(item.id, data.categoryName);
             } else {
               console.warn("Category name cannot be empty.");
             }
@@ -123,7 +125,7 @@ export class CategoryManagementPage implements OnInit {
         }
       ]
     });
-
+  
     await alert.present();
   }
   async presentActionSheet() {
@@ -262,16 +264,18 @@ export class CategoryManagementPage implements OnInit {
       status: "A"
     };
  this.isLoading = true
-    const url = `http://172.17.12.101:8081/api/admin/categories?id=${id}`;
+    const url = `http://52.45.222.211:8081/lookup/update-categories?id=${id}`;
 
     try {
       const response = await this.claimService.updateCategory(url, reqBody);
       if (response) {
         this.isLoading = false
+        this.showToast("Category updated successfully!");
         console.log("Category updated successfully:", response);
         this.fetchCategories();
       } else {
         this.isLoading = false
+        this.showToast("Failed to update category. Try again!");
         console.warn("Category update failed:", response);
       }
     } catch (error) {
@@ -279,7 +283,14 @@ export class CategoryManagementPage implements OnInit {
       console.error("Error updating category:", error);
     }
   }
-
+  async showToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      position: 'top'
+    });
+    await toast.present();
+  }
   async deleteCategory(id: any) {
   
     const alert = await this.alertController.create({

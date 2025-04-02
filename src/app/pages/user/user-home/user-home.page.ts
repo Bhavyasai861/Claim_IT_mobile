@@ -55,7 +55,7 @@ export class UserHomePage implements OnInit {
   errorMessage: string = '';
   orgName:any
   orgId:any
-  constructor(private fb: FormBuilder, private popoverController: PopoverController, private cdRef: ChangeDetectorRef, private errorService: ErrorService, private toastController: ToastController, private modalController: ModalController, private http: HttpClient, private loadingCtrl: LoadingController, private sanitizer: DomSanitizer, private claimService: ClaimitService) {
+  constructor(private cdr: ChangeDetectorRef,private fb: FormBuilder, private popoverController: PopoverController, private cdRef: ChangeDetectorRef, private errorService: ErrorService, private toastController: ToastController, private modalController: ModalController, private http: HttpClient, private loadingCtrl: LoadingController, private sanitizer: DomSanitizer, private claimService: ClaimitService) {
     this.claimForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', Validators.required],
@@ -192,14 +192,14 @@ export class UserHomePage implements OnInit {
   fetchItems(event?: any) {
     this.orgId = localStorage.getItem('organizationId');
     this.isLoading = true;
-    this.claimService?.listOfItems(this?.currentPage).subscribe(
+    this.claimService?.listOfItems(this?.currentPage, this.orgId).subscribe(
       (res: any) => {
         this.isLoading = false;
-
+        this.cdr.detectChanges();
         if (res && res.data && res.data.length > 0) {
           this.hasMoreItems = false;
           this.items = [...this.items, ...res.data];
-          this.currentPage++; // Increase page count for next load
+          this.currentPage++; 
         } else {
           console.warn('No more items available.');
         }
@@ -218,7 +218,7 @@ export class UserHomePage implements OnInit {
   }
 
   getImage(base64String: string): string {
-    return `data:image/jpeg;base64,${base64String}`;
+    return `${base64String}`;
   }
 
   getStatusColor(status: string): string {
@@ -381,7 +381,7 @@ export class UserHomePage implements OnInit {
     this.isLoading = true
     const formData: FormData = new FormData();
     formData.append('image', file, file.name);
-    const picUrl = 'http://172.17.12.101:8081/api/users/search-by-image';
+    const picUrl = 'http://52.45.222.211:8081/api/users/search-by-image';
 
     return this.http.post(picUrl, formData, {
       headers: new HttpHeaders(),
@@ -423,7 +423,7 @@ export class UserHomePage implements OnInit {
       .then((toast: { present: () => any; }) => toast.present());
   }
   search(search: any): void {
-    const apiUrl = `http://172.17.12.101:8081/api/users/search?query=${encodeURIComponent(search)}`;
+    const apiUrl = `http://52.45.222.211:8081/api/users/search?query=${encodeURIComponent(search)}`;
 
     this.http.get<any[]>(apiUrl).subscribe(
       (data: any) => {

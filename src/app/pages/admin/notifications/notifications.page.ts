@@ -34,28 +34,32 @@ export class NotificationsPage implements OnInit {
     this.isLoading = true;
     this.claimService.getNotifications().subscribe(
       (res: any) => {
-        if (res && res.data) {
-          this.isLoading = false;
-          this.notifications = res.data; 
-          if (res.length !== 0) {
-            this.noRecord = false;
-          }
-          else {
-            this.noRecord = true;
-          }
+        this.isLoading = false;
+  
+        if (res && Array.isArray(res.data)) {
+          this.notifications = res.data;
+          this.noRecord = this.notifications.length === 0; // ✅ Properly set `noRecord`
+  
+          // Update unread notification count
           const unreadNotifications = this.notifications.filter(notification => !notification.read);
           const unreadCount = unreadNotifications.length;
           this.claimService.setNotificationCount(unreadCount);
-          this.loader = false;
+        } else {
+          this.notifications = [];
+          this.noRecord = true; // ✅ Ensure `noRecord` is true if `res.data` is invalid
         }
-      },(error) => {
+  
+        this.loader = false;
+      },
+      (error) => {
         this.isLoading = false;
         this.errorImage = this.errorService.getErrorImage(error.status);
         this.errorMessage = this.errorService.getErrorMessage(error.status);
-        console.error('Error fetching categories:', error.status);
-      },
+        console.error('Error fetching notifications:', error.status);
+      }
     );
   }
+  
 
   async markAsRead(notificationId: any) {
     const reqBody = {
@@ -63,8 +67,7 @@ export class NotificationsPage implements OnInit {
       isRead: true,
     };
   
-    this.isLoading = true;
-  
+    this.isLoading = true;  
     try {
       const response = await this.claimService.updateNotification(reqBody);
       if (response) {
