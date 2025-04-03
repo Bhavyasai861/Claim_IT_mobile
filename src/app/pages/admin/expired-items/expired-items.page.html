@@ -94,8 +94,7 @@
     </ng-template>
   </ion-modal>
   
-  <ion-grid class="custom-card" *ngFor="let item of expiredItems; let i = index">
-    <div >
+  <ion-grid class="custom-card" *ngFor="let item of expiredItems; let i = index">  
     <ion-row 
       style="align-items: center; border-bottom: 1px solid #dcdcdc; margin-top: 2px; padding: 10px;" class="card-row">
       <ion-col size="4">
@@ -107,8 +106,7 @@
         <p style="font-size: 12px; color: #999;">Received Date: {{ item.receivedDate}}</p>
         <p style="font-size: 12px; color: #999;">Expired Date: {{ item.expirationDate }}</p>
       </ion-col>
-    </ion-row>
-  </div>
+    </ion-row> 
   </ion-grid>
 
   <ion-modal [isOpen]="isImageModalOpen" (didDismiss)="closeImageModal()"

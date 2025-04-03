@@ -128,7 +128,7 @@ export class AdditemPage implements OnInit {
     this.fetchCategories()
   }
   fetchOrganizations() {
-    this.http.get<any[]>('http://52.45.222.211:8081/api/users/organisation').subscribe(
+    this.http.get<any[]>('http://172.17.12.101:8081/api/users/organisation').subscribe(
       (response) => {
         this.organizations = response;
 
@@ -168,7 +168,7 @@ export class AdditemPage implements OnInit {
 
   // Fetch updated organization details
   fetchOrganizationData(orgId: string) {
-    this.http.get(`http://52.45.222.211:8081/api/users/organisation?orgId=${orgId}`).subscribe(
+    this.http.get(`http://172.17.12.101:8081/api/users/organisation?orgId=${orgId}`).subscribe(
       (data: any) => {
         localStorage.setItem('organizationData', JSON.stringify(data));
         console.log('Updated Organization Data:', data);
@@ -655,7 +655,7 @@ export class AdditemPage implements OnInit {
       return;
     }
 
-    this.http.get<any[]>(`http://52.45.222.211:8081/lookup/categories?orgId=${this.orgId}`)
+    this.http.get<any[]>(`http://172.17.12.101:8081/lookup/categories?orgId=${this.orgId}`)
       .subscribe(
         (response: any[]) => {
           this.isLoading = false;
@@ -685,7 +685,7 @@ export class AdditemPage implements OnInit {
       this.formData.append('providedCategoryName', this.selectedCategory || 'default')
       console.log(this.formData);
 
-      this.http.post('http://52.45.222.211:8081/api/admin/image', this.formData).subscribe(
+      this.http.post('http://172.17.12.101:8081/api/admin/image', this.formData).subscribe(
         (response) => {
           this.imageDataResponse = response;
           this.formatResponse(response);
@@ -735,7 +735,7 @@ export class AdditemPage implements OnInit {
     updatedFormData.append('categoryName', this.selectedCategory);
     updatedFormData.append('editedLabels', updatedData.description);
     this.isLoading = true;
-    this.http.post('http://52.45.222.211:8081/api/admin/upload', updatedFormData)
+    this.http.post('http://172.17.12.101:8081/api/admin/upload', updatedFormData)
       .subscribe(
         response => {
           this.isEditingDescription = false;

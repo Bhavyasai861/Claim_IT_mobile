@@ -264,7 +264,7 @@ export class CategoryManagementPage implements OnInit {
       status: "A"
     };
  this.isLoading = true
-    const url = `http://52.45.222.211:8081/lookup/update-categories?id=${id}`;
+    const url = `http://172.17.12.101:8081/lookup/update-categories?id=${id}`;
 
     try {
       const response = await this.claimService.updateCategory(url, reqBody);

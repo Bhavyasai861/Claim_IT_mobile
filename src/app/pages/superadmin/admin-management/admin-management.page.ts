@@ -43,7 +43,8 @@ export class AdminManagementPage implements OnInit {
   ngOnInit() {
     this.initializeAdminForm();
     this.loadSelectedOrganization()
-    this.orgId = localStorage.getItem('organizationId');
+    this.orgId = localStorage.getItem('organizationId')|| '';
+
     this.adminManagement(this.orgId)
   }
   initializeAdminForm() {
@@ -61,7 +62,7 @@ export class AdminManagementPage implements OnInit {
   }
 
   fetchOrganizations() {
-    this.http.get<any[]>('http://52.45.222.211:8081/api/users/organisation').subscribe(
+    this.http.get<any[]>('http://172.17.12.101:8081/api/users/organisation').subscribe(
       (response) => {
         this.organizations = response;
       },
@@ -86,7 +87,7 @@ export class AdminManagementPage implements OnInit {
     if (selectedOrgId === 'addNew') {
       this.showNewOrgInput = true;
       this.userForm.patchValue({ organization: '' }); 
-      this.adminManagement(''); 
+      this.adminManagement(this.orgId); 
     } else {
       this.showNewOrgInput = false;
       this.selectedOrgId = selectedOrgId;
@@ -128,6 +129,8 @@ export class AdminManagementPage implements OnInit {
     this.adminManagement(this.orgId);
   }
   adminManagement(orgId:any) {
+    console.log(orgId);
+    
     this.isLoading = true;
     this.noRecord = false;
     let email = '';
@@ -140,7 +143,7 @@ export class AdminManagementPage implements OnInit {
     const reqBody = {
       email: email,
       status: status,
-      orgId: orgId,
+      orgId: orgId.trim(),
     };
 
     this.service.adminManagement(reqBody).subscribe(
@@ -210,14 +213,14 @@ export class AdminManagementPage implements OnInit {
         password: this.userForm.value.password
       };
   
-      const apiUrl = 'http://52.45.222.211:8081/auth/register';
+      const apiUrl = 'http://172.17.12.101:8081/auth/register';
       this.http.post(apiUrl, requestBody).subscribe(
         (res: any) => {
           this.isLoading = false;
           if (res && res.success) {
             this.showToast('Admin successfully created');
             this.isItemModalOpen = false;
-            this.adminManagement('');
+            this.adminManagement(this.orgId);
           } else {
             this.isItemModalOpen = false;
             this.showToast(res.message || 'Failed to create admin');
@@ -234,11 +237,24 @@ export class AdminManagementPage implements OnInit {
     }
   }
   
-
   getOrganizationName(orgId: string): string {
     const org = this.organizations.find(o => o.id === orgId);
     return org ? org.orgName : orgId;
   }
-
+  deleteAdmin(event: any){
+    const params = {
+      itemId: event
+    };  
+    this.isLoading = true;
+    this.service.RemoveAdmin(params.itemId).subscribe((res: any) => {
+      this.isLoading = false;
+      if (res.success === true) { 
+        this.showToast(res.message || 'Admin deleted successfully');
+        this.adminManagement(this.orgId);
+      }else{
+        this.showToast(res.message || 'Failed to delete the admin. Please try again.');
+      }
+    })
+  }
 
 }

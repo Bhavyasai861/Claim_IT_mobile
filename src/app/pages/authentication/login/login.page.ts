@@ -150,7 +150,7 @@ export class LoginPage implements OnInit {
       await alert.present();
   
     } else if (role === 'superadmin') {
-      this.http.get<any[]>('http://52.45.222.211:8081/api/users/organisation').subscribe(async (organizations) => {
+      this.http.get<any[]>('http://172.17.12.101:8081/api/users/organisation').subscribe(async (organizations) => {
         if (!organizations || organizations.length === 0) {
           this.showToast('No organizations available.');
           return;
@@ -242,7 +242,7 @@ export class LoginPage implements OnInit {
     }
   }
   userNavigate() {
-    this.http.get<any[]>('http://52.45.222.211:8081/api/users/organisation').subscribe(async (organizations) => {
+    this.http.get<any[]>('http://172.17.12.101:8081/api/users/organisation').subscribe(async (organizations) => {
       if (organizations.length === 0) {
         this.showToast('No organizations available.');
         return;

@@ -101,7 +101,7 @@ export class ApproveRejectPage implements OnInit {
     this.search(this.orgId);
   }
   fetchOrganizations() {
-    this.http.get<any[]>('http://52.45.222.211:8081/api/users/organisation').subscribe(
+    this.http.get<any[]>('http://172.17.12.101:8081/api/users/organisation').subscribe(
       (response) => {
         this.organizations = response;
   

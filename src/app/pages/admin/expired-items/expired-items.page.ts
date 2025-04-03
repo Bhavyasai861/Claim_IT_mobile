@@ -67,7 +67,7 @@ export class ExpiredItemsPage implements OnInit {
     this.getorgId()
   }
   fetchOrganizations() {
-    this.http.get<any[]>('http://52.45.222.211:8081/api/users/organisation').subscribe(
+    this.http.get<any[]>('http://172.17.12.101:8081/api/users/organisation').subscribe(
       (response) => {
         this.organizations = response;
   
@@ -114,7 +114,7 @@ export class ExpiredItemsPage implements OnInit {
      
     this.orgId = orgId || localStorage.getItem('organizationId');
     this.isLoading = true;
-    let url = 'http://52.45.222.211:8081/api/admin/archived';
+    let url = 'http://172.17.12.101:8081/api/admin/archived';
     const params = [];  
     if (fromDate) params.push(`fromDate=${fromDate}`);
     if (toDate) params.push(`toDate=${toDate}`);

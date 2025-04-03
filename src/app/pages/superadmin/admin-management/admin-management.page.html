@@ -19,8 +19,8 @@
 <ion-content [fullscreen]="true">
   <ion-item-divider class="searchBarFixed">
     <ion-searchbar class="search-bar" show-clear-button="always" [(ngModel)]="searchQuery"
-      placeholder="Search by Email or Status" (ionClear)="clearSearch()" (keyup.enter)="adminManagement($event)">
-    </ion-searchbar>
+    placeholder="Search by Email or Status" (ionClear)="clearSearch()" (keyup.enter)="adminManagement(this.orgId)">
+  </ion-searchbar>
   </ion-item-divider>
   <app-loader *ngIf="isLoading"></app-loader>
   <div *ngIf="noRecord">
@@ -28,26 +28,33 @@
       <img class="noRecord" src="../../../../assets/images/Animation - 1737116880117.gif" />
     </ion-row>
   </div>
-  <ion-grid class="custom-card" *ngIf="!isLoading && !noRecord">
-    <ion-row>
-      <ion-col *ngFor="let data of adminResults" size="12">
-        <ion-card class="admin-card">
-          <ion-card-header>
-            <ion-card-title>{{ data.name }}</ion-card-title>
-            <ion-card-subtitle>Username: {{ data.userName }}</ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
+  <ion-grid *ngIf="!isLoading && !noRecord" class="custom-card">
+    <ion-row *ngFor="let data of adminResults" class="card-row"> 
+      <ion-col size="12">
+        <ion-row style="display: flex; align-items: center; width: 100%;">
+          <ion-col size="9">
+            <p style="font-size: 14px; font-weight: bold; color: #333;">{{ data.name }}</p>
+            <p style="font-size: 12px; color: #999;">Username: {{ data.userName }}</p>
+            <p style="font-size: 12px; color: #999;">Create Date: {{ data.createdDate }}</p>
             <p class="status-pill" [ngStyle]="{
               'background-color': getStatusColor(data.Status).backgroundColor,
               'color': getStatusColor(data.Status).textColor
             }">
               {{ data.Status }}
             </p>
-          </ion-card-content>
-        </ion-card>
+          </ion-col>
+          <ion-col size="3" style="display: flex; justify-content: flex-end; align-items: center;">
+            <ion-icon name="trash" (click)="deleteAdmin(data.id)" 
+              style="color: red; font-size: 1.5rem; cursor: pointer;">
+            </ion-icon>
+          </ion-col>
+        </ion-row>
       </ion-col>
     </ion-row>
   </ion-grid>
+  
+  
+  
   <ion-modal [isOpen]="isItemModalOpen" (willDismiss)="isItemModalOpen = false"
     style="--width: 80%; --height: 63%; --max-width: 90%; --max-height: 90%; --border-radius: 15px; --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); --padding: 15px;">
    

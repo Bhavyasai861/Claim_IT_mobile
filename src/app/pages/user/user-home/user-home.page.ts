@@ -381,7 +381,7 @@ export class UserHomePage implements OnInit {
     this.isLoading = true
     const formData: FormData = new FormData();
     formData.append('image', file, file.name);
-    const picUrl = 'http://52.45.222.211:8081/api/users/search-by-image';
+    const picUrl = 'http://172.17.12.101:8081/api/users/search-by-image';
 
     return this.http.post(picUrl, formData, {
       headers: new HttpHeaders(),
@@ -423,7 +423,7 @@ export class UserHomePage implements OnInit {
       .then((toast: { present: () => any; }) => toast.present());
   }
   search(search: any): void {
-    const apiUrl = `http://52.45.222.211:8081/api/users/search?query=${encodeURIComponent(search)}`;
+    const apiUrl = `http://172.17.12.101:8081/api/users/search?query=${encodeURIComponent(search)}`;
 
     this.http.get<any[]>(apiUrl).subscribe(
       (data: any) => {

@@ -103,11 +103,15 @@ export class ClaimitService {
   public getNotifications(): Observable<any> {
     return this.http.get(environment.getNotifications)
   }
+  public RemoveAdmin(adminId: number): Observable<any> {
+    const url = `${environment.removeAdmin}?userIds=${adminId}`;
+    return this.http.delete(url, {});
+  }
   public adminManagementOrg(reqbody: any) {
     return this.http.post(environment.adminManagementOrg ,reqbody)
   }
   public adminManagement(params: any) {
-    return this.http.get(environment.adminManagement + '?orgId=' + params.orgId + '&status=' + params.status + '&email=' + params.email)
+    return this.http.get(environment.adminManagement+'?orgId='+params.orgId+'&status=' + params.status + '&email=' + params.email)
   }
   pendingClaims: any[] = [];
 
