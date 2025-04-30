@@ -107,7 +107,7 @@ export class ExpiredItemsPage implements OnInit {
   }
 
   getImage(base64String: string): string {
-    return `data:image/jpeg;base64,${base64String}`;
+    return `${base64String}`;
   }
 
   getData(fromDate?: string, toDate?: string, orgId?: string) {

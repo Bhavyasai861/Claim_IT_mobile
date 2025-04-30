@@ -147,6 +147,8 @@ export class UserHomePage implements OnInit {
   }
 
   async submitClaimForm() {
+    const storedOrgId = localStorage.getItem('organizationId');
+    const role = localStorage.getItem('role') || '';
     if (this.claimForm.valid) {
       this.isSubmitted = true;
       const formValues = this.claimForm.value;
@@ -154,9 +156,11 @@ export class UserHomePage implements OnInit {
         name: formValues.name,
         email: formValues.email,
         itemId: this.selectedItemId,
+        orgId:storedOrgId,
+        role:role
       };
       this.isLoading = true
-      this.claimService.createRequest(REQBODY).subscribe(
+      this.claimService.createClaimRequest(REQBODY,role).subscribe(
         (res: any) => {
           if (res && res.success) {
             this.isModalOpen = false;

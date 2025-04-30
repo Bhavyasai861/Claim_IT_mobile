@@ -59,7 +59,7 @@ export class CategoryManagementPage implements OnInit {
     this.fetchCategories(); 
   }
   openImageModal(image: string) {
-    this.selectedImage = `data:image/jpeg;base64,${image}`;
+    this.selectedImage = `${image}`;
     this.isImageModalOpen = true;
   }
   closeImageModal() {

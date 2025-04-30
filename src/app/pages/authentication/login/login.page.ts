@@ -107,88 +107,101 @@ export class LoginPage implements OnInit {
   }
   
   async showOrganizationSelection() {
-    const role = localStorage.getItem('role');   
+    const role = localStorage.getItem('role');
+
     if (role === 'admin') {
-      const storedOrganizations = localStorage.getItem('organizations');
-  
-      if (!storedOrganizations) {
-        this.showToast('No organizations available.');
-        return;
-      }
-      const organizations = JSON.parse(storedOrganizations);  
-      if (!Array.isArray(organizations) || organizations.length === 0) {
-        this.showToast('No organizations available.');
-        return;
-      }
-      const alert = await this.alertController.create({
-        header: 'Select Organization',
-        inputs: organizations.map((org: { orgName: string; orgId: string }) => ({
-          type: 'radio',
-          label: org.orgName,
-          value: { id: org.orgId, name: org.orgName }
-        })),
-        buttons: [
-          {
-            text: 'Cancel',
-            role: 'cancel'
-          },
-          {
-            text: 'Confirm',
-            handler: (selectedOrg) => {
-              if (selectedOrg) {
-                localStorage.setItem('organizationId', selectedOrg.id);
-                localStorage.setItem('organizationName', selectedOrg.name);
-                this.router.navigate(['/claimIt/additem']);
-              } else {
-                this.showToast('Please select an organization.');
-              }
-            }
-          }
-        ]
-      });
-  
-      await alert.present();
-  
-    } else if (role === 'superadmin') {
-      this.http.get<any[]>('http://172.17.12.101:8081/api/users/organisation').subscribe(async (organizations) => {
-        if (!organizations || organizations.length === 0) {
-          this.showToast('No organizations available.');
-          return;
+        const storedOrganizations = localStorage.getItem('organizations');
+
+        if (!storedOrganizations) {
+            this.showToast('No organizations available.');
+            return;
         }
-  
+
+        const organizations = JSON.parse(storedOrganizations);
+
+        if (!Array.isArray(organizations) || organizations.length === 0) {
+            this.showToast('No organizations available.');
+            return;
+        }
+
         const alert = await this.alertController.create({
-          header: 'Select Organization',
-          inputs: organizations.map(org => ({
-            type: 'radio',
-            label: org.orgName,
-            value: { id: org.orgId, name: org.orgName }
-          })),
-          buttons: [
-            {
-              text: 'Cancel',
-              role: 'cancel'
-            },
-            {
-              text: 'Confirm',
-              handler: (selectedOrg) => {
-                if (selectedOrg) {
-                  localStorage.setItem('organizationId', selectedOrg.id);
-                  localStorage.setItem('organizationName', selectedOrg.name);
-                  this.router.navigate(['/claimIt/additem']);
-                } else {
-                  this.showToast('Please select an organization.');
+            header: 'Select Organization',
+            inputs: organizations.map((org: { orgName: string; orgId: string }) => ({
+                type: 'radio',
+                label: org.orgName,
+                value: { id: org.orgId, name: org.orgName }
+            })),
+            buttons: [
+                {
+                    text: 'Cancel',
+                    role: 'cancel'
+                },
+                {
+                    text: 'Confirm',
+                    handler: (selectedOrg) => {
+                        if (selectedOrg) {
+                            localStorage.setItem('organizationId', selectedOrg.id);
+                            localStorage.setItem('organizationName', selectedOrg.name);
+                            this.router.navigate(['/claimIt/additem']);
+                        } else {
+                            this.showToast('Please select an organization.');
+                        }
+                    }
                 }
-              }
-            }
-          ]
+            ]
         });
-  
+
         await alert.present();
-      }, (error) => {
-        this.showToast('Failed to load organizations.');
-      });
+
+    } else if (role === 'superadmin') {
+        this.isLoading = true; // Show loading indicator
+
+        this.http.get<any[]>('http://172.17.12.101:8081/api/users/organisation').subscribe(
+            async (organizations) => {
+                this.isLoading = false; // Hide loading indicator
+
+                if (!organizations || organizations.length === 0) {
+                    this.showToast('No organizations available.');
+                    return;
+                }
+
+                const alert = await this.alertController.create({
+                    header: 'Select Organization',
+                    inputs: organizations.map(org => ({
+                        type: 'radio',
+                        label: org.orgName,
+                        value: { id: org.orgId, name: org.orgName }
+                    })),
+                    buttons: [
+                        {
+                            text: 'Cancel',
+                            role: 'cancel'
+                        },
+                        {
+                            text: 'Confirm',
+                            handler: (selectedOrg) => {
+                                if (selectedOrg) {
+                                    localStorage.setItem('organizationId', selectedOrg.id);
+                                    localStorage.setItem('organizationName', selectedOrg.name);
+                                    this.router.navigate(['/claimIt/additem']);
+                                } else {
+                                    this.showToast('Please select an organization.');
+                                }
+                            }
+                        }
+                    ]
+                });
+
+                await alert.present();
+            },
+            (error) => {
+                this.isLoading = false; // Hide loading on error
+                this.showToast('Failed to load organizations.');
+            }
+        );
     }
-  }
+}
+
   
   // async onSubmit() {
   //   if (this.loginForm.valid) {

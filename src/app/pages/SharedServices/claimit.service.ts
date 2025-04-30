@@ -80,9 +80,9 @@ export class ClaimitService {
     const params = new HttpParams().set('role', role);
     return this.http.post(environment.createClaimRequest, REQBODY, { params });
   }
-  public createRequest(REQBODY: any) {
-    return this.http.post(environment.createClaimRequest, REQBODY)
-  }
+  // public createRequest(REQBODY: any) {
+  //   return this.http.post(environment.createClaimRequest, REQBODY)
+  // }
   public adminSearch(params: any) {
     const queryParams = new URLSearchParams({
       username:params.name,
